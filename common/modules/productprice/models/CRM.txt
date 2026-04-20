@@ -1,0 +1,89 @@
+Design insight:
+
+✔ Account hierarchy
+✔ Product bundle
+✔ Price list per account
+✔ Discount priority
+✔ Price validity period
+
+
+Menu:
+Dashboard
+
+Sales
+   Lead Management
+   Accounts
+   Contacts
+   Opportunities
+   Quotations
+   Sales Orders
+   Invoices
+
+Activities
+   Activities
+   Tasks
+   Meetings
+   Calls
+
+Products & Pricing
+   A. Product Categories -> Buat category
+   B. Product UOM -> Buat (Units of Measure)
+   C. Products -> 
+      1. Sesuaikan Product Type, 
+      2. Bundle Fixed/ SUM:
+         Fixed: Jangan hitung harga barang di dalam paket, lihat Product Price/ harga utama (product_price.price)
+         SUM: Hitung sendiri total harga barang-barang di dalamnya (Aplikasi akan melakukan looping ke tabel product_bundle_item, mengambil harga tiap komponen dari product_price, lalu menjumlahkannya)
+   
+   D. Price Lists: (Retail vs Corporate) dan Minimum Quantity
+   E. Product Price:
+      Valid From & Valid To:
+      -  Harga Masa Depan (Future Pricing):
+         Misalkan besok tanggal 1 ada kenaikan harga BBM yang berdampak pada harga Laptop. Anda bisa menginput harga baru hari ini, tapi disetel valid_from mulai tanggal 1. Sistem tidak akan memakai harga itu sebelum tanggalnya tiba.
+
+      -  Harga Promo Terbatas (Seasonal Price):
+         Anda ingin membuat "Harga Spesial Lebaran" yang hanya berlaku selama 2 minggu. Anda set valid_from dan valid_to sesuai rentang tanggal tersebut. Begitu masa berlakunya habis, sistem akan otomatis kembali ke harga normal tanpa Anda harus menghapus data secara manual.
+
+      -  Audit Trail & History:
+         Dengan kolom ini, Anda punya catatan: "Berapa harga Laptop ini pada bulan Januari 2025?". Jika Anda hanya menimpa (overwrite) satu kolom harga, Anda kehilangan sejarah perubahan harga Anda.
+
+      Dampaknya Jika Di-skip?
+
+      -  Selalu Berlaku: Sistem akan menganggap harga tersebut berlaku selamanya (kecuali Anda menghapus atau menonaktifkan statusnya).
+      -  Update Manual: Setiap kali ada perubahan harga, Anda harus mengedit data yang ada secara manual tepat di hari H perubahan.
+      -  Risiko Bentrok: Jika Anda punya dua harga untuk produk yang sama (misal Retail), sistem mungkin akan bingung mengambil harga yang mana jika tidak ada pembatas tanggal yang jelas.
+
+   F. Product Bundles: Group untuk mendefinisikan hubungan beberapa produk
+      Catatan: 
+
+      -  Cek Duplikasi: Pastikan satu produk tidak muncul dua kali dalam satu bundel (misal: Laptop muncul dua kali di baris berbeda untuk paket yang sama). Lebih baik qty-nya saja yang ditambah.
+
+      -  Cek Modal (Base Price) Bundel:
+         Aplikasi bisa membuat kalkulasi otomatis:
+         Total Modal Bundel = ∑(Item×Qty×BasePrice)
+
+         Ini sangat berguna untuk mengecek apakah harga jual fixed yang Anda tentukan di product_price masih memberikan untung atau justru rugi setelah digabung.
+   
+   G. Discounts
+
+Reports
+   Sales Pipeline
+   Revenue
+   Product Sales
+   Customer Activity
+
+Administration
+   Users
+   Teams
+   Roles
+
+common\modules\productprice\models\ProductUom
+common\modules\productprice\models\ProductUomSearch
+backend\modules\productprice\controllers\ProductuomController
+@backend/modules/productprice/views/productuom
+
+Title: Opportunities
+Sub title untuk index?
+Sub title untuk view/detail?
+Nc Icon yang sesuai?
+
+

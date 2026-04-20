@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  php:
+    build: ./php
+    container_name: commcorp_php
+    volumes:
+      - ../:/var/www/html
+    depends_on:
+      - mariadb
+
+  nginx:
+    image: nginx:latest
+    container_name: commcorp_nginx
+    ports:
+      - "8086:8086"  # backend
+    volumes:
+      - ../:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: commcorp_db
+    environment:
+      MYSQL_ROOT_PASSWORD: zx
+      MYSQL_DATABASE: commcorp_tb
+      MYSQL_USER: commcorp_2026_tb
+      MYSQL_PASSWORD: Commcorp@2026
+    ports:
+      - "3309:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

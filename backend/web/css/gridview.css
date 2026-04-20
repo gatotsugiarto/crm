@@ -1,0 +1,103 @@
+/* Gridview diedit sendiri */
+.table thead th.bg-creative {
+  background-color: #447fc8 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  border: none !important;
+  vertical-align: middle !important;
+}
+
+.table th.bg-creative a {
+    color: #fff !important;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(113, 156, 214, 0.08) !important;
+  transition: 0.3s;
+}
+
+.table,
+.table td,
+.table th {
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  border: none !important;
+}
+
+.kv-grid-bs4 .filters input.form-control {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  box-shadow: none !important;
+}
+
+.kv-grid-bs4 .btn {
+  border-radius: 50% !important;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.kv-grid-bs4 .btn i {
+  font-size: 0.9rem;
+}
+
+.summary {
+  text-align: right;
+  padding-right: 1rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.pagination {
+  margin-bottom: 0;
+  padding-left: 1rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.pagination li {
+  margin: 0 2px;
+}
+
+.pagination li a,
+.pagination li span {
+  border-radius: 0.3rem !important;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  color: #447fc8;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  transition: 0.2s;
+}
+
+.pagination li.active span {
+  background-color: #447fc8;
+  color: #fff;
+  border-color: #447fc8;
+}
+
+.pagination li a:hover {
+  background-color: rgba(68, 127, 200, 0.1);
+  text-decoration: none;
+}
+
+
+.table-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+
+

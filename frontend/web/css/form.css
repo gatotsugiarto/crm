@@ -1,0 +1,108 @@
+/* Form edit sendiri */
+
+/* Label form */
+.form-label {
+    font-size: 0.9rem;          /* Ukuran proporsional, tidak terlalu besar */
+    font-weight: 600;           /* Sedikit tebal agar kontras */
+    color: #344767;             /* Warna khas Creative Tim (Soft UI / Argon) */
+    margin-bottom: 0.35rem;     /* Spasi bawah yang proporsional */
+}
+
+/* Untuk tampilan input */
+.form-control {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.help-block {
+  color: #dc3545;            /* Warna merah Bootstrap danger */
+  font-size: 0.85rem;        /* Sedikit lebih kecil dari teks biasa */
+  margin-top: 2px;           /* Jarak kecil dari input */
+}
+.has-error .form-control {
+  border-color: #dc3545;     /* Warna border input saat error */
+  box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.15); /* Efek lembut */
+}
+
+/* === GRIDVIEW MODERN BLUE THEME - KARTIK BS4 FIX === */
+#w0.grid-view table {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+/* Header (warna biru lembut & teks putih) */
+#w0 thead th {
+    background-color: #719cd6 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-align: center;
+    border: none !important;
+    vertical-align: middle !important;
+    padding: 10px 12px !important;
+}
+
+/* Filter input (baris kedua) */
+#w0 .filters input.form-control,
+#w0 .filters select.form-control {
+    width: 100%;
+    padding: 6px 10px !important;
+    border: 1px solid #d5d9e0 !important;
+    border-radius: 8px !important;
+    color: #333 !important;
+    background-color: #fff !important;
+    transition: all 0.25s ease-in-out !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+/* Placeholder lembut */
+#w0 .filters input::placeholder {
+    color: #b3b3b3 !important;
+}
+
+/* Hover dan fokus efek */
+#w0 .filters input:hover,
+#w0 .filters select:hover {
+    border-color: #a7c2eb !important;
+}
+
+#w0 .filters input:focus,
+#w0 .filters select:focus {
+    border-color: #719cd6 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(113,156,214,0.25) !important;
+}
+
+/* Badge aktif */
+#w0 .badge.bg-success {
+    background-color: #43b581 !important;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+#w0 .badge.bg-secondary {
+    background-color: #e74c3c !important;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+/* Shadow lembut di table */
+#w0 .table {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05) !important;
+}
+
+/* Responsif */
+@media (max-width: 992px) {
+    #w0 th, #w0 td {
+        font-size: 13px !important;
+        padding: 8px !important;
+    }
+}

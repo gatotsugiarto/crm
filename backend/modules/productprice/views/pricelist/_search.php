@@ -1,0 +1,43 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+/** @var yii\web\View $this */
+/** @var common\modules\productprice\models\PriceListSearch $model */
+/** @var yii\widgets\ActiveForm $form */
+?>
+
+<div class="price-list-search">
+
+    <?php $form = ActiveForm::begin([
+        'action' => ['index'],
+        'method' => 'get',
+        'options' => [
+            'data-pjax' => 1,
+        ],
+    ]); ?>
+    
+    <div class="d-flex align-items-center" style="gap: 8px;">
+
+        <?= $form->field($model, 'name', [
+            'options' => ['class' => 'mb-0'],
+            'template' => '{input}'
+        ])->textInput([
+            'placeholder' => 'Product Name',
+            'class' => 'form-control form-control-sm',
+            'style' => 'width: 220px;',
+        ]) ?>
+
+        <?=  Html::submitButton('<i class="fa fa-search"></i> Search', [
+            'class' => 'btn btn-primary btn-sm px-3 rounded-pill shadow-sm',
+        ]) ?>
+
+        <?=  Html::a('<i class="fa fa-sync"></i> Reset', ['index'], [
+            'class' => 'btn btn-outline-secondary btn-sm px-3 rounded-pill shadow-sm',
+        ]) ?>
+
+    </div>
+    <?php ActiveForm::end(); ?>
+
+</div>

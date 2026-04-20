@@ -1,0 +1,15 @@
+# 1. Buat company table
+php yii migrate/up m251026_070001_create_company_table
+
+# 2. Buat client table
+php yii migrate/up m251026_070020_create_client_table
+
+# 3. Buat member table (karena member memakai FK ke company & client)
+php yii migrate/up m251026_070010_create_member_table
+
+# 4. Baru jalankan migration alter FK member (revisi company_id & client_id)
+php yii migrate/up m251026_090001_update_member_company_client_fk
+
+
+Single
+php yii migrate/up 1 --migrationPath=@console/migrations <-- kalau masalah sesuaikan di table migration

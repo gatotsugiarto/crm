@@ -1,0 +1,108 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    /*background: #f5f7fa;*/
+}
+
+.login-card {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transform: translateY(-20px); /* geser sedikit naik */
+}
+
+.login-card-header {
+    font-weight: 700 !important;
+    font-size: 1.5rem;
+    background: #447fc8 !important;
+    text-align: center;
+    color: #fff;
+    padding: 1rem;
+}
+
+.login-card .form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.login-card .form-control:focus {
+    border-color: #447fc8;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.login-card .btn-primary {
+    background: #447fc8;
+    border: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff; /* pastikan label terlihat */
+    transition: all 0.3s ease;
+}
+
+.login-card .btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.toggle-password:hover {
+    color: #007bff;
+}
+
+.login-card .form-check-label {
+    display: flex;
+    align-items: center;      /* vertikal rata tengah */
+    justify-content: flex-start; /* horizontal rata kiri */
+    gap: 0.5rem;              /* jarak antar elemen */
+    font-weight: 500;
+    color: #333;
+}
+
+.table-custom {
+    width: 100%;
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+.table-custom thead {
+    background-color: #719cd6 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-align: center;
+    border: none !important;
+    vertical-align: middle !important;
+    padding: 10px 12px !important;
+}
+
+.table-custom th,
+.table-custom td {
+    border: none;
+    padding: 8px 12px;
+}
+
+.table-custom tbody tr:hover {
+    background: #f8fbff;
+}
+
