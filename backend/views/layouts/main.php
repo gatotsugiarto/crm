@@ -26,7 +26,7 @@ $menuMap = [
     'menu/usermanagement' => 'User Management',
     'logactivity/index'    => 'Log Activity',
     'menu/masterdata'    => 'Master Data',
-    'payrollmenu/index'    => 'Payroll Management',
+    // 'payrollmenu/index'    => 'Payroll Management',
     'menu/productprice'    => 'Product & Pricing',
     'menu/sales'    => 'Sales CRM',
     'site/documentation'           => 'Documentation',
@@ -196,12 +196,12 @@ if (isset($menuMap[$urlMenu])) {
                         </a>
                     </li>
 
-                    <li class="nav-item <?= $currentController === 'payrollmenu' && $currentAction === 'index' ? 'active' : '' ?>">
+                    <!-- <li class="nav-item <?= $currentController === 'payrollmenu' && $currentAction === 'index' ? 'active' : '' ?>">
                         <a class="nav-link" href="<?= $baseUrl ?>/payrollmenu/index">
                             <i class="nc-icon nc-app"></i>
                             <p>Payroll Management</p>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item <?= $currentController === 'menu' && $currentAction === 'masterdata' ? 'active' : '' ?>">
                         <a class="nav-link" href="<?= $baseUrl ?>/menu/masterdata">
                             <i class="nc-icon nc-layers-3"></i>

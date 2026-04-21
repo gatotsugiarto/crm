@@ -224,5 +224,39 @@ $baseUrl = Yii::$app->request->baseUrl;
     }
     ?>
 
+    <!-- Invoice -->
+    <?php if (\Yii::$app->user->can('backend.sales.invoice.index') || \Yii::$app->user->can("root")) { ?>
+    <div class="col-6 col-md-4 col-lg-3 mb-4">
+      <a href="<?=$baseUrl ?>/sales/invoice/index" class="text-decoration-none">
+        <div class="card menu-card text-center p-4 h-100">
+          <div class="menu-icon mb-2">
+            <i class="nc-icon nc-paper"></i>
+          </div>
+          <div class="menu-title fw-bold text-primary">Invoices</div>
+          <div class="menu-desc text-muted">Manage and track customer invoices</div>
+        </div>
+      </a>
+    </div>
+    <?php
+    }
+    ?>
+
+    <!-- Invoice Items -->
+    <?php if (\Yii::$app->user->can('backend.sales.invoiceitem.index') || \Yii::$app->user->can("root")) { ?>
+    <div class="col-6 col-md-4 col-lg-3 mb-4">
+      <a href="<?=$baseUrl ?>/sales/invoiceitem/index" class="text-decoration-none">
+        <div class="card menu-card text-center p-4 h-100">
+          <div class="menu-icon mb-2">
+            <i class="nc-icon nc-bullet-list-67"></i>
+          </div>
+          <div class="menu-title fw-bold text-primary">Invoice Items</div>
+          <div class="menu-desc text-muted">Track all line items within customer invoices</div>
+        </div>
+      </a>
+    </div>
+    <?php
+    }
+    ?>
+
   </div>
 </div>

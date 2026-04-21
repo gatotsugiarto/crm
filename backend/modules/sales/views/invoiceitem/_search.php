@@ -14,33 +14,48 @@ use kartik\select2\Select2;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        'options' => [
+            'data-pjax' => 1,
+        ],
     ]); ?>
 
     <div class="d-flex align-items-center" style="gap: 8px;">
 
-    <?= $form->field($model, 'id') ?>
+        <div style="width: 200px;">
+        <?= $form->field($model, 'invoice_id', [
+            'options' => ['class' => 'mb-0'],
+            'template' => '{input}'
+        ])->widget(Select2::classname(), [
+            'data' => \common\modules\sales\models\Invoice::dropdown(),
+            'options' => [
+                'placeholder' => 'Invoice',
+                'multiple' => false,
+                'class' => 'form-control form-control-sm',
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'escapeMarkup' => new \yii\web\JsExpression('function (m) { return m; }'),
+            ],
+        ])->label(false) ?>
+        </div>
 
-    <?= $form->field($model, 'invoice_id') ?>
-
-    <?= $form->field($model, 'product_id') ?>
-
-    <?= $form->field($model, 'qty') ?>
-
-    <?= $form->field($model, 'price') ?>
-
-    <?php // echo $form->field($model, 'discount') ?>
-
-    <?php // echo $form->field($model, 'total') ?>
-
-    <?php // echo $form->field($model, 'status_id') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'created_by') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <?php // echo $form->field($model, 'updated_by') ?>
+        <div style="width: 200px;">
+        <?= $form->field($model, 'product_id', [
+            'options' => ['class' => 'mb-0'],
+            'template' => '{input}'
+        ])->widget(Select2::classname(), [
+            'data' => \common\modules\productprice\models\Product::dropdown(),
+            'options' => [
+                'placeholder' => 'Product',
+                'multiple' => false,
+                'class' => 'form-control form-control-sm',
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'escapeMarkup' => new \yii\web\JsExpression('function (m) { return m; }'),
+            ],
+        ])->label(false) ?>
+        </div>
 
         <?=  Html::submitButton('<i class="fa fa-search"></i> Search', [
             'class' => 'btn btn-primary btn-sm px-3 rounded-pill shadow-sm',

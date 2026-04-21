@@ -11,7 +11,7 @@ use yii\behaviors\BlameableBehavior;
 use common\components\behaviors\TokenProtectedFormBehavior;
 use common\components\behaviors\LoggableBehavior;
 
-use common\modules\master\models\Status;
+use common\modules\master\models\StatusActive;
 use common\modules\auth\models\User;
 
 class Invoice extends ActiveRecord

@@ -7,6 +7,7 @@ use Yii;
 
 use common\modules\sales\models\Invoice;
 use common\modules\sales\models\InvoiceSearch;
+use common\modules\sales\models\InvoiceItemSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -83,11 +84,57 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
 
+        $searchModel = new InvoiceItemSearch();
+        $searchModel->invoice_id = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $params = [
+            'model'        => $model,
+            'searchModel'  => $searchModel,
+            'dataProvider' => $dataProvider,
+        ];
+
         if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('view', ['model' => $model]);
+            return $this->renderAjax('view', $params);
         }
 
-        return $this->render('view', ['model' => $model]);
+        return $this->render('view', $params);
+    }
+
+    public function actionPdf($id)
+    {
+        $model = $this->findModel($id);
+
+        $this->layout = false;
+        return $this->render('_pdf', ['model' => $model]);
+    }
+
+    public function actionMarkSent($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->isStatusDraft()) {
+            $model->detachBehavior('tokenProtection');
+            $model->setStatusToSent();
+            $model->save(false);
+        }
+
+        Yii::$app->session->setFlash('success', 'Invoice marked as Sent.');
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionMarkPaid($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->isStatusSent()) {
+            $model->detachBehavior('tokenProtection');
+            $model->setStatusToPaid();
+            $model->save(false);
+        }
+
+        Yii::$app->session->setFlash('success', 'Invoice marked as Paid.');
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**
