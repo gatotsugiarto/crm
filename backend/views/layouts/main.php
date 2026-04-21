@@ -99,7 +99,13 @@ if (isset($menuMap[$urlMenu])) {
     $topUrl = array_search('Sales CRM', $menuMap);
 } else if (strpos($urlMenu, 'salesorder/') === 0) {
     $baseMenu = 'Sales CRM';
-    $topUrl = array_search('Sales CRM', $menuMap);    
+    $topUrl = array_search('Sales CRM', $menuMap);
+} else if (strpos($urlMenu, 'invoice/') === 0) {
+    $baseMenu = 'Sales CRM';
+    $topUrl = array_search('Sales CRM', $menuMap);
+} else if (strpos($urlMenu, 'invoiceitem/') === 0) {
+    $baseMenu = 'Sales CRM';
+    $topUrl = array_search('Sales CRM', $menuMap);            
 
 } else if (strpos($urlMenu, 'productcategory/') === 0) {
     $baseMenu = 'Product & Pricing';
