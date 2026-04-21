@@ -230,7 +230,7 @@ $baseUrl = Yii::$app->request->baseUrl;
       <a href="<?=$baseUrl ?>/sales/invoice/index" class="text-decoration-none">
         <div class="card menu-card text-center p-4 h-100">
           <div class="menu-icon mb-2">
-            <i class="nc-icon nc-paper"></i>
+            <i class="nc-icon nc-single-copy-04"></i>
           </div>
           <div class="menu-title fw-bold text-primary">Invoices</div>
           <div class="menu-desc text-muted">Manage and track customer invoices</div>
