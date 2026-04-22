@@ -238,8 +238,7 @@ $statusClass = match($model->status) {
     default   => 'status-draft',
 };
 
-$subtotal = array_sum(array_column((array) $items, null));
-$total    = $model->total_amount;
+$total = $model->total_amount;
 
 $formatCurrency = fn($v) => 'Rp ' . number_format((float)$v, 0, ',', '.');
 ?>
