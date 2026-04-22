@@ -55,13 +55,13 @@ use kartik\select2\Select2;
             ]) ?>
         </div>
 
-        <div style="width: 220px;">
+        <div style="width: 180px;">
             <?= $form->field($model, 'discount_type', [
                 'options' => ['class' => 'mb-0'],
                 'template' => '{input}'
             ])->widget(Select2::class, [
                 'data' => [
-                    'percent'  => 'Percent',
+                    'percent' => 'Percent',
                     'amount'  => 'Amount',
                 ],
                 'options' => [
@@ -74,7 +74,25 @@ use kartik\select2\Select2;
                 ],
             ]) ?>
         </div>
-    
+
+        <?= $form->field($model, 'valid_from', [
+            'options'  => ['class' => 'mb-0'],
+            'template' => '{input}',
+        ])->textInput([
+            'type'  => 'date',
+            'class' => 'form-control form-control-sm',
+            'title' => 'Valid From (on or after)',
+        ]) ?>
+
+        <?= $form->field($model, 'valid_to', [
+            'options'  => ['class' => 'mb-0'],
+            'template' => '{input}',
+        ])->textInput([
+            'type'  => 'date',
+            'class' => 'form-control form-control-sm',
+            'title' => 'Valid To (on or before)',
+        ]) ?>
+
         <?= Html::submitButton('<i class="fa fa-search"></i> Search', [
             'class' => 'btn btn-primary btn-sm px-3',
         ]) ?>

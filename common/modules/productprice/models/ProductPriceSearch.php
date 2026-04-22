@@ -103,6 +103,8 @@ class ProductPriceSearch extends ProductPrice
         $query->andFilterWhere(['price_list_id' => $this->price_list_id]);
         $query->andFilterWhere(['product_id'    => $this->product_id]);
         $query->andFilterWhere(['status_id'     => $this->status_id]);
+        $query->andFilterWhere(['>=', 'valid_from', $this->valid_from ?: null]);
+        $query->andFilterWhere(['<=', 'valid_to',   $this->valid_to   ?: null]);
 
         return $dataProvider;
     }

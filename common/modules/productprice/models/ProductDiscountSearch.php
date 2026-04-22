@@ -66,25 +66,16 @@ class ProductDiscountSearch extends ProductDiscount
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'product_id' => $this->product_id,
+            'product_id'    => $this->product_id,
             'price_list_id' => $this->price_list_id,
-            'discount_value' => $this->discount_value,
-            'priority' => $this->priority,
-            'min_qty' => $this->min_qty,
-            'valid_from' => $this->valid_from,
-            'valid_to' => $this->valid_to,
-            'is_stackable' => $this->is_stackable,
-            'status_id' => $this->status_id,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
+            'discount_type' => $this->discount_type,
+            'is_stackable'  => $this->is_stackable,
+            'status_id'     => $this->status_id,
         ]);
 
-        $query->andFilterWhere(['like', 'discount_type', $this->discount_type]);
+        $query->andFilterWhere(['>=', 'valid_from', $this->valid_from ?: null]);
+        $query->andFilterWhere(['<=', 'valid_to',   $this->valid_to   ?: null]);
 
         return $dataProvider;
     }

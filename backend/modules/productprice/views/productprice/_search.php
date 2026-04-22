@@ -47,6 +47,26 @@ use kartik\select2\Select2;
             ]) ?>
         </div>
 
+        <?= $form->field($model, 'valid_from', [
+            'options'  => ['class' => 'mb-0'],
+            'template' => '{input}',
+        ])->textInput([
+            'type'        => 'date',
+            'class'       => 'form-control form-control-sm',
+            'placeholder' => 'Valid From',
+            'title'       => 'Valid From (on or after)',
+        ]) ?>
+
+        <?= $form->field($model, 'valid_to', [
+            'options'  => ['class' => 'mb-0'],
+            'template' => '{input}',
+        ])->textInput([
+            'type'        => 'date',
+            'class'       => 'form-control form-control-sm',
+            'placeholder' => 'Valid To',
+            'title'       => 'Valid To (on or before)',
+        ]) ?>
+
         <?= Html::submitButton('<i class="fa fa-search"></i> Search', [
             'class' => 'btn btn-primary btn-sm px-3',
         ]) ?>
