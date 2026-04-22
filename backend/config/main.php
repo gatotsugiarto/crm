@@ -96,7 +96,8 @@ return [
         ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
-            'locale' => 'id-ID',
+            'currencyCode' => 'IDR',
+            'locale' => 'id_ID',
             'dateFormat' => 'php:d-m-Y',
             'datetimeFormat' => 'php:d-m-Y H:i:s',
             'thousandSeparator' => '.',
