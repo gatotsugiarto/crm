@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
 use kartik\number\NumberControl;
-use kartik\datecontrol\DateControl;
 
 $isNew = $model->isNewRecord;
 $title = $isNew ? 'Add Discount' : 'Edit Discount';
@@ -101,20 +100,10 @@ $icon  = $isNew ? 'fa-tag' : 'fa-edit';
                 ]) ?>
             </div>
             <div class="col-md-4">
-                <?= $form->field($model, 'valid_from')->widget(DateControl::class, [
-                    'type'          => DateControl::FORMAT_DATE,
-                    'saveFormat'    => 'php:Y-m-d',
-                    'displayFormat' => 'php:d-m-Y',
-                    'options'       => ['placeholder' => 'Valid From'],
-                ]) ?>
+                <?= $form->field($model, 'valid_from')->textInput(['type' => 'date']) ?>
             </div>
             <div class="col-md-4">
-                <?= $form->field($model, 'valid_to')->widget(DateControl::class, [
-                    'type'          => DateControl::FORMAT_DATE,
-                    'saveFormat'    => 'php:Y-m-d',
-                    'displayFormat' => 'php:d-m-Y',
-                    'options'       => ['placeholder' => 'Valid To'],
-                ]) ?>
+                <?= $form->field($model, 'valid_to')->textInput(['type' => 'date']) ?>
             </div>
         </div>
 

@@ -4,8 +4,6 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
 use kartik\number\NumberControl;
-use kartik\datecontrol\DateControl;
-use kartik\date\DatePicker;
 
 $isNew = $model->isNewRecord;
 $title = $isNew ? 'Add Product Price' : 'Edit Product Price';
@@ -97,20 +95,10 @@ $icon  = $isNew ? 'fa-plus-circle' : 'fa-edit';
         <!-- Valid From + Valid To -->
         <div class="row">
             <div class="col-md-6">
-                <?= $form->field($model, 'valid_from')->widget(DatePicker::class, [
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd'
-                ]
-            ]) ?>
+                <?= $form->field($model, 'valid_from')->textInput(['type' => 'date']) ?>
             </div>
             <div class="col-md-6">
-                <?= $form->field($model, 'valid_to')->widget(DateControl::class, [
-                    'type'          => DateControl::FORMAT_DATE,
-                    'saveFormat'    => 'php:Y-m-d',
-                    'displayFormat' => 'php:d-m-Y',
-                    'options'       => ['placeholder' => 'Valid To'],
-                ]) ?>
+                <?= $form->field($model, 'valid_to')->textInput(['type' => 'date']) ?>
             </div>
         </div>
 
@@ -162,15 +150,7 @@ $icon  = $isNew ? 'fa-plus-circle' : 'fa-edit';
 
 </div>
 
-<?php 
-ActiveForm::end(); 
-
-$this->registerJs("
-    setTimeout(function(){
-        $('.kv-datepicker').datepicker();
-    }, 200);
-");
-?>
+<?php ActiveForm::end(); ?>
 
 
 
