@@ -155,7 +155,7 @@ if (isset($menuMap[$urlMenu])) {
     $topUrl = array_search('Product & Pricing', $menuMap);
 
 } else {
-    $baseMenu = 'Comm Corp';
+    $baseMenu = 'CRM Application';
     $topUrl = "";
 }
 
@@ -184,7 +184,7 @@ if (isset($menuMap[$urlMenu])) {
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="<?=$baseUrl?>/site/index" class="simple-text">
-                        Comm-Corp v.1.0.7
+                        CRM-APP v.1.0.8
                     </a>
                 </div>
                 <ul class="nav">

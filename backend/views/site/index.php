@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 
-$this->title = 'Payroll Dashboard';
+$this->title = 'CRM Application';
 ?>
 
 

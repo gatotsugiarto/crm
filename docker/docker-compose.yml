@@ -35,3 +35,5 @@ services:
 
 volumes:
   db_data:
+    external: true
+    name: commcorp_db_data

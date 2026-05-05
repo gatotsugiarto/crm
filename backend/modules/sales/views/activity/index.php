@@ -231,7 +231,7 @@ $gridColumns = [
                 'delete' => fn($url, $model) => Html::button('<i class="fa fa-trash"></i>', [
                     'class' => 'btn btn-sm btn-outline-danger rounded-circle delete-js',
                     'data-url' => $url,
-                    'data-name' => $model->account->name,
+                    'data-name' => $model->account?->name ?? '-',
                 ]),
             ],
         ],
