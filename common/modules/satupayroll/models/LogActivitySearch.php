@@ -42,7 +42,6 @@ class LogActivitySearch extends LogActivity
     public function search($params, $formName = null)
     {
         $query = LogActivity::find();
-        $query->joinWith(['employee']);
         $query->joinWith(['user']);
 
         // add conditions that should always apply here
@@ -84,7 +83,6 @@ class LogActivitySearch extends LogActivity
             ->andFilterWhere(['like', 'before_data', $this->before_data])
             ->andFilterWhere(['like', 'after_data', $this->after_data])
             ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'employee.fullname', $this->employee_id])
             ->andFilterWhere(['like', 'user.fullname', $this->action_by])
             ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
