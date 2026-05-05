@@ -100,17 +100,16 @@ body{
 }
 
 .login-icon{
-    width:70px;
-    height:70px;
+    width:100px;
     margin:0 auto 10px auto;
-    border-radius:50%;
-    background:#0d6efd;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#fff;
-    font-size:28px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.login-icon img{
+    width:100%;
+    height:auto;
 }
 
 </style>
@@ -119,7 +118,7 @@ body{
     <div class="login-card">
 
         <div class="login-icon">
-            <i class="fa-solid fa-user-lock"></i>
+            <img src="<?= Yii::$app->request->baseUrl ?>/img/crm.png" alt="CRM Logo">
         </div>
 
         <h5>User Sign In</h5>
