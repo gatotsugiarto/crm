@@ -91,7 +91,7 @@ class ProductbundleitemController extends Controller
     }
 
     /**
-     * Creates a new ProductBundleItem model.
+     * Creates one or more ProductBundleItem models for the same bundle product in one submit.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
@@ -101,23 +101,96 @@ class ProductbundleitemController extends Controller
         $model = new ProductBundleItem();
 
         if (Yii::$app->request->isAjax) {
-            if ($model->load(Yii::$app->request->post())) {
+            if (Yii::$app->request->isPost) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
-                if ($model->validate()) {
-                    $model->save();
-                    $model->getBehavior('tokenProtection')->consumeToken();
+                $post = Yii::$app->request->post();
+                $bundleProductId = trim((string) ($post['ProductBundleItem']['bundle_product_id'] ?? ''));
+                $items = is_array($post['items'] ?? null) ? $post['items'] : [];
 
+                if ($bundleProductId === '') {
                     return [
-                        'success' => true,
-                        'message' => 'Product bundle created successfully.',
+                        'success' => false,
+                        'message' => 'Validation failed.',
+                        'errors' => ['bundle_product_id' => ['Bundle Product cannot be blank.']],
                     ];
                 }
 
+                $errors = [];
+                $seenProducts = [];
+                $itemModels = [];
+
+                foreach ($items as $i => $item) {
+                    $productId = trim((string) ($item['product_id'] ?? ''));
+                    $qty = trim((string) ($item['quantity'] ?? ''));
+                    $rowLabel = 'Row ' . ($i + 1) . ': ';
+
+                    if ($productId === '' && $qty === '') {
+                        continue;
+                    }
+                    if ($productId === '') {
+                        $errors[] = $rowLabel . 'Product is required.';
+                        continue;
+                    }
+                    if ($qty === '' || !is_numeric($qty) || (int) $qty < 1) {
+                        $errors[] = $rowLabel . 'Quantity must be at least 1.';
+                        continue;
+                    }
+                    if (isset($seenProducts[$productId])) {
+                        $errors[] = $rowLabel . 'This product is already added in this bundle.';
+                        continue;
+                    }
+                    $seenProducts[$productId] = true;
+
+                    $itemModel = new ProductBundleItem();
+                    $itemModel->bundle_product_id = $bundleProductId;
+                    $itemModel->product_id = $productId;
+                    $itemModel->quantity = (int) $qty;
+
+                    if (!$itemModel->validate()) {
+                        foreach (array_values($itemModel->getFirstErrors()) as $msg) {
+                            $errors[] = $rowLabel . $msg;
+                        }
+                        continue;
+                    }
+
+                    $itemModels[] = $itemModel;
+                }
+
+                if (empty($itemModels) && empty($errors)) {
+                    $errors[] = 'Add at least one product to the bundle.';
+                }
+
+                if (!empty($errors)) {
+                    return [
+                        'success' => false,
+                        'message' => 'Validation failed.',
+                        'errors' => ['bundle_product_id' => $errors],
+                    ];
+                }
+
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($itemModels as $itemModel) {
+                        if (!$itemModel->save(false)) {
+                            throw new \yii\db\Exception('Failed to save product bundle item.');
+                        }
+                    }
+                    $transaction->commit();
+                } catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    return [
+                        'success' => false,
+                        'message' => 'Failed to save.',
+                        'errors' => ['bundle_product_id' => ['Failed to save one or more items, please try again.']],
+                    ];
+                }
+
+                $model->getBehavior('tokenProtection')->consumeToken();
+
                 return [
-                    'success' => false,
-                    'message' => 'Validation failed.',
-                    'errors' => ActiveForm::validate($model),
+                    'success' => true,
+                    'message' => count($itemModels) . ' product bundle item(s) created successfully.',
                 ];
             }
 

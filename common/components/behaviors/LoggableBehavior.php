@@ -5,7 +5,7 @@ use Yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
-use common\modules\satupayroll\models\LogActivity;
+use common\modules\logdata\models\LogActivity;
 
 class LoggableBehavior extends Behavior
 {

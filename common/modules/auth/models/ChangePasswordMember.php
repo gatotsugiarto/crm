@@ -4,7 +4,7 @@ namespace common\modules\auth\models;
 
 use Yii;
 use yii\base\Model;
-use common\modules\satupayroll\models\LogActivity;
+use common\modules\logdata\models\LogActivity;
 
 use common\modules\auth\models\Member;
 

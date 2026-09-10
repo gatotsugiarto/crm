@@ -22,11 +22,8 @@ return [
         'master' => [
             'class' => 'backend\modules\master\Module',
         ],
-        'payroll' => [
-            'class' => 'backend\modules\payroll\Module',
-        ],
-        'satupayroll' => [
-            'class' => 'backend\modules\satupayroll\Module',
+        'logdata' => [
+            'class' => 'backend\modules\logdata\Module',
         ],
         'productprice' => [
             'class' => 'backend\modules\productprice\Module',

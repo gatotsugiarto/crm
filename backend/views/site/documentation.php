@@ -3,465 +3,420 @@
 $baseUrl = Yii::$app->request->baseUrl;
 ?>
 <style>
-	html { 
-		scroll-behavior: smooth; 
+	html {
+		scroll-behavior: smooth;
 	}
-
-	/* submenu background sangat muda & clean */
-	.navbar.bg-warning .dropdown-menu {
-	    background-color: #fff3cd;
-	    border: 1px solid #ffe69c;
-	    border-radius: 6px;
-	    padding: 6px 0;
-	}
-
-	/* text normal */
-	.navbar.bg-warning .dropdown-menu .dropdown-item {
-	    color: #495057;
-	    font-weight: 500;
-	}
-
-	/* hover */
-	.navbar.bg-warning .dropdown-menu .dropdown-item:hover {
-	    background-color: #ffe69c;
-	    color: #212529;
-	}
-
-	/* active */
-	.navbar.bg-warning .dropdown-menu .dropdown-item:active {
-	    background-color: #ffc107;
-	    color: #212529;
-	}
-
 </style>
 
 <!-- Main Content -->
 <div class="container my-0">
   <div class="row">
-    
+
 	<!-- Top Navigation -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-warning w-100">
 	  <ul class="navbar-nav">
 
 	    <!-- DASHBOARD -->
-	    <li class="nav-item dropdown">
-	      <a class="nav-link dropdown-toggle text-white font-weight-bold" href="#" id="menuDashboard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dashboard</a>
-
-	      <div class="dropdown-menu">
-	        <a class="dropdown-item" href="#employer-payroll-cost">
-	          Employer Payroll Cost
-	        </a>
-	        <a class="dropdown-item" href="#employee-status">
-	          Employee Status
-	        </a>
-	        <a class="dropdown-item" href="#overtime">
-	          Overtime
-	        </a>
-	        <a class="dropdown-item" href="#take-home-pay">
-	          Take Home Pay
-	        </a>
-	        <a class="dropdown-item" href="#attendance-deduction">
-	          Attendance Deduction
-	        </a>
-	      </div>
-	    </li>
-
-	    <!-- USER MANAGEMENT -->
 	    <li class="nav-item">
-	          <a class="nav-link text-white fw-bold" href="#usermanagement">User Management</a>
+	          <a class="nav-link text-white fw-bold" href="javascript:void(0)">Dashboard</a>
 	        </li>
 
-	        <li class="nav-item">
-	          <a class="nav-link text-white fw-bold" href="#payrollmanagement">Payroll Management</a>
+	    <!-- MODULES -->
+	    <li class="nav-item">
+	          <a class="nav-link text-white fw-bold" href="#modules">Modules</a>
 	        </li>
 
-	        <li class="nav-item">
-	          <a class="nav-link text-white fw-bold" href="#masterdata">Master Data</a>
+	    <!-- USER FLOW -->
+	    <li class="nav-item">
+	          <a class="nav-link text-white fw-bold" href="#userflow">User Flow</a>
 	        </li>
 
-	        <li class="nav-item">
-	          <a class="nav-link text-white fw-bold" href="#logactivity">Log Activity</a>
-	       </li>
+	    <!-- PRODUCT & PRICING -->
+	    <li class="nav-item">
+	          <a class="nav-link text-white fw-bold" href="#productpricing">Product &amp; Pricing</a>
+	        </li>
+
+	    <!-- BUSINESS SCENARIOS -->
+	    <li class="nav-item">
+	          <a class="nav-link text-white fw-bold" href="#businessscenarios">Business Scenarios</a>
+	        </li>
 
 	  </ul>
 	</nav>
 
 
 
-	<!-- Documentation Content -->
-	<section class="col-md-12">
-	  <h2 id="dashboard"><strong>Payroll Dashboard Documentation</strong></h2>
-	  <p class="text-muted">
-	    This document provides a detailed overview of all payroll dashboard components, including their purpose, data sources, visualization, interpretation guidelines, and technical references.
-	  </p>
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-Dashboard.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3">
-
-	  <!-- Employer Payroll Cost -->
-	  <h3 id="employer-payroll-cost"><strong>1. Employer Payroll Cost</strong></h3>
-	  <h5><strong>Description</strong> The Employer Payroll Cost chart displays the total payroll expenses incurred by the employer for each payroll period. This includes all compensation and employer-paid contributions associated with employee salaries.</h5>
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-Employer-Payroll-Cost.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3" width="50%">
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays the total payroll expenses borne by the company each month.</li>
-	    <li><strong>Data Source:</strong> Aggregated from base salary, allowances, deductions, and employer contributions (BPJS, tax, etc.).</li>
-	  </ul>
-
-	  <!-- Employee Status -->
-	  <h3 id="employee-status"><strong>2. Employee Status</strong></h3>
-	  <h5><strong>Description</strong> The Employee Status chart displays the distribution of employees based on their employment type for each payroll period. It provides visibility into workforce composition by showing how many employees are in Probation, PKWT (Fixed-Term Contract), and Permanent status.</h5>
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-Employee-Status.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3" width="50%">
-	  <ul>
-	    <li><strong>Purpose:</strong> Shows the distribution of employees by employment status.</li>
-	    <li><strong>Categories:</strong> Probation, PKWT (fixed-term contract), Permanent.</li>
-	  </ul>
-
-	  <!-- Overtime -->
-	  <h3 id="overtime"><strong>3. Overtime</strong></h3>
-	  <h5><strong>Description</strong> The Overtime chart displays the total employee overtime recorded during each payroll period. It provides insight into overtime trends and helps evaluate additional labor costs incurred beyond regular working hours.</h5>
-	  
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-Overtime.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3" width="50%">
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays overtime hours and compensation.</li>
-	    <li><strong>Data Source:</strong> Overtime timesheets combined with payroll overtime formula.</li>
-	  </ul>
-
-	  <!-- Take Home Pay -->
-	  <h3 id="take-home-pay"><strong>4. Take Home Pay</strong></h3>
-	  <h5><strong>Description</strong> The Take Home Pay chart shows the total net salary paid to employees after all earnings and deductions have been applied.</h5>
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-THP.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3" width="50%">
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays the net salary employees receive after deductions.</li>
-	    <li><strong>Data Source:</strong> Final payroll (base salary + allowances – tax/BPJS deductions).</li>
-	  </ul>
-
-	  <!-- Attendance Deduction -->
-	  <h3 id="attendance-deduction"><strong>5. Attendance Deduction</strong></h3>
-	  <h5><strong>Description</strong> The Attendance Deduction chart displays total salary deductions caused by attendance violations, such as late arrivals or other attendance-related penalties.</h5>
-	  
-	  <img src="<?=$baseUrl?>/img/documentation/Satu-Payroll-Attendance-Deduction.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3" width="50%">
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays deductions applied due to late employee attendance.</li>
-	    <li><strong>Data Source:</strong> Attendance logs combined with payroll deduction rules.</li>
-	  </ul>
-	</section>
-
-
-	<!-- User Management Documentation -->
+	<!-- Modules Documentation -->
 	<section class="col-md-9">
-	  <h2 id="usermanagement">User Management</h2>
+	  <h2 id="modules">Modules</h2>
 	  <p class="text-muted">
-	    This section documents the User Management dashboard, which provides administrators with tools to manage users, roles, and permissions within the system.
+	    This section lists the modules that make up the application and what each one is responsible for.
 	  </p>
-	  <img src="<?=$baseUrl?>/img/documentation/user-management.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3">
 
-	  <!-- Users Access -->
-	  <h3 id="users-access">1. Users Access</h3>
-	  <img src="<?=$baseUrl?>/img/documentation/user-management.png" alt="Employer Payroll Cost Chart" class="img-fluid mb-3">
+	  <!-- Auth -->
+	  <h3 id="module-auth">1. Auth</h3>
+	  <p>Handles authentication and authorization: backend users, roles &amp; permissions (RBAC), and members.</p>
 	  <ul>
-	    <li><strong>Purpose:</strong> Displays the list of backend users with system access.</li>
-	    <li><strong>Data Source:</strong> User accounts stored in the backend authentication database.</li>
-	    <li><strong>Interpretation:</strong> Allows administrators to review and manage system-level users.</li>
-	    <li><strong>Technical Notes:</strong> Ensure proper role assignment and password policies are enforced.</li>
+	    <li><strong>Users Access:</strong> Manage backend users with system access.</li>
+	    <li><strong>Assignments:</strong> Assign backend accounts to members/groups.</li>
+	    <li><strong>Role:</strong> Define collections of permissions grouped into roles.</li>
+	    <li><strong>Permission:</strong> Specify individual actions a user/role is allowed to perform.</li>
+	    <li><strong>Members Access:</strong> Manage frontend/client member accounts.</li>
+	    <li><strong>Change Password:</strong> Self-service password update for users and members.</li>
 	  </ul>
 
-	  <!-- Assignments -->
-	  <h3 id="assignments">2. Assignments</h3>
+	  <!-- Master -->
+	  <h3 id="module-master">2. Master</h3>
+	  <p>Shared reference/master data used across the other modules.</p>
 	  <ul>
-	    <li><strong>Purpose:</strong> Provides navigation to assign users to members or groups.</li>
-	    <li><strong>Data Source:</strong> User-to-member mapping tables.</li>
-	    <li><strong>Interpretation:</strong> Facilitates linking backend accounts to frontend members.</li>
-	    <li><strong>Technical Notes:</strong> Validate assignment consistency to avoid orphaned accounts.</li>
+	    <li><strong>Company:</strong> Registered companies used throughout the system.</li>
+	    <li><strong>Team:</strong> Sales team assignment used by Accounts, Leads, and Opportunities.</li>
+	    <li><strong>Application Setting:</strong> Application-wide configuration parameters.</li>
+	    <li><strong>Country / Province / City / Postal Code:</strong> Address reference data used by Sales module records.</li>
 	  </ul>
 
-	  <!-- Role -->
-	  <h3 id="role">3. Role</h3>
+	  <!-- Product & Pricing -->
+	  <h3 id="module-productprice">3. Product &amp; Pricing</h3>
+	  <p>Manages the product catalog and its pricing.</p>
 	  <ul>
-	    <li><strong>Purpose:</strong> Defines collections of permissions grouped into roles.</li>
-	    <li><strong>Data Source:</strong> Role definitions stored in the authorization schema.</li>
-	    <li><strong>Interpretation:</strong> Roles simplify permission management by grouping actions.</li>
-	    <li><strong>Technical Notes:</strong> Use role-based access control (RBAC) for scalability.</li>
+	    <li><strong>Product / Product Category / Product UOM:</strong> Product catalog and classification.</li>
+	    <li><strong>Price List / Product Price / Product Discount:</strong> Pricing rules applied to products.</li>
+	    <li><strong>Product Bundle Item:</strong> Bundled product configurations.</li>
 	  </ul>
 
-	  <!-- Permission -->
-	  <h3 id="permission">4. Permission</h3>
+	  <!-- Sales -->
+	  <h3 id="module-sales">4. Sales (CRM)</h3>
+	  <p>The core CRM pipeline, from lead capture through to invoicing.</p>
 	  <ul>
-	    <li><strong>Purpose:</strong> Specifies individual actions a user is allowed to perform.</li>
-	    <li><strong>Data Source:</strong> Permission records linked to roles and users.</li>
-	    <li><strong>Interpretation:</strong> Fine-grained control over system functionality.</li>
-	    <li><strong>Technical Notes:</strong> Permissions should be audited regularly for compliance.</li>
+	    <li><strong>Lead:</strong> Prospective customers not yet qualified as accounts.</li>
+	    <li><strong>Account / Contact / Account Address:</strong> Customer/company records and their contacts and addresses.</li>
+	    <li><strong>Opportunity / Opportunity Product / Opportunity Stage History:</strong> Sales pipeline and deal tracking.</li>
+	    <li><strong>Quotation / Quotation Item:</strong> Price quotes sent to customers.</li>
+	    <li><strong>Sales Order / Sales Order Item:</strong> Confirmed customer orders.</li>
+	    <li><strong>Invoice / Invoice Item:</strong> Billing documents issued to customers.</li>
+	    <li><strong>Activity:</strong> Logged interactions (calls, meetings, notes) tied to sales records.</li>
 	  </ul>
 
-	  <!-- Members Access -->
-	  <h3 id="members-access">5. Members Access</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays the list of frontend/client users.</li>
-	    <li><strong>Data Source:</strong> Member accounts stored in the client-facing database.</li>
-	    <li><strong>Interpretation:</strong> Enables monitoring and management of client-side access.</li>
-	    <li><strong>Technical Notes:</strong> Ensure synchronization between backend and frontend accounts.</li>
-	  </ul>
-
-	  <!-- Change Password -->
-	  <h3 id="change-password">6. Change Password</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Allows users to update their account password securely.</li>
-	    <li><strong>Data Source:</strong> Authentication system with password hashing.</li>
-	    <li><strong>Interpretation:</strong> Provides a self-service option for account security.</li>
-	    <li><strong>Technical Notes:</strong> Enforce strong password policies and hashing algorithms (e.g., bcrypt).</li>
-	  </ul>
+	  <!-- Log Data -->
+	  <h3 id="module-logdata">5. Log Data</h3>
+	  <p>Application-wide audit log. Records create, update, and delete activity performed across every other module for monitoring, compliance, and troubleshooting.</p>
 	</section>
 
-	<!-- Payroll Management Documentation -->
+	<!-- User Flow Documentation -->
 	<section class="col-md-9">
-	  <h2 id="payrollmanagement">Payroll Management</h2>
+	  <h2 id="userflow">User Flow</h2>
 	  <p class="text-muted">
-	    This section documents the Payroll Management dashboard, which provides HR and finance teams with tools to manage employee compensation, compliance, and reporting.
+	    This section describes the typical end-to-end flow a user follows when using the application.
 	  </p>
 
-	  <!-- Upload Data -->
-	  <h3 id="upload-data">1. Upload Data</h3>
+	  <!-- Overall flow diagram -->
+	  <div style="overflow-x:auto; margin: 8px 0 24px;">
+	    <svg viewBox="0 0 1000 150" width="100%" style="min-width:760px; max-width:1000px; font-family: inherit;">
+	      <defs>
+	        <marker id="uf-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+	          <path d="M0,0 L8,3 L0,6 Z" fill="#f0ad4e"/>
+	        </marker>
+	      </defs>
+
+	      <!-- connectors -->
+	      <line x1="176" y1="60" x2="190" y2="60" stroke="#f0ad4e" stroke-width="2" marker-end="url(#uf-arrow)"/>
+	      <line x1="356" y1="60" x2="370" y2="60" stroke="#f0ad4e" stroke-width="2" marker-end="url(#uf-arrow)"/>
+	      <line x1="536" y1="60" x2="550" y2="60" stroke="#f0ad4e" stroke-width="2" marker-end="url(#uf-arrow)"/>
+	      <line x1="716" y1="60" x2="730" y2="60" stroke="#f0ad4e" stroke-width="2" marker-end="url(#uf-arrow)"/>
+
+	      <!-- 1. Login -->
+	      <rect x="16" y="20" width="160" height="80" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="96" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">1. Login</text>
+	      <text x="96" y="75" text-anchor="middle" font-size="10" fill="#7a6120">Auth module</text>
+
+	      <!-- 2. Setup Master Data -->
+	      <rect x="196" y="20" width="160" height="80" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="276" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">2. Setup</text>
+	      <text x="276" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Master Data</text>
+	      <text x="276" y="84" text-anchor="middle" font-size="10" fill="#7a6120">Master module</text>
+
+	      <!-- 3. Setup Product & Pricing -->
+	      <rect x="376" y="20" width="160" height="80" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="456" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">3. Setup Product</text>
+	      <text x="456" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">&amp; Pricing</text>
+	      <text x="456" y="84" text-anchor="middle" font-size="10" fill="#7a6120">Product &amp; Pricing module</text>
+
+	      <!-- 4. Sales Process -->
+	      <rect x="556" y="20" width="160" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="636" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">4. Sales Process</text>
+	      <text x="636" y="75" text-anchor="middle" font-size="10" fill="#8a4c1c">Sales module</text>
+
+	      <!-- 5. Audit Trail -->
+	      <rect x="736" y="20" width="160" height="80" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="816" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">5. Audit Trail</text>
+	      <text x="816" y="75" text-anchor="middle" font-size="10" fill="#7a6120">Log Data module</text>
+	    </svg>
+	  </div>
+
+	  <!-- Login -->
+	  <h3 id="flow-login">1. Login</h3>
+	  <p>User signs in with a backend account. Access to each menu depends on the roles/permissions assigned via the <strong>Auth</strong> module.</p>
+
+	  <!-- Setup Master Data -->
+	  <h3 id="flow-setup-master">2. Setup Master Data</h3>
+	  <p>Before running the business process, reference data is prepared in the <strong>Master</strong> module: Company, Team, Application Setting, and address data (Country, Province, City, Postal Code).</p>
+
+	  <!-- Setup Product & Pricing -->
+	  <h3 id="flow-setup-product">3. Setup Product &amp; Pricing</h3>
+	  <p>Products to be sold are registered in the <strong>Product &amp; Pricing</strong> module, along with their categories, unit of measure, and price lists/discounts.</p>
+
+	  <!-- Sales Process -->
+	  <h3 id="flow-sales-process">4. Sales Process</h3>
+	  <p>The core CRM pipeline in the <strong>Sales</strong> module, followed in order:</p>
+
+	  <div style="overflow-x:auto; margin: 8px 0 24px;">
+	    <svg viewBox="0 0 990 180" width="100%" style="min-width:760px; max-width:990px; font-family: inherit;">
+	      <defs>
+	        <marker id="sf-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+	          <path d="M0,0 L8,3 L0,6 Z" fill="#e8730f"/>
+	        </marker>
+	      </defs>
+
+	      <!-- connectors -->
+	      <line x1="146" y1="55" x2="170" y2="55" stroke="#e8730f" stroke-width="2" marker-end="url(#sf-arrow)"/>
+	      <line x1="316" y1="55" x2="340" y2="55" stroke="#e8730f" stroke-width="2" marker-end="url(#sf-arrow)"/>
+	      <line x1="486" y1="55" x2="510" y2="55" stroke="#e8730f" stroke-width="2" marker-end="url(#sf-arrow)"/>
+	      <line x1="656" y1="55" x2="680" y2="55" stroke="#e8730f" stroke-width="2" marker-end="url(#sf-arrow)"/>
+	      <line x1="826" y1="55" x2="850" y2="55" stroke="#e8730f" stroke-width="2" marker-end="url(#sf-arrow)"/>
+
+	      <!-- 1. Lead -->
+	      <rect x="6" y="15" width="140" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="76" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Lead</text>
+	      <text x="76" y="75" text-anchor="middle" font-size="10" fill="#8a4c1c">Prospect captured</text>
+
+	      <!-- 2. Account/Contact -->
+	      <rect x="176" y="15" width="140" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="246" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Account /</text>
+	      <text x="246" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Contact</text>
+	      <text x="246" y="82" text-anchor="middle" font-size="10" fill="#8a4c1c">Qualified customer</text>
+
+	      <!-- 3. Opportunity -->
+	      <rect x="346" y="15" width="140" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="416" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Opportunity</text>
+	      <text x="416" y="75" text-anchor="middle" font-size="10" fill="#8a4c1c">Deal in pipeline</text>
+
+	      <!-- 4. Quotation -->
+	      <rect x="516" y="15" width="140" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="586" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Quotation</text>
+	      <text x="586" y="75" text-anchor="middle" font-size="10" fill="#8a4c1c">Price offered</text>
+
+	      <!-- 5. Sales Order -->
+	      <rect x="686" y="15" width="140" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="756" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Sales</text>
+	      <text x="756" y="64" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Order</text>
+	      <text x="756" y="82" text-anchor="middle" font-size="10" fill="#8a4c1c">Order confirmed</text>
+
+	      <!-- 6. Invoice -->
+	      <rect x="856" y="15" width="128" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="920" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Invoice</text>
+	      <text x="920" y="75" text-anchor="middle" font-size="10" fill="#8a4c1c">Customer billed</text>
+
+	      <!-- Activity annotation spanning the pipeline -->
+	      <line x1="76" y1="150" x2="920" y2="150" stroke="#adb5bd" stroke-width="1.5" stroke-dasharray="4 4"/>
+	      <line x1="76" y1="150" x2="76" y2="140" stroke="#adb5bd" stroke-width="1.5"/>
+	      <line x1="920" y1="150" x2="920" y2="140" stroke="#adb5bd" stroke-width="1.5"/>
+	      <text x="498" y="172" text-anchor="middle" font-size="11" fill="#6c757d">Activity — every interaction along the way is logged</text>
+	    </svg>
+	  </div>
+
 	  <ul>
-	    <li><strong>Purpose:</strong> Upload payroll data integrated from HRIS systems.</li>
-	    <li><strong>Data Source:</strong> HRIS export files (CSV/XML).</li>
-	    <li><strong>Interpretation:</strong> Ensures payroll records are synchronized with HR data.</li>
-	    <li><strong>Technical Notes:</strong> Validate file structure before upload to avoid errors.</li>
+	    <li><strong>Lead</strong> &rarr; A prospect comes in and is recorded as a Lead.</li>
+	    <li><strong>Account / Contact</strong> &rarr; A qualified Lead is converted into an Account with its Contacts and Addresses.</li>
+	    <li><strong>Opportunity</strong> &rarr; A potential deal is opened against the Account and tracked through pipeline stages.</li>
+	    <li><strong>Quotation</strong> &rarr; A price quote is sent to the customer based on the Opportunity.</li>
+	    <li><strong>Sales Order</strong> &rarr; The customer confirms, and the Quotation is converted into a Sales Order.</li>
+	    <li><strong>Invoice</strong> &rarr; The Sales Order is billed to the customer.</li>
+	    <li><strong>Activity</strong> &rarr; Every interaction along the way (calls, meetings, notes) is logged against the related record.</li>
 	  </ul>
 
-	  <!-- Join & Resignation -->
-	  <h3 id="join-resignation">2. Join &amp; Resignation</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Overview of employees joining or resigning during the payroll period.</li>
-	    <li><strong>Data Source:</strong> Employee lifecycle records.</li>
-	    <li><strong>Interpretation:</strong> Provides visibility into workforce changes impacting payroll.</li>
-	    <li><strong>Technical Notes:</strong> Ensure resignation dates align with payroll cut-off.</li>
-	  </ul>
-
-	  <!-- Employee Salary -->
-	  <h3 id="employee-salary">3. Employee Salary</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Configure and oversee salary structures and compensation records.</li>
-	    <li><strong>Data Source:</strong> Salary tables and compensation policies.</li>
-	    <li><strong>Interpretation:</strong> Centralized management of salary components.</li>
-	    <li><strong>Technical Notes:</strong> Use <code>DECIMAL(15,2)</code> for monetary fields.</li>
-	  </ul>
-
-	  <!-- Employee Management -->
-	  <h3 id="employee-management">4. Employee Management</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Manage and monitor employee data within the system.</li>
-	    <li><strong>Data Source:</strong> Employee master records.</li>
-	    <li><strong>Interpretation:</strong> Ensures accurate employee information for payroll processing.</li>
-	    <li><strong>Technical Notes:</strong> Regularly audit employee records for completeness.</li>
-	  </ul>
-
-	  <!-- Employee Profile -->
-	  <h3 id="employee-profile">5. Employee Profile</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays employee information and payroll details.</li>
-	    <li><strong>Data Source:</strong> Integrated HR and payroll database.</li>
-	    <li><strong>Interpretation:</strong> Provides a single view of employee compensation history.</li>
-	    <li><strong>Technical Notes:</strong> Ensure secure access controls for sensitive data.</li>
-	  </ul>
-
-	  <!-- Payroll -->
-	  <h3 id="payroll">6. Payroll</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Manages employee salary and payroll processing.</li>
-	    <li><strong>Data Source:</strong> Payroll transaction records.</li>
-	    <li><strong>Interpretation:</strong> Executes monthly payroll runs and generates payslips.</li>
-	    <li><strong>Technical Notes:</strong> Align payroll cycle with company financial calendar.</li>
-	  </ul>
-
-	  <!-- L3 Summary -->
-	  <h3 id="l3-summary">7. L3 Summary</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Provides a consolidated payroll overview.</li>
-	    <li><strong>Data Source:</strong> Aggregated payroll reports.</li>
-	    <li><strong>Interpretation:</strong> High-level summary for management review.</li>
-	    <li><strong>Technical Notes:</strong> Ensure report accuracy before distribution.</li>
-	  </ul>
-
-	  <!-- Bukti Potong PPh21 -->
-	  <h3 id="bukti-potong">8. Bukti Potong PPh21</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Generates official tax withholding forms (1721-A1/A2).</li>
-	    <li><strong>Data Source:</strong> Payroll tax calculations.</li>
-	    <li><strong>Interpretation:</strong> Provides compliance documentation for employees.</li>
-	    <li><strong>Technical Notes:</strong> Ensure alignment with DJP e-Bupot standards.</li>
-	  </ul>
-
-	  <!-- Formulir 1721-A1 -->
-	  <h3 id="formulir-1721-a1">9. Formulir 1721-A1</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Official tax withholding form for permanent employees.</li>
-	    <li><strong>Data Source:</strong> Payroll tax records.</li>
-	    <li><strong>Interpretation:</strong> Used for employee annual tax reporting.</li>
-	    <li><strong>Technical Notes:</strong> Validate NPWP/NIK fields before submission.</li>
-	  </ul>
-
-	  <!-- BPJS Records -->
-	  <h3 id="bpjs-records">10. BPJS Records</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays employee BPJS records and contribution details.</li>
-	    <li><strong>Data Source:</strong> BPJS contribution tables.</li>
-	    <li><strong>Interpretation:</strong> Ensures compliance with social security regulations.</li>
-	    <li><strong>Technical Notes:</strong> Synchronize with BPJS online system for accuracy.</li>
-	  </ul>
-
-	  <!-- THR -->
-	  <h3 id="thr">11. THR</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Summarizes employee THR (holiday allowance) contributions.</li>
-	    <li><strong>Data Source:</strong> Payroll THR records.</li>
-	    <li><strong>Interpretation:</strong> Provides visibility into annual THR disbursement.</li>
-	    <li><strong>Technical Notes:</strong> Ensure THR calculation follows labor regulations.</li>
-	  </ul>
+	  <!-- Audit -->
+	  <h3 id="flow-audit">5. Audit Trail</h3>
+	  <p>Every create/update/delete action performed above is automatically recorded in the <strong>Log Data</strong> module for monitoring and compliance review.</p>
 	</section>
 
-	<!-- Master Data Documentation -->
+	<!-- Product & Pricing Documentation -->
 	<section class="col-md-9">
-	  <h2 id="masterdata">Master Data</h2>
+	  <h2 id="productpricing">Product &amp; Pricing</h2>
 	  <p class="text-muted">
-	    This section documents the Master Data dashboard, which provides foundational configurations for payroll structures, employee statuses, and company information.
+	    This module manages the product catalog and how each product is priced. It is used to set up what can be sold before it is quoted or ordered in the Sales module.
 	  </p>
 
-	  <!-- Payroll Profiles -->
-	  <h3 id="payroll-profiles">1. Payroll Profiles</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Defines payroll structures and employee salary configurations.</li>
-	    <li><strong>Data Source:</strong> Payroll profile tables linked to employee records.</li>
-	    <li><strong>Interpretation:</strong> Ensures consistent salary structures across the organization.</li>
-	    <li><strong>Technical Notes:</strong> Profiles should be version-controlled to track changes over time.</li>
-	  </ul>
+	  <!-- Relationship diagram -->
+	  <div style="overflow-x:auto; margin: 8px 0 24px;">
+	    <svg viewBox="0 0 900 280" width="100%" style="min-width:700px; max-width:900px; font-family: inherit;">
+	      <defs>
+	        <marker id="pp-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+	          <path d="M0,0 L8,3 L0,6 Z" fill="#f0ad4e"/>
+	        </marker>
+	        <marker id="pp-arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+	          <path d="M0,0 L8,3 L0,6 Z" fill="#adb5bd"/>
+	        </marker>
+	      </defs>
 
-	  <!-- Payroll Components -->
-	  <h3 id="payroll-components">2. Payroll Components</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Configures salary components used in payroll calculations (e.g., base salary, allowances, deductions).</li>
-	    <li><strong>Data Source:</strong> Component definitions stored in payroll schema.</li>
-	    <li><strong>Interpretation:</strong> Provides modular building blocks for payroll formulas.</li>
-	    <li><strong>Technical Notes:</strong> Use standardized naming conventions for components to avoid duplication.</li>
-	  </ul>
+	      <!-- connectors -->
+	      <line x1="170" y1="55" x2="214" y2="97" stroke="#f0ad4e" stroke-width="2" marker-end="url(#pp-arrow)"/>
+	      <line x1="170" y1="145" x2="214" y2="103" stroke="#f0ad4e" stroke-width="2" marker-end="url(#pp-arrow)"/>
+	      <line x1="370" y1="100" x2="414" y2="100" stroke="#f0ad4e" stroke-width="2" marker-end="url(#pp-arrow)"/>
+	      <line x1="570" y1="90" x2="614" y2="52" stroke="#f0ad4e" stroke-width="2" marker-end="url(#pp-arrow)"/>
+	      <line x1="570" y1="110" x2="614" y2="148" stroke="#f0ad4e" stroke-width="2" marker-end="url(#pp-arrow)"/>
+	      <line x1="295" y1="135" x2="295" y2="179" stroke="#adb5bd" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#pp-arrow-gray)"/>
 
-	  <!-- Payroll Categories -->
-	  <h3 id="payroll-categories">3. Payroll Categories</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Organizes payroll components into structured categories.</li>
-	    <li><strong>Data Source:</strong> Category mappings in payroll configuration tables.</li>
-	    <li><strong>Interpretation:</strong> Simplifies reporting and analysis by grouping related components.</li>
-	    <li><strong>Technical Notes:</strong> Categories should align with financial reporting standards.</li>
-	  </ul>
+	      <!-- Product Category -->
+	      <rect x="20" y="20" width="150" height="70" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="95" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Product Category</text>
+	      <text x="95" y="75" text-anchor="middle" font-size="10" fill="#7a6120">Classification</text>
 
-	  <!-- Pending Status -->
-	  <h3 id="pending-status">4. Pending Status</h3>
-	  <ul>
-	    <li><strong>Purpose:</strong> Displays employees with pending employment status.</li>
-	    <li><strong>Data Source:</strong> Employee master records flagged as pending.</li>
-	    <li><strong>Interpretation:</strong> Provides visibility into employees awaiting confirmation or approval.</li>
-	    <li><strong>Technical Notes:</strong> Pending records should be reviewed regularly to maintain data integrity.</li>
-	  </ul>
+	      <!-- Product UOM -->
+	      <rect x="20" y="110" width="150" height="70" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="95" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Product UOM</text>
+	      <text x="95" y="165" text-anchor="middle" font-size="10" fill="#7a6120">Unit of measure</text>
 
-	  <!-- Master Company -->
-	  <h3 id="master-company">5. Company</h3>
-	  <ul>
-	    <li>
-	    	<strong>Overview:</strong> 
-	    	The Company Master Data module is used to manage company information registered in the payroll system.
-	    	<br /><br />
-	    	This module stores essential company details required for payroll processing, tax reporting (Form 1721-A1), and system configuration.
-	    	<br /><br />
-	    	Users can:
-	    	<br />
-	    	<ul>
-					<li>Create a new company</li>
-					<li>View company details</li>
-					<li>Update company information</li>
-					<li>Delete a company</li>
-					<li>Activate or deactivate a company</li>
-				</ul>
-	    </li>
-	    <br />
-	    <li><strong>Company List Page:</strong> The Companies page displays all registered companies in the system.</li>
-	    	<ul>
-					<li>
-						I. Company Table Columns
-						<ul>
-							<li>No – Sequential number</li>
-							<li>Code – Unique company code</li>
-							<li>Company – Company name</li>
-							<li>Status – Active / Inactive</li>
-							<li>Action – Edit and Delete buttons</li>
-						</ul>
-					</li>
-					<br />
-					<li>
-						II. Search & Filter
-						<ul>
-							<li>Search by company code</li>
-							<li>Search by company name</li>
-							<li>Filter by status (All Status / Active / Inactive)</li>
-						</ul>
-					</li>
-					<br />
-					<li>
-						III. Export Data: The Export button allows users to export company data into a file format (e.g., Excel/CSV).
-					</li>
-					<br />
-					<li>
-						IV. Add New Company: Click + New Company to create a new company record.
-					</li>
-				</ul>
+	      <!-- Product -->
+	      <rect x="220" y="65" width="150" height="70" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5"/>
+	      <text x="295" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Product</text>
+	      <text x="295" y="120" text-anchor="middle" font-size="10" fill="#8a4c1c">Catalog item</text>
 
-	    <br />
-	    <li><strong>Company Detail Page:</strong> The Company Detail page displays complete company information.</li>
-	    
-	    <li><strong>Technical Notes:</strong> Ensure compliance with government regulations when updating company data.</li>
-	  </ul>
+	      <!-- Price List -->
+	      <rect x="420" y="65" width="150" height="70" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="495" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Price List</text>
+	      <text x="495" y="120" text-anchor="middle" font-size="10" fill="#7a6120">Named price list</text>
+
+	      <!-- Product Price -->
+	      <rect x="620" y="10" width="150" height="70" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="695" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Product Price</text>
+	      <text x="695" y="65" text-anchor="middle" font-size="10" fill="#7a6120">Price per list</text>
+
+	      <!-- Product Discount -->
+	      <rect x="620" y="120" width="150" height="70" rx="10" fill="#fff8e6" stroke="#f0ad4e" stroke-width="1.5"/>
+	      <text x="695" y="155" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4300">Product Discount</text>
+	      <text x="695" y="175" text-anchor="middle" font-size="10" fill="#7a6120">Discount rules</text>
+
+	      <!-- Product Bundle Item -->
+	      <rect x="220" y="185" width="150" height="80" rx="10" fill="#fdece0" stroke="#e8730f" stroke-width="1.5" stroke-dasharray="5 3"/>
+	      <text x="295" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Product Bundle</text>
+	      <text x="295" y="229" text-anchor="middle" font-size="13" font-weight="700" fill="#7a3400">Item</text>
+	      <text x="295" y="247" text-anchor="middle" font-size="10" fill="#8a4c1c">Combo of products</text>
+	    </svg>
+	  </div>
+
+	  <!-- Product Category -->
+	  <h3 id="pp-category">1. Product Category</h3>
+	  <p>Groups products into categories for classification, navigation, and reporting (e.g. Hardware, Software, Services).</p>
+
+	  <!-- Product UOM -->
+	  <h3 id="pp-uom">2. Product UOM</h3>
+	  <p>Defines the unit of measure a product is sold in (e.g. pcs, box, kg, hour).</p>
+
+	  <!-- Product -->
+	  <h3 id="pp-product">3. Product</h3>
+	  <p>The core catalog entry: what is being sold. Each Product belongs to a Product Category, is measured in a Product UOM, and is what gets referenced by Quotation, Sales Order, and Invoice items in the Sales module.</p>
+
+	  <!-- Price List -->
+	  <h3 id="pp-pricelist">4. Price List</h3>
+	  <p>A named collection of prices — for example a different Price List per customer segment, region, or currency. A Product can have different prices across different Price Lists.</p>
+
+	  <!-- Product Price -->
+	  <h3 id="pp-price">5. Product Price</h3>
+	  <p>The actual price of a specific Product within a specific Price List. This is the value used when a Product is added to a Quotation or Sales Order.</p>
+
+	  <!-- Product Discount -->
+	  <h3 id="pp-discount">6. Product Discount</h3>
+	  <p>Discount rules that can be applied on top of a Product's price (e.g. percentage off, fixed amount off), optionally scoped to a Price List or time period.</p>
+
+	  <!-- Product Bundle Item -->
+	  <h3 id="pp-bundle">7. Product Bundle Item</h3>
+	  <p>Combines multiple Products into a single sellable bundle (e.g. a starter package), so the bundle can be quoted and sold as one line item instead of adding each Product separately.</p>
 	</section>
 
-	<!-- Log Activity Documentation -->
+	<!-- Business Scenarios Documentation -->
 	<section class="col-md-9">
-	  <h2 id="logactivity">Log Activity</h2>
+	  <h2 id="businessscenarios">Business Scenarios</h2>
 	  <p class="text-muted">
-	    This section documents the Log Activity dashboard, which provides an audit trail of all actions performed within the payroll system. It is essential for monitoring, compliance, and troubleshooting.
+	    Real-world walkthroughs showing how Product, Price List, Product Price, Product Discount, and Product Bundle Item work together.
 	  </p>
 
-	  <!-- Overview -->
-	  <h3 id="log-overview">1. Overview</h3>
+	  <!-- Scenario 1 -->
+	  <p><strong>Scenario 1 &mdash; Same product, different price per customer segment</strong></p>
+	  <p><strong>Setup:</strong></p>
 	  <ul>
-	    <li><strong>Purpose:</strong> Tracks system actions such as create, update, and delete operations.</li>
-	    <li><strong>Data Source:</strong> Application logs generated by the payroll system.</li>
-	    <li><strong>Interpretation:</strong> Provides visibility into user and system activity for auditing purposes.</li>
-	    <li><strong>Technical Notes:</strong> Logs should be timestamped and immutable to ensure integrity.</li>
+	    <li>Product: <strong>Laptop ProBook 14</strong> (LPT-PB14)</li>
+	    <li>Price List: <strong>Retail</strong> and <strong>Corporate</strong></li>
+	    <li>Product Price: Retail = Rp 12.500.000, Corporate = Rp 11.200.000</li>
+	    <li>Product Discount: 5% on the Corporate price list, valid 1&ndash;31 Dec</li>
 	  </ul>
+	  <p><strong>Flow:</strong> Account "PT Maju Jaya" (Corporate) orders 20 units in December. The Quotation uses the Corporate price list &rarr; Rp 11.200.000/unit, and the December discount applies &rarr; <strong>Rp 10.640.000/unit</strong>. This price carries through unchanged to the Sales Order and Invoice.</p>
 
-	  <!-- Log Fields -->
-	  <h3 id="log-fields">2. Log Fields</h3>
+	  <!-- Scenario 2 -->
+	  <p><strong>Scenario 2 &mdash; Bundling multiple products into one package</strong></p>
+	  <p><strong>Setup:</strong></p>
 	  <ul>
-	    <li><strong>No:</strong> Sequential identifier for each log entry.</li>
-	    <li><strong>Action:</strong> Type of operation performed (create, update, delete).</li>
-	    <li><strong>Model:</strong> The data model affected (e.g., EmployeePending, PayrollItem, Salary).</li>
-	    <li><strong>Action By:</strong> The user or system component that performed the action.</li>
-	    <li><strong>Action Date:</strong> Timestamp of when the action occurred.</li>
-	    <li><strong>Record ID:</strong> Identifier of the record impacted by the action.</li>
+	    <li>Products: Laptop ProBook 14 (Rp 12.500.000), Mouse Wireless MX (Rp 350.000), Tas Laptop 14&Prime; (Rp 250.000)</li>
+	    <li>Product Bundle Item: <strong>Paket Kerja Starter</strong> (BDL-STARTER01) &mdash; sum of parts Rp 13.100.000, bundle price Rp 12.750.000</li>
 	  </ul>
+	  <p><strong>Flow:</strong> A Lead converted to Account wants a WFH work laptop set. The sales rep adds a single line item, <strong>Paket Kerja Starter</strong>, to the Quotation instead of three separate lines. The bundle price of <strong>Rp 12.750.000</strong> is used directly, and the same single line carries through to Sales Order and Invoice &mdash; while the underlying components remain traceable for stock/reporting.</p>
 
-	  <!-- Interpretation -->
-	  <h3 id="log-interpretation">3. Interpretation</h3>
+	  <!-- Scenario 3 -->
+	  <p><strong>Scenario 3 &mdash; Combining a Discount with a Bundle</strong></p>
+	  <p><strong>Setup:</strong></p>
 	  <ul>
-	    <li>Frequent <strong>create</strong> actions indicate new records being added (e.g., new employees).</li>
-	    <li><strong>Update</strong> actions reflect modifications to existing payroll or employee data.</li>
-	    <li><strong>Delete</strong> actions highlight records removed, which should be reviewed for compliance.</li>
-	    <li>Consistent logging by <em>Application v1</em> shows automated system processes are active.</li>
+	    <li>Product Bundle Item: <strong>Paket Kerja Lengkap</strong> (BDL-COMPLETE01) &mdash; Laptop + Mouse + Tas + Printer, sum of parts Rp 14.000.000, bundle price Rp 13.300.000</li>
+	    <li>Price List: <strong>Corporate</strong></li>
+	    <li>Product Discount: 10% on Corporate price list, applies to bundle items, promo "Back to Office" 1&ndash;28 Feb</li>
 	  </ul>
+	  <p><strong>Flow:</strong> Account "PT Sinar Abadi" (Corporate) orders 15 bundles in February. Quotation starts from the bundle price Rp 13.300.000, then the Feb promo discount of 10% applies on top &rarr; <strong>Rp 11.970.000/bundle</strong>. Total for 15 bundles = <strong>Rp 179.550.000</strong>, with both layers of savings (bundle price + promo discount) calculated automatically.</p>
 
-	  <!-- Technical Notes -->
-	  <h3 id="log-technical">4. Technical Notes</h3>
+	  <!-- Scenario 4 -->
+	  <p><strong>Scenario 4 &mdash; Stackable Discount (multiple discounts combined)</strong></p>
+	  <p><strong>Setup:</strong> Laptop ProBook 14 on the Corporate price list (Rp 11.200.000/unit), with three discounts active together (all <code>stackable = true</code>):</p>
 	  <ul>
-	    <li>Ensure logs are stored securely and backed up regularly.</li>
-	    <li>Implement role-based access control (RBAC) to restrict log visibility to authorized users.</li>
-	    <li>Use indexing for efficient retrieval of log records during audits.</li>
-	    <li>Consider integrating with external monitoring tools for real-time alerts.</li>
+	    <li>Corporate Loyalty Discount &mdash; 5%</li>
+	    <li>Promo Back to Office &mdash; 10%</li>
+	    <li>Volume Discount &mdash; 3% (triggered when quantity &ge; 10)</li>
 	  </ul>
+	  <p><strong>Flow:</strong> Account "PT Nusantara Teknologi" (Corporate) orders 12 units in February, so all three discounts apply, in sequence, each one calculated from the price left over by the previous step:</p>
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:640px;">
+	      <thead class="thead-light">
+	        <tr><th>Step</th><th>Discount</th><th>Calculation</th><th>Price / unit after</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>Base</td><td>&mdash;</td><td>&mdash;</td><td>Rp 11.200.000</td></tr>
+	        <tr><td>1</td><td>Corporate Loyalty 5%</td><td>11.200.000 &times; (1 &minus; 0,05)</td><td>Rp 10.640.000</td></tr>
+	        <tr><td>2</td><td>Promo Back to Office 10%</td><td>10.640.000 &times; (1 &minus; 0,10)</td><td>Rp 9.576.000</td></tr>
+	        <tr><td>3</td><td>Volume Discount 3%</td><td>9.576.000 &times; (1 &minus; 0,03)</td><td><strong>Rp 9.288.720</strong></td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+	  <p>Total for 12 units = <strong>Rp 111.464.640</strong>. Note this is <em>sequential</em> (multiplicative) stacking, not additive: summing the percentages flat (5+10+3=18%) would instead give Rp 9.184.000/unit (Rp 110.208.000 total) &mdash; a different, lower number. The effective sequential discount is only ~17.06%, not 18%, because each discount is taken from the price left over by the one before it.</p>
+
+	  <!-- Scenario 5 -->
+	  <p><strong>Scenario 5 &mdash; Stackable Discount with a Cap (maximum limit)</strong></p>
+	  <p><strong>Setup:</strong> Same as Scenario 4, plus a business rule: <code>max_discount_cap = 15%</code>, set at the Price List or Application Setting level to protect margin regardless of how many discounts qualify.</p>
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:720px;">
+	      <thead class="thead-light">
+	        <tr><th>Method</th><th>Price / unit</th><th>Total (12 units)</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>Additive (18% flat &mdash; incorrect approach)</td><td>Rp 9.184.000</td><td>Rp 110.208.000</td></tr>
+	        <tr><td>Sequential, no cap</td><td>Rp 9.288.720</td><td>Rp 111.464.640</td></tr>
+	        <tr><td><strong>Sequential + 15% cap (used)</strong></td><td><strong>Rp 9.520.000</strong></td><td><strong>Rp 114.240.000</strong></td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+	  <p>Sequential stacking alone works out to ~17.06% off, which exceeds the 15% cap &mdash; so the system falls back to the capped price (Rp 11.200.000 &times; 0,85 = Rp 9.520.000/unit) instead of the fully-stacked result.</p>
+	  <p><strong>Two common ways to enforce a cap:</strong></p>
+	  <ul>
+	    <li><strong>Cap the final result</strong> &mdash; calculate the full stack first, then override with the capped price if it exceeds the limit. Simple and easy to audit ("your discount is capped at 15%").</li>
+	    <li><strong>Stop applying once the cap is reached</strong> &mdash; apply discounts one by one in priority order, and skip any further discount once the cumulative total would exceed the cap. More complex, but lets the system explain exactly which discount was skipped and why.</li>
+	  </ul>
+	  <p>To support this, <code>Product Discount</code> would need at minimum: an <code>is_stackable</code> flag, a <code>sequence</code>/priority for the order discounts are applied in, and a place to store the cap (per Price List, per Product, or global). Without a cap, combining too many promotions at once can silently erode margin as more promotions are introduced over time.</p>
 	</section>
-	  
+
   </div>
 </div>

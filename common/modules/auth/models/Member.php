@@ -5,7 +5,7 @@ namespace common\modules\auth\models;
 use Yii;
 use common\components\behaviors\TokenProtectedFormBehavior;
 use common\modules\master\models\Company;
-use common\modules\satupayroll\models\Client;
+use common\modules\logdata\models\Client;
 
 class Member extends \yii\db\ActiveRecord
 {

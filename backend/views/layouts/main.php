@@ -22,11 +22,9 @@ $currentAction = Yii::$app->controller->action->id;
 $urlMenu = $currentController.'/'.$currentAction;
 $menuMap = [
     'site/index'           => 'Dashboard',
-    // 'menu/usermanagement' => 'User payrollmenu/index',
     'menu/usermanagement' => 'User Management',
     'logactivity/index'    => 'Log Activity',
     'menu/masterdata'    => 'Master Data',
-    // 'payrollmenu/index'    => 'Payroll Management',
     'menu/productprice'    => 'Product & Pricing',
     'menu/sales'    => 'Sales CRM',
     'site/documentation'           => 'Documentation',
@@ -202,12 +200,6 @@ if (isset($menuMap[$urlMenu])) {
                         </a>
                     </li>
 
-                    <!-- <li class="nav-item <?= $currentController === 'payrollmenu' && $currentAction === 'index' ? 'active' : '' ?>">
-                        <a class="nav-link" href="<?= $baseUrl ?>/payrollmenu/index">
-                            <i class="nc-icon nc-app"></i>
-                            <p>Payroll Management</p>
-                        </a>
-                    </li> -->
                     <li class="nav-item <?= $currentController === 'menu' && $currentAction === 'masterdata' ? 'active' : '' ?>">
                         <a class="nav-link" href="<?= $baseUrl ?>/menu/masterdata">
                             <i class="nc-icon nc-layers-3"></i>
@@ -226,8 +218,8 @@ if (isset($menuMap[$urlMenu])) {
                             <p>Sales</p>
                         </a>
                     </li>
-                    <li class="nav-item <?= $currentController === 'satupayroll' && $currentAction === 'logactivity' ? 'active' : '' ?>">    
-                        <a class="nav-link" href="<?= $baseUrl ?>/satupayroll/logactivity">
+                    <li class="nav-item <?= $currentController === 'logdata' && $currentAction === 'logactivity' ? 'active' : '' ?>">    
+                        <a class="nav-link" href="<?= $baseUrl ?>/logdata/logactivity">
                             <i class="nc-icon nc-notes"></i>
                             <p>Log Activity</p>
                         </a>
