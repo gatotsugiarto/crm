@@ -69,11 +69,14 @@ class ProductBundleItem extends ActiveRecord
         return [
             [['bundle_product_id', 'product_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['status_id'], 'default', 'value' => 1],
+            [['bundle_product_id', 'product_id', 'quantity'], 'required'],
             [['bundle_product_id', 'product_id', 'quantity', 'status_id', 'created_by', 'updated_by'], 'integer'],
+            [['quantity'], 'integer', 'min' => 1],
             [['created_at', 'updated_at'], 'safe'],
             [['bundle_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['bundle_product_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            ['product_id', 'compare', 'compareAttribute' => 'bundle_product_id', 'operator' => '!=', 'skipOnEmpty' => true, 'message' => 'A bundle cannot contain itself as a component.'],
         ];
     }
 

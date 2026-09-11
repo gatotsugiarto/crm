@@ -244,7 +244,7 @@ class ProductbundleitemController extends Controller
                 return [
                     'success' => false,
                     'message' => 'Validation failed.',
-                    'errors'  => $model->getErrors(),
+                    'errors'  => ActiveForm::validate($model),
                 ];
             }
 
