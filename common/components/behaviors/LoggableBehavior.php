@@ -15,7 +15,6 @@ class LoggableBehavior extends Behavior
     private $_dirtyAttributes = [];
     
     public $extraRemarks;
-    public $extraEmployee;
 
     public function events()
     {
@@ -28,13 +27,12 @@ class LoggableBehavior extends Behavior
         ];
     }
 
-    public function manualLog($action, $extraRemarks = null, $extraEmployee = null, $recordId = null)
+    public function manualLog($action, $extraRemarks = null, $recordId = null)
     {
         $log = new LogActivity();
         $log->controller_action = $action;
         $log->model_name = $this->modelName ?: ($this->owner ? $this->owner->tableName() : 'EmployeeUpload');
         $log->record_id = $recordId ?? ($this->owner ? $this->owner->primaryKey : 1);
-        $log->employee_id = $extraEmployee;
         $log->remarks = $extraRemarks ?? ucfirst($action) . ' performed';
         $log->ip_address = Yii::$app->request->userIP ?? 'console';
         $log->user_agent = Yii::$app->request->userAgent ?? 'console';
@@ -44,10 +42,10 @@ class LoggableBehavior extends Behavior
     }
 
 
-    protected function log($action, $extraRemarks = null, $extraEmployee = null, $before = null, $after = null)
+    protected function log($action, $extraRemarks = null, $before = null, $after = null)
     {
-        if ($this->owner->disableLog ?? false) { 
-            return; // skip log 
+        if ($this->owner->disableLog ?? false) {
+            return; // skip log
         }
 
         $log = new LogActivity();
@@ -63,13 +61,7 @@ class LoggableBehavior extends Behavior
         $log->after_data = $after ? json_encode($after, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : null;
         $log->status = 'success';
 
-        $employee_id = NULL;
-        if (!empty($this->extraEmployee)) { 
-            $employee_id = $this->extraEmployee; 
-        }
-        $log->employee_id = $employee_id;
-        
-        // default remarks 
+        // default remarks
         $remarks = ucfirst($action) . ' performed'; 
         // kalau ada tambahan info dari controller, gabungkan 
         if (!empty($this->extraRemarks)) { 
@@ -99,7 +91,7 @@ class LoggableBehavior extends Behavior
 
     public function afterInsert($event)
     {
-        $this->log('create', null, null, null, $this->owner->getAttributes());
+        $this->log('create', null, null, $this->owner->getAttributes());
     }
 
     public function afterUpdate($event)
@@ -121,11 +113,11 @@ class LoggableBehavior extends Behavior
             $after[$attribute] = $newValue;
         }
 
-        $this->log('update', null, null, $this->_beforeValues, $after);
+        $this->log('update', null, $this->_beforeValues, $after);
     }
 
     public function afterDelete($event)
     {
-        $this->log('delete', null, null, $this->_beforeDelete, null);
+        $this->log('delete', null, $this->_beforeDelete, null);
     }
 }

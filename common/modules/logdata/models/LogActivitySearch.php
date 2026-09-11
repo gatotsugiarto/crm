@@ -18,7 +18,7 @@ class LogActivitySearch extends LogActivity
     {
         return [
             [['id'], 'integer'],
-            [['employee_id', 'action_by', 'record_id', 'controller_action', 'model_name', 'created_at', 'ip_address', 'user_agent', 'request_url', 'before_data', 'after_data', 'status', 'remarks'], 'safe'],
+            [['action_by', 'record_id', 'controller_action', 'model_name', 'created_at', 'ip_address', 'user_agent', 'request_url', 'before_data', 'after_data', 'status', 'remarks'], 'safe'],
         ];
     }
 
