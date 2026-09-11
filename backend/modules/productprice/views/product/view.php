@@ -115,6 +115,17 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
+        <?php if ($model->productBundleItems): ?>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <span class="text-secondary small">Bundle Contents</span>
+                <div class="mt-1">
+                    <?= $this->render('_bundleTree', ['product' => $model, 'visited' => [$model->id]]) ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
 
         <hr class="my-2">
 
