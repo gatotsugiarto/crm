@@ -80,6 +80,21 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
+                <?= $form->field($model, 'parent_product_id')->widget(Select2::class, [
+                    'data' => \common\modules\productprice\models\Product::parentDropdown($model->id),
+                    'options' => [
+                        'placeholder' => 'None — this is a standalone product',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'escapeMarkup' => new \yii\web\JsExpression('function (m) { return m; }'),
+                    ],
+                ])->hint('Optional. Set this if this product is a variant/sub product of another product (e.g. "Vision+ TV - With STB (Google Certified)" under "Vision+ TV").') ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
                 <?= $form->field($model, 'type')->widget(Select2::class, [
                     'data' => [ 'Goods' => 'Goods', 'Service' => 'Service', 'Subscription' => 'Subscription', 'Bundle' => 'Bundle', 'Software' => 'Software', ],
                     'options' => [

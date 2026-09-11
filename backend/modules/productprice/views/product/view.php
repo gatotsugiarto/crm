@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\modules\master\models\Product $model */
+/** @var common\modules\productprice\models\Product $model */
 
 
 $this->title = 'Detail '.'Products';
@@ -47,6 +47,32 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-md-6">
                 <span class="text-secondary small">Uom</span><br>
                 <span><small><?= Html::encode($model->uom->name) ?></small></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Parent Product</span><br>
+                <span>
+                    <?php if ($model->parentProduct): ?>
+                        <small><?= Html::encode($model->parentProduct->name) ?></small>
+                    <?php else: ?>
+                        <small class="text-muted">&mdash; standalone product</small>
+                    <?php endif; ?>
+                </span>
+            </div>
+
+            <div class="col-md-6">
+                <span class="text-secondary small">Sub Products</span><br>
+                <span>
+                    <?php if ($model->subProducts): ?>
+                        <?php foreach ($model->subProducts as $sub): ?>
+                            <small class="d-block"><?= Html::encode($sub->name) ?></small>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <small class="text-muted">&mdash; none</small>
+                    <?php endif; ?>
+                </span>
             </div>
         </div>
 

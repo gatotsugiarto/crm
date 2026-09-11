@@ -35,6 +35,13 @@ $gridColumns = [
             return $model->uom?->name ?? '-';
         },
     ],
+    [
+        'attribute' => 'parent_product_id',
+        'label' => 'Parent Product',
+        'value' => function ($model) {
+            return $model->parentProduct?->name ?? '-';
+        },
+    ],
     'type',
     'bundle_price_type',
     'description:ntext',
@@ -143,6 +150,13 @@ $gridColumns = [
         ],
         'category.name',
         // 'uom_id',
+        [
+            'attribute' => 'parent_product_id',
+            'label' => 'Parent Product',
+            'value' => function ($model) {
+                return $model->parentProduct?->name ?? '-';
+            },
+        ],
         'type',
         'bundle_price_type',
         // 'description:ntext',

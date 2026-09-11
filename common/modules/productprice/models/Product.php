@@ -84,7 +84,7 @@ class Product extends ActiveRecord
             [['base_price'], 'default', 'value' => 0.00],
             [['status_id'], 'default', 'value' => 1],
             [['name'], 'required'],
-            [['category_id', 'uom_id', 'is_bundle_expand', 'status_id', 'created_by', 'updated_by'], 'integer'],
+            [['category_id', 'parent_product_id', 'uom_id', 'is_bundle_expand', 'status_id', 'created_by', 'updated_by'], 'integer'],
             [['type', 'bundle_price_type', 'description'], 'string'],
             [['base_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
@@ -94,6 +94,8 @@ class Product extends ActiveRecord
             ['bundle_price_type', 'in', 'range' => array_keys(self::optsBundlePriceType())],
             [['code'], 'unique'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductCategory::class, 'targetAttribute' => ['category_id' => 'id']],
+            [['parent_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['parent_product_id' => 'id']],
+            ['parent_product_id', 'compare', 'compareAttribute' => 'id', 'operator' => '!=', 'skipOnEmpty' => true, 'message' => 'A product cannot be its own parent.'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
             [['uom_id'], 'exist', 'skipOnError' => true, 'targetClass' => ProductUom::class, 'targetAttribute' => ['uom_id' => 'id']],
         ];
@@ -109,6 +111,7 @@ class Product extends ActiveRecord
             'code' => 'Code',
             'name' => 'Product',
             'category_id' => 'Category',
+            'parent_product_id' => 'Parent Product',
             'uom_id' => 'UOM',
             'type' => 'Type',
             'bundle_price_type' => 'Bundle Price Type',
@@ -131,6 +134,26 @@ class Product extends ActiveRecord
     public function getCategory()
     {
         return $this->hasOne(ProductCategory::class, ['id' => 'category_id']);
+    }
+
+    /**
+     * Gets query for [[ParentProduct]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParentProduct()
+    {
+        return $this->hasOne(self::class, ['id' => 'parent_product_id']);
+    }
+
+    /**
+     * Gets query for [[SubProducts]] — Products that have this Product as their parent.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubProducts()
+    {
+        return $this->hasMany(self::class, ['parent_product_id' => 'id']);
     }
 
     /**
@@ -229,13 +252,35 @@ class Product extends ActiveRecord
     {
         static $dropdown;
         if ($dropdown === null) {
-            
+
             $models = static::find()->all();
             foreach ($models as $model) {
                 $dropdown[$model->id] = $model->name;
             }
         }
-            
+
+        return $dropdown;
+    }
+
+    /**
+     * Dropdown of eligible Parent Product options, excluding the given Product id
+     * (so a Product cannot be selected as its own parent).
+     *
+     * @param int|null $excludeId
+     * @return array
+     */
+    public static function parentDropdown($excludeId = null)
+    {
+        $query = static::find();
+        if ($excludeId) {
+            $query->andWhere(['!=', 'id', $excludeId]);
+        }
+
+        $dropdown = [];
+        foreach ($query->all() as $model) {
+            $dropdown[$model->id] = $model->name;
+        }
+
         return $dropdown;
     }
 
