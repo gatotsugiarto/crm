@@ -43,6 +43,8 @@ $gridColumns = [
         },
     ],
     'type',
+    'customer_type',
+    'revenue_model',
     'bundle_price_type',
     'description:ntext',
     'base_price',
@@ -158,6 +160,8 @@ $gridColumns = [
             },
         ],
         'type',
+        'customer_type',
+        'revenue_model',
         'bundle_price_type',
         // 'description:ntext',
         [

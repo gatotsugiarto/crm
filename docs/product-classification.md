@@ -31,7 +31,7 @@ mapping the business's "Revenue MKM" product structure into the CRM.
 - **Service** — an ongoing labor/facility service being performed (reserved for cases where nothing above fits better; used sparingly so far).
 - **Software** — rarely used as a Type in practice; Category already captures the software/hardware/service distinction, so Type on software items is usually still Subscription (the billing nature) rather than "Software" itself.
 
-## Known gap: Customer Type / Revenue Model are not modeled as fields
+## Customer Type / Revenue Model (implemented)
 
 The business's "Revenue MKM" BRD carries two more dimensions that cut across every
 product line:
@@ -39,24 +39,28 @@ product line:
 - **Customer Type** — B2B2C (ISP), B2C, Online-to-Offline, Hospitality, Internal, etc.
 - **Revenue Model** — Recurring (Billing Bulanan), One Time (1 Tahun di Depan), Deal-based.
 
-**Confirmed (checked all of `sales` and `productprice` modules) there is no existing
-field for either.** The closest-but-different things in the app are:
+These are now real columns on `product` — `customer_type` and `revenue_model`
+(migration `m260914_151934_add_customer_type_revenue_model_to_product_table`). Leaf
+SKUs should carry both tags directly on themselves rather than relying only on
+`parent_product_id` grouping nodes for this.
+
+Both are plain `VARCHAR(50)` (not ENUM) — the set of values keeps growing as new
+business lines show up (Online to Offline and Hospitality were both added after the
+first classification pass), so a rigid ENUM would need a migration every time. The
+create/edit Product form uses a Select2 in "tags" mode with a suggested list
+(`Product::optsCustomerType()` / `Product::optsRevenueModel()`) but accepts free text.
+
+Still worth noting: `parent_product_id` intermediate grouping nodes (e.g. "B2B2C ISP –
+Recurring (Billing Bulanan)" as its own Product record purely for tree organization)
+are still in use for the hierarchy itself — these two new fields don't replace that,
+they just mean a leaf product no longer *has* to rely on its ancestor chain to know
+its own customer type / revenue model.
+
+The closest-but-different existing things in the app, for reference:
 - `Account.account_type` (Prospect/Customer/Partner/Reseller/Vendor) — sales
   relationship stage, not customer segment/channel.
 - `PriceList` (currently: "Retail Price", "Corporate Price", "Promotional Price") — a
-  coarse pricing tier, not a structured customer-type/billing-model taxonomy.
-
-**Current workaround:** Customer Type and Revenue Model are represented as
-intermediate `Product` nodes in the `parent_product_id` tree (e.g. "B2B2C ISP –
-Recurring (Billing Bulanan)" is itself a Product record, purely for grouping — it's
-not something a customer buys directly). This works but mixes non-sellable grouping
-nodes into the same table as real SKUs, and makes filtering/reporting by customer
-type or revenue model require walking the tree instead of a plain `WHERE` clause.
-
-**If/when this becomes worth fixing:** add `customer_type` and `revenue_model` as
-proper fields (or lookup tables, mirroring `ProductCategory`) on `product`, so leaf
-SKUs carry both tags directly and `parent_product_id` goes back to representing only
-genuine product hierarchy (e.g. Vision+ TV → With STB → Google Certified).
+  coarse pricing tier, not this taxonomy.
 
 ## Revenue MKM product hierarchy (as classified so far)
 

@@ -90,6 +90,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
+                <span class="text-secondary small">Customer Type</span><br>
+                <span><small><?= Html::encode($model->customer_type) ?: '—' ?></small></span>
+            </div>
+
+            <div class="col-md-6">
+                <span class="text-secondary small">Revenue Model</span><br>
+                <span><small><?= Html::encode($model->revenue_model) ?: '—' ?></small></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
                 <span class="text-secondary small">Description</span><br>
                 <span><small><?= Html::encode($model->description) ?></small></span>
             </div>

@@ -90,6 +90,7 @@ class Product extends ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
+            [['customer_type', 'revenue_model'], 'string', 'max' => 50],
             ['type', 'in', 'range' => array_keys(self::optsType())],
             ['bundle_price_type', 'in', 'range' => array_keys(self::optsBundlePriceType())],
             [['code'], 'unique'],
@@ -114,6 +115,8 @@ class Product extends ActiveRecord
             'parent_product_id' => 'Parent Product',
             'uom_id' => 'UOM',
             'type' => 'Type',
+            'customer_type' => 'Customer Type',
+            'revenue_model' => 'Revenue Model',
             'bundle_price_type' => 'Bundle Price Type',
             'description' => 'Description',
             'base_price' => 'Base Price (COGS)',
@@ -310,6 +313,37 @@ class Product extends ActiveRecord
         return [
             self::BUNDLE_PRICE_TYPE_FIXED => 'fixed',
             self::BUNDLE_PRICE_TYPE_SUM => 'sum',
+        ];
+    }
+
+    /**
+     * Suggested customer_type values (free-text field — not an enforced ENUM,
+     * new business lines keep adding new values here over time).
+     * @return string[]
+     */
+    public static function optsCustomerType()
+    {
+        return [
+            'B2B2C (ISP)' => 'B2B2C (ISP)',
+            'B2C' => 'B2C',
+            'B2B' => 'B2B',
+            'Online to Offline' => 'Online to Offline',
+            'Hospitality' => 'Hospitality',
+            'Internal' => 'Internal',
+        ];
+    }
+
+    /**
+     * Suggested revenue_model values (free-text field — not an enforced ENUM).
+     * @return string[]
+     */
+    public static function optsRevenueModel()
+    {
+        return [
+            'Recurring Revenue (Billing Bulanan)' => 'Recurring Revenue (Billing Bulanan)',
+            'One Time (1 Tahun di Depan)' => 'One Time (1 Tahun di Depan)',
+            'Retail (Beli Putus)' => 'Retail (Beli Putus)',
+            'Deal-based' => 'Deal-based',
         ];
     }
 
