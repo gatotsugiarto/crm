@@ -150,7 +150,7 @@ $gridColumns = [
                 ]
             ),
         ],
-        'category.name',
+        // 'category.name',
         // 'uom_id',
         // 'parent_product_id',
         // 'type',
