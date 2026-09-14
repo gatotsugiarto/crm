@@ -152,17 +152,11 @@ $gridColumns = [
         ],
         'category.name',
         // 'uom_id',
-        [
-            'attribute' => 'parent_product_id',
-            'label' => 'Parent Product',
-            'value' => function ($model) {
-                return $model->parentProduct?->name ?? '-';
-            },
-        ],
-        'type',
+        // 'parent_product_id',
+        // 'type',
         'customer_type',
         'revenue_model',
-        'bundle_price_type',
+        // 'bundle_price_type',
         // 'description:ntext',
         [
             'attribute' => 'base_price',
