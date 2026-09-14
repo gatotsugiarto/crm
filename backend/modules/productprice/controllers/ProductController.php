@@ -105,7 +105,7 @@ class ProductController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
                 if ($model->validate()) {
-                    $model->save();
+                    $model->save(false);
                     $model->getBehavior('tokenProtection')->consumeToken();
 
                     return [
@@ -159,7 +159,8 @@ class ProductController extends Controller
             if ($model->load(Yii::$app->request->post())) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
-                if ($model->validate() && $model->save()) {
+                if ($model->validate()) {
+                    $model->save(false);
                     $model->getBehavior('tokenProtection')->consumeToken();
 
                     return [
@@ -171,7 +172,7 @@ class ProductController extends Controller
                 return [
                     'success' => false,
                     'message' => 'Validation failed.',
-                    'errors'  => $model->getErrors(),
+                    'errors'  => ActiveForm::validate($model),
                 ];
             }
 

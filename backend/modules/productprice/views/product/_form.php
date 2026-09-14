@@ -126,26 +126,26 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                 <?= $form->field($model, 'customer_type')->widget(Select2::class, [
                     'data' => \common\modules\productprice\models\Product::optsCustomerType(),
                     'options' => [
-                        'placeholder' => 'e.g. B2B2C (ISP), B2C, Hospitality...',
+                        'placeholder' => 'Customer Type',
                     ],
                     'pluginOptions' => [
                         'allowClear' => true,
                         'tags' => true,
                     ],
-                ])->hint('Business segment/channel this product is sold through. Pick from the list or type a new one.') ?>
+                ]) ?>
             </div>
 
             <div class="col-md-6">
                 <?= $form->field($model, 'revenue_model')->widget(Select2::class, [
                     'data' => \common\modules\productprice\models\Product::optsRevenueModel(),
                     'options' => [
-                        'placeholder' => 'e.g. Recurring, One Time, Retail...',
+                        'placeholder' => 'Revenue Model',
                     ],
                     'pluginOptions' => [
                         'allowClear' => true,
                         'tags' => true,
                     ],
-                ])->hint('Billing/revenue nature. Pick from the list or type a new one.') ?>
+                ])->hint('A product sold under more than one Customer Type / Revenue Model combination should be added as a separate product per combination (same name, different code).') ?>
             </div>
         </div>
 

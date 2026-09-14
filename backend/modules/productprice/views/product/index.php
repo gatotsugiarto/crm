@@ -154,8 +154,26 @@ $gridColumns = [
         // 'uom_id',
         // 'parent_product_id',
         // 'type',
-        'customer_type',
-        'revenue_model',
+        [
+            'attribute' => 'customer_type',
+            'label' => 'Customer Type',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return $model->customer_type
+                    ? Html::encode($model->customer_type)
+                    : '<span class="text-muted">(belum diset)</span>';
+            },
+        ],
+        [
+            'attribute' => 'revenue_model',
+            'label' => 'Revenue Model',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return $model->revenue_model
+                    ? Html::encode($model->revenue_model)
+                    : '<span class="text-muted">(belum diset)</span>';
+            },
+        ],
         // 'bundle_price_type',
         // 'description:ntext',
         [
