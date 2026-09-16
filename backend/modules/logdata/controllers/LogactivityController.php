@@ -8,6 +8,7 @@ use common\modules\logdata\models\LogActivity;
 use common\modules\logdata\models\LogActivitySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
 /**
@@ -23,6 +24,22 @@ class LogactivityController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                $route = 'backend.'.str_replace('/','.',$this->getRoute());
+                                $parents = strstr($route, strrchr($route,'.'),true).'.*';
+                                if (\Yii::$app->user->can($route) || \Yii::$app->user->can($parents) || \Yii::$app->user->can("root")){
+                                    return true;
+                                }
+                            }
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
