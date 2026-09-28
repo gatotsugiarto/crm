@@ -233,6 +233,11 @@ class LeadController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+        // A converted lead is the history of where its Account came from; the
+        // Account/Contact/Opportunity don't depend on it, so it is simply kept.
+        if ($model->is_converted) {
+            throw new ForbiddenHttpException('This lead has been converted and is kept as history. It can\'t be deleted.');
+        }
         $model->delete();
 
         if (Yii::$app->request->isAjax) {

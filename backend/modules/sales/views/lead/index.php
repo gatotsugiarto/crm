@@ -282,11 +282,17 @@ $gridColumns = [
                     'data-url' => Url::to(['update', 'id' => $model->id]),
                     'title'    => 'Edit',
                 ]),
-                'delete' => fn($url, $model) => Html::button('<i class="fa fa-trash"></i>', [
-                    'class'     => 'btn btn-sm btn-outline-danger rounded-circle delete-js',
-                    'data-url'  => $url,
-                    'data-name' => $model->company_name,
-                ]),
+                'delete' => fn($url, $model) => $model->is_converted
+                    ? Html::tag('span', Html::button('<i class="fa fa-trash"></i>', [
+                        'class'    => 'btn btn-sm btn-outline-secondary rounded-circle',
+                        'disabled' => true,
+                        'style'    => 'pointer-events: none;',
+                    ]), ['title' => 'Converted leads are kept as history', 'style' => 'cursor: not-allowed; display: inline-block;'])
+                    : Html::button('<i class="fa fa-trash"></i>', [
+                        'class'     => 'btn btn-sm btn-outline-danger rounded-circle delete-js',
+                        'data-url'  => $url,
+                        'data-name' => $model->company_name,
+                    ]),
             ],
         ],
     ],

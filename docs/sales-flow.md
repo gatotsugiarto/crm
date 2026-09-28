@@ -36,7 +36,9 @@ industry, optional customer segment, location, owner (a team).
   - a primary **Contact**,
   - an **Opportunity** "Opportunity - {company}" at `Prospecting`, 10%, closing in 30 days,
 
-  and marks the lead `is_converted = 1`. A converted lead cannot be converted again.
+  and marks the lead `is_converted = 1`. A converted lead cannot be converted again,
+  and cannot be deleted (kept as history; its delete button is disabled). Deleting a
+  lead never touches the Account/Contact/Opportunity created from it.
 
 ## 2. Account, Contact, Address
 

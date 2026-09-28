@@ -459,6 +459,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <h3 id="lead-convert">2. After Saving: Edit and Convert</h3>
 	  <ul>
 	    <li><strong>Edit</strong> &mdash; pencil icon on the Lead's row.</li>
+	    <li><strong>Delete</strong> &mdash; only for Leads that are not converted yet. A converted Lead is kept as the history of where its Account came from
+	        (the delete button is greyed out); deleting a Lead never removes its Account, Contact or Opportunity.</li>
 	    <li><strong>Convert</strong> &mdash; the <i class="fa fa-exchange-alt"></i> icon, once the Lead is qualified. After confirming, the system creates in one step:
 	      <ul>
 	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment),
