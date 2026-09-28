@@ -491,8 +491,8 @@ $(document).on('submit', '#delete-modal-form', function(e) {
                 $('#alert-container').html(html);
             }
         });
-    }, 'json').fail(function() {
-        alert('Request failed. Check console for details.');
+    }, 'json').fail(function(xhr) {
+        if (xhr.status !== 403) alert('Request failed. Check console for details.');
     });
 });
 
@@ -543,10 +543,10 @@ $(document).on('submit', '#convert-modal-form', function (e) {
                 '</div>'
             );
         });
-    }, 'json').fail(function () {
+    }, 'json').fail(function (xhr) {
         $('#confirmConvertModal').modal('hide');
         btn.prop('disabled', false).html('<i class="fa fa-exchange-alt"></i> Convert');
-        alert('Request failed. Check console for details.');
+        if (xhr.status !== 403) alert('Request failed. Check console for details.');
     });
 });
 

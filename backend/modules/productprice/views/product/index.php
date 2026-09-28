@@ -417,8 +417,8 @@ $(document).on('submit', '#delete-modal-form', function(e) {
                 $('#alert-container').html(html);
             }
         });
-    }, 'json').fail(function() {
-        alert('Request failed. Check console for details.');
+    }, 'json').fail(function(xhr) {
+        if (xhr.status !== 403) alert('Request failed. Check console for details.');
     });
 });
 

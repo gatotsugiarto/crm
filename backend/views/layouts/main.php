@@ -413,6 +413,23 @@ $(document).on('click', '[data-bs-dismiss="modal"]', function () {
     $('#viewProfile').modal('hide');
 });
 
+// Akses ditolak (403) pada request AJAX (buka form create/update di modal, delete,
+// nonactive, dll.): tutup modal yang masih loading dan tampilkan pesan, daripada
+// spinner berputar terus. Berlaku untuk semua halaman yang memakai layout ini.
+$(document).ajaxError(function (event, xhr) {
+    if (xhr.status !== 403) return;
+
+    $('.modal.show').modal('hide');
+    $('#alert-container').html(
+        '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">' +
+        '<i class="fa fa-ban"></i> You do not have permission to perform this action.' +
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+        '<span aria-hidden="true">&times;</span></button>' +
+        '</div>'
+    );
+    $('html, body').animate({scrollTop: 0}, 200);
+});
+
 JS;
 $this->registerJs($script);
 ?>
