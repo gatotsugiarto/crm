@@ -461,7 +461,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    <li><strong>Edit</strong> &mdash; pencil icon on the Lead's row.</li>
 	    <li><strong>Convert</strong> &mdash; the <i class="fa fa-exchange-alt"></i> icon, once the Lead is qualified. After confirming, the system creates in one step:
 	      <ul>
-	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment),</li>
+	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment),
+	            whose address is also listed under <strong>Account Addresses</strong> as an <em>Office</em> address,</li>
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
 	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; at stage <em>Prospecting</em>, 10% probability, closing in 30 days.</li>
 	      </ul>

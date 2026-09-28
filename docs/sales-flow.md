@@ -30,7 +30,8 @@ industry, optional customer segment, location, owner (a team).
   `trg_lead_owner_update`.
 - **Convert** (`/sales/lead/convert`, the ⇄ button on the Lead grid) calls stored
   procedure `sp_convert_lead_to_customer`, which in one transaction creates:
-  - an **Account** (type `Prospect`, same owner and customer segment),
+  - an **Account** (type `Prospect`, same owner and customer segment), with the lead's
+    address as its Main Address and also as an **Office** entry in Account Addresses,
   - a primary **Contact**,
   - an **Opportunity** "Opportunity - {company}" at `Prospecting`, 10%, closing in 30 days,
 
