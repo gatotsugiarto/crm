@@ -3,28 +3,18 @@
 Problems found while reviewing the codebase and database (2026-09-28). None of these
 are fixed yet unless marked. Ordered roughly by impact.
 
-## 1. Approving a quotation duplicates Sales Order items
+## 1. ~~Approving a quotation duplicates Sales Order items~~ (fixed 2026-09-28)
 
-**Confirmed** on a scratch copy of the production data: approving a quotation with
-one item (qty 3 × 55,000 − 5,000 = 160,000) produced a Sales Order with **two**
-identical item rows (items total 320,000) while `sales_order.total_amount` stayed
-160,000.
+Approving a quotation created every Sales Order item twice (and the invoice lines
+after Confirm), because two triggers copied the same items:
+`trg_quotation_to_sales_order` inserted the SO and copied the items, then
+`trg_so_copy_items` fired on that insert and copied them again.
 
-Cause: two triggers copy the same items.
-- `trg_quotation_to_sales_order` (quotation AFTER UPDATE) inserts the SO **and**
-  copies `quotation_item` → `sales_order_item`.
-- `trg_so_copy_items` (sales_order AFTER INSERT) fires on that insert and copies them
-  again.
-
-Knock-on effect: `SalesorderController::actionConfirm` copies SO items into
-`invoice_item`, so the invoice lines are doubled too, while `invoice.total_amount` is
-taken from the SO header (correct).
-
-The two existing SOs (2026-05-04) are not duplicated, most likely because
-`trg_so_copy_items` was added after they were created. Fix: drop one of the copies (most likely `trg_so_copy_items`, since the
-quotation trigger's own comment says "NO TRIGGER SIDE EFFECT") and clean up any
-duplicated rows created since. Check production for SOs with duplicate
-`(sales_order_id, product_id)` rows before and after.
+Fixed by migration `m260928_120000_fix_duplicate_sales_order_items`: the quotation
+trigger no longer copies items. `trg_so_copy_items` stays, because Sales Orders
+created by hand (SO form with a quotation selected) also rely on it. Rows already
+duplicated on production are not cleaned up automatically; the STEP 1 query in
+`scripts/production/2026-09-28_fix_duplicate_so_items.sql` lists them.
 
 ## 2. Gii and debug mode are exposed on production
 

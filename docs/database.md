@@ -104,10 +104,10 @@ contact of the same account, then sets it to 1 on the chosen contact.
 | `opportunity` | `tr_opp_stage_update` | AFTER UPDATE | If `stage` changed, insert a history row. `days_in_previous_stage` is computed from the opportunity's `created_at`, not from the previous stage change |
 | `opportunity_product` | `tr_update_opp_amount_after_upsert` / `_after_update` / `_after_delete` | AFTER INSERT/UPDATE/DELETE | Recompute `opportunity.amount = SUM(total)` of its products |
 | `quotation` | `trg_quotation_after_update_status` | AFTER UPDATE | Status → `Sent`: set the opportunity to stage `Proposal`, probability 50 |
-| `quotation` | `trg_quotation_to_sales_order` | AFTER UPDATE | Status → `Approved`: set the opportunity to `Closed Won`, probability 100, amount = quotation total; if no SO exists for this quotation, insert a `sales_order` (`SO/YYYYMMDD/NNNN`, status Draft) and copy the quotation items into `sales_order_item` |
+| `quotation` | `trg_quotation_to_sales_order` | AFTER UPDATE | Status → `Approved`: set the opportunity to `Closed Won`, probability 100, amount = quotation total; if no SO exists for this quotation, insert a `sales_order` (`SO/YYYYMMDD/NNNN`, status Draft) and let `trg_so_copy_items` copy the items (the trigger's own copy was removed in `m260928_120000`, it duplicated them) |
 | `quotation_item` | `trg_qtn_item_before_insert` / `_before_update` | BEFORE INSERT/UPDATE | `total = qty*price - discount` |
 | `quotation_item` | `trg_qtn_after_insert` / `_after_update` / `_after_delete` | AFTER INSERT/UPDATE/DELETE | Recompute `quotation.total_amount = SUM(total)` |
-| `sales_order` | `trg_so_copy_items` | AFTER INSERT | Copy the linked quotation's items into `sales_order_item`. **Duplicates the copy done by `trg_quotation_to_sales_order`** (see [known-issues.md](known-issues.md)) |
+| `sales_order` | `trg_so_copy_items` | AFTER INSERT | Copy the linked quotation's items into `sales_order_item`. The only place SO items are copied, for approvals and for SOs created by hand |
 | `sales_order_item` | `trg_so_item_before_insert` / `_before_update` | BEFORE INSERT/UPDATE | `total = qty*price - discount` |
 | `team` | `tr_team_before_insert_check_manager` | BEFORE INSERT | Reject if the manager user already manages another active team |
 | `team` | `tr_team_after_upsert_manager` | AFTER INSERT | Set the manager's `user.team_id` to this team |
@@ -126,5 +126,10 @@ the Sales Order in PHP.
   with `TRIGGER` / `CREATE ROUTINE` (locally: `root`).
 - **Triggers fire on raw SQL too.** A manual `UPDATE quotation SET status='Approved'`
   creates a Sales Order exactly like the UI does. Test data changes on a copy.
+- **Trigger DEFINER.** A trigger created by a migration gets the migration user as
+  DEFINER (`commcorp_2026_tb@%` locally) and runs with that user's privileges.
+  When copying the DB into a scratch database for tests, strip the `DEFINER=...`
+  clauses from the dump (the `sed` in [local-development.md](local-development.md))
+  or the triggers fail with ERROR 1142.
 - **Production is MySQL 5.5.** Avoid syntax it lacks (JSON type, CTEs, window
   functions, `ALTER TABLE ... RENAME COLUMN`) in migrations.

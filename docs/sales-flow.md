@@ -73,13 +73,10 @@ Approved / Rejected.
   sets `status = 'Approved'`. Trigger `trg_quotation_to_sales_order` then:
   - sets the opportunity to **Closed Won**, probability 100, amount = quotation total;
   - if no Sales Order exists for this quotation, creates one (`SO/YYYYMMDD/NNNN`,
-    status Draft, same account and total) and copies the quotation items into it.
+    status Draft, same account and total). Trigger `trg_so_copy_items` on the new SO
+    copies the quotation items into it.
 
   The controller then redirects to the new Sales Order.
-
-> ⚠️ Approving currently produces **duplicated Sales Order items**: the quotation
-> trigger copies the items, and `trg_so_copy_items` on `sales_order` insert copies
-> them again. See [known-issues.md](known-issues.md#1-approving-a-quotation-duplicates-sales-order-items).
 
 ## 5. Sales Order
 

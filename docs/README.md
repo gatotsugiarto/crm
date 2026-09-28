@@ -15,7 +15,7 @@ an audit log.
 | Module | Status |
 |---|---|
 | Product & Pricing | **Complete** |
-| Sales CRM | In use; open items in [known-issues.md](known-issues.md) (SO item duplication, pricing lookup) |
+| Sales CRM | In use; open items in [known-issues.md](known-issues.md) (pricing lookup; SO item duplication fixed 2026-09-28) |
 | Master, Auth, Log Activity | In use; Master Company / Member screens are broken (missing tables) |
 
 ## Start here

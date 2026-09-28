@@ -76,6 +76,7 @@ Naming follows Yii's `mYYMMDD_HHMMSS_<description>.php`. Existing ones that matt
 | `m260914_170500_split_multi_segment_products` | one product row per customer-type/revenue-model combination |
 | `m260928_090000_create_sales_role` | `sales` basic role |
 | `m260928_100000_create_product_pricing_role` | `productPricing` basic role |
+| `m260928_120000_fix_duplicate_sales_order_items` | stops quotation approval duplicating SO items |
 
 After a migration runs locally, prepare the production hand-off described in
 [deployment-workflow.md](deployment-workflow.md).
@@ -89,7 +90,8 @@ and drop it:
 ```bash
 docker exec commcorp_db sh -c '
   mariadb -uroot -p<root-pw> -e "DROP DATABASE IF EXISTS trgtest; CREATE DATABASE trgtest;" &&
-  mariadb-dump -uroot -p<root-pw> --routines --triggers commcorp_tb | mariadb -uroot -p<root-pw> trgtest &&
+  mariadb-dump -uroot -p<root-pw> --routines --triggers commcorp_tb \
+    | sed -E "s/DEFINER=\`[^\`]+\`@\`[^\`]+\`//g" | mariadb -uroot -p<root-pw> trgtest &&
   mariadb -uroot -p<root-pw> trgtest -e "UPDATE quotation SET status=\"Approved\", updated_by=6 WHERE id=4;
     SELECT * FROM sales_order WHERE quotation_id=4;" ;
   mariadb -uroot -p<root-pw> -e "DROP DATABASE trgtest;"'
