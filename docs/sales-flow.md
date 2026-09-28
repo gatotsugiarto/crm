@@ -130,7 +130,8 @@ discounts and bundle definitions, but no sales screen looks them up yet. See
 | | Sales | Sales Manager |
 |---|:-:|:-:|
 | Lead, Account, Contact, Address, Activity: create / edit | ✅ | ✅ |
-| Convert lead | ✅ | ✅ |
+| Convert lead | ✅ own team's leads | ✅ all teams |
+| Edit an existing lead | ✅ own team's leads | ✅ all teams |
 | Opportunity + products, Quotation + items (up to Sent) | ✅ | ✅ |
 | Remove opportunity products / quotation items | ✅ | ✅ |
 | Change Sales Team / Assigned Sales on existing records | ❌ | ✅ |

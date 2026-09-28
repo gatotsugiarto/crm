@@ -9,7 +9,9 @@ use common\modules\sales\models\Lead;
 use common\modules\sales\models\LeadSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\AccessControl;
+use common\components\rbac\SalesAccess;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -41,6 +43,30 @@ class LeadController extends Controller
         ];
         
         return $behaviors;
+    }
+
+    /**
+     * Existing leads can only be converted or changed by their own Sales Team (or
+     * the Sales Manager / root). Runs after AccessControl, so the role check has
+     * already passed.
+     */
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        if (in_array($action->id, ['update', 'convert', 'nonactive', 'reactive', 'delete'], true)) {
+            $lead = Lead::findOne(['id' => Yii::$app->request->get('id')]);
+            if ($lead !== null) {
+                $error = SalesAccess::leadTeamError($lead, $action->id === 'convert' ? 'convert' : 'change');
+                if ($error !== null) {
+                    throw new ForbiddenHttpException($error);
+                }
+            }
+        }
+
+        return true;
     }
 
     // public function actionValidate()

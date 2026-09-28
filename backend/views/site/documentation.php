@@ -467,7 +467,10 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
 	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; at stage <em>Prospecting</em>, 10% probability, closing in 30 days.</li>
 	      </ul>
-	      A Lead can only be converted once. Continue the work in <strong>Accounts</strong> and <strong>Opportunities</strong>;
+	      A Lead can only be converted once, and only by <strong>members of the Lead's Sales Team</strong> or the <strong>Sales Manager</strong>
+	      (others see &ldquo;This lead belongs to &hellip;&rdquo;). The same applies to editing a Lead. Sales users need a team
+	      (User Management &rarr; Edit User Access &rarr; Sales Team) to work on existing Leads.
+	      Continue the work in <strong>Accounts</strong> and <strong>Opportunities</strong>;
 	      the individual salesperson can be set on the Account as <strong>Assigned Sales</strong>.
 	    </li>
 	  </ul>

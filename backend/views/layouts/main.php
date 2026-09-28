@@ -419,10 +419,22 @@ $(document).on('click', '[data-bs-dismiss="modal"]', function () {
 $(document).ajaxError(function (event, xhr) {
     if (xhr.status !== 403) return;
 
+    // Yii's ErrorAction answers AJAX errors as plain text "Forbidden (#403): <message>".
+    // Show a specific message (e.g. "This lead belongs to ...") when the server sent
+    // one; keep the generic text for the default AccessControl denial.
+    var message = 'You do not have permission to perform this action.';
+    var text = $.trim(xhr.responseText || '');
+    if (text && text.charAt(0) !== '<' && text.length < 500) {
+        var serverMessage = text.replace(/^[^:]*\(#403\):\s*/, '');
+        if (serverMessage && serverMessage !== 'You are not allowed to perform this action.') {
+            message = serverMessage;
+        }
+    }
+
     $('.modal.show').modal('hide');
     $('#alert-container').html(
         '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">' +
-        '<i class="fa fa-ban"></i> You do not have permission to perform this action.' +
+        '<i class="fa fa-ban"></i> ' + $('<div>').text(message).html() +
         '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
         '<span aria-hidden="true">&times;</span></button>' +
         '</div>'

@@ -78,6 +78,14 @@ or lock the matching inputs):
 - **Approving**: moving a quotation into or out of `Approved` through the edit form
   needs `backend.sales.quotation.approve`, same as the Approve button (approval
   creates the Sales Order in a DB trigger).
+- **Lead team**: editing, converting, (re)activating or deleting an existing lead is
+  limited to members of the lead's Sales Team (`user.team_id = lead.owner_user_id`),
+  the Sales Manager (`backend.sales.assign`; one manager covers several teams) and
+  root, enforced in `LeadController::beforeAction` via `SalesAccess::leadTeamError()`.
+  Others get 403 "This lead belongs to <team>. Only members of that team can
+  convert/change it." A sales user without a team can't work on existing leads.
+  Creating a lead for any team stays open. The layout's 403 handler shows this
+  server message; the default AccessControl denial keeps the generic text.
 - The Approve, Confirm SO and Mark Sent/Paid buttons are only shown to users who
   may use them.
 
