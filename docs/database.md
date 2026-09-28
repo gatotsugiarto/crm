@@ -87,8 +87,9 @@ Called by `LeadController::actionConvert`. In one transaction:
 2. Inserts an `account` (type `Prospect`) from the lead's company/location fields and
    `customer_segment` (since `m260928_140000`).
    Owner = lead owner, or the converting user if the lead has none.
-3. Inserts an `account_address` of type `Office` with the lead's address and location
-   (since `m260928_150000`; skipped if the lead has no address), then a primary
+3. Inserts three `account_address` rows, `Billing`, `Shipping` and `Office`, all with the
+   lead's address and location (since `m260928_150000`; skipped if the lead has no
+   address; users edit the ones that differ), then a primary
    `contact` from the lead's contact fields.
 4. Inserts an `opportunity` "Opportunity - {company}" at stage `Prospecting`,
    probability 10, amount 0, close date today + 30 days.

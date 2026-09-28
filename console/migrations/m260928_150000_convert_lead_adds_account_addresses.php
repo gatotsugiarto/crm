@@ -3,8 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Lead conversion also records the lead's address as an Office address in
- * account_address, so the converted account's Account Addresses list isn't empty.
+ * Lead conversion also records the lead's address in account_address as three
+ * rows, Billing, Shipping and Office, so the converted account's Account
+ * Addresses list isn't empty; users edit the ones that differ.
  * account.address (Main Address) is still filled as before.
  *
  * Recreates sp_convert_lead_to_customer from the m260928_140000 version with one
@@ -13,7 +14,7 @@ use yii\db\Migration;
  *
  * Plain CREATE PROCEDURE (no DELIMITER, no DEFINER); needs CREATE/ALTER ROUTINE.
  */
-class m260928_150000_convert_lead_adds_office_address extends Migration
+class m260928_150000_convert_lead_adds_account_addresses extends Migration
 {
     public function up()
     {
@@ -83,17 +84,17 @@ BEGIN
 
     SET p_account_id = LAST_INSERT_ID();
 
-    -- 2b. Lead address also becomes the account's Office address
+    -- 2b. Lead address also becomes the account's Billing, Shipping and Office
+    --     addresses (edited later where they differ)
     IF v_address IS NOT NULL AND TRIM(v_address) <> '' THEN
         INSERT INTO `account_address` (
             account_id, address_type, address,
             city_id, province_id, country_id, postal_code_id,
             status_id, created_at, created_by, updated_at, updated_by
-        ) VALUES (
-            p_account_id, 'Office', v_address,
-            v_city_id, v_province_id, v_country_id, v_postal_id,
-            1, NOW(), p_user_id, NOW(), p_user_id
-        );
+        ) VALUES
+            (p_account_id, 'Billing', v_address, v_city_id, v_province_id, v_country_id, v_postal_id, 1, NOW(), p_user_id, NOW(), p_user_id),
+            (p_account_id, 'Shipping', v_address, v_city_id, v_province_id, v_country_id, v_postal_id, 1, NOW(), p_user_id, NOW(), p_user_id),
+            (p_account_id, 'Office', v_address, v_city_id, v_province_id, v_country_id, v_postal_id, 1, NOW(), p_user_id, NOW(), p_user_id);
     END IF;
         
         -- Karena is_primary reset semua by account_id
