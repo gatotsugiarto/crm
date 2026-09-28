@@ -55,22 +55,20 @@ $baseUrl = Yii::$app->request->baseUrl;
 
 	  <!-- Auth -->
 	  <h3 id="module-auth">1. Auth</h3>
-	  <p>Handles authentication and authorization: backend users, roles &amp; permissions (RBAC), and members.</p>
+	  <p>Handles authentication and authorization: backend users and roles &amp; permissions (RBAC).</p>
 	  <ul>
 	    <li><strong>Users Access:</strong> Manage backend users with system access.</li>
-	    <li><strong>Assignments:</strong> Assign backend accounts to members/groups.</li>
+	    <li><strong>Assignments:</strong> Assign roles to backend users.</li>
 	    <li><strong>Role:</strong> Define collections of permissions grouped into roles.</li>
 	    <li><strong>Permission:</strong> Specify individual actions a user/role is allowed to perform.</li>
-	    <li><strong>Members Access:</strong> Manage frontend/client member accounts.</li>
-	    <li><strong>Change Password:</strong> Self-service password update for users and members.</li>
+	    <li><strong>Change Password:</strong> Self-service password update for users.</li>
 	  </ul>
 
 	  <!-- Master -->
 	  <h3 id="module-master">2. Master</h3>
 	  <p>Shared reference/master data used across the other modules.</p>
 	  <ul>
-	    <li><strong>Company:</strong> Registered companies used throughout the system.</li>
-	    <li><strong>Team:</strong> Sales team assignment used by Accounts, Leads, and Opportunities.</li>
+	    <li><strong>Team:</strong> Sales teams (Team Leader and members) used by Leads, Accounts and Opportunities.</li>
 	    <li><strong>Application Setting:</strong> Application-wide configuration parameters.</li>
 	    <li><strong>Country / Province / City / Postal Code:</strong> Address reference data used by Sales module records.</li>
 	  </ul>
@@ -159,7 +157,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 
 	  <!-- Setup Master Data -->
 	  <h3 id="flow-setup-master">2. Setup Master Data</h3>
-	  <p>Before running the business process, reference data is prepared in the <strong>Master</strong> module: Company, Team, Application Setting, and address data (Country, Province, City, Postal Code).</p>
+	  <p>Before running the business process, reference data is prepared in the <strong>Master</strong> module: Team, Application Setting, and address data (Country, Province, City, Postal Code).</p>
 
 	  <!-- Setup Product & Pricing -->
 	  <h3 id="flow-setup-product">3. Setup Product &amp; Pricing</h3>

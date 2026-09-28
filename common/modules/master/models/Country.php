@@ -143,4 +143,14 @@ class Country extends ActiveRecord
     }
 
 
+
+    /**
+     * The country to preselect on a new form: the only one, if there is exactly one.
+     * @return int|null
+     */
+    public static function defaultId()
+    {
+        $ids = static::find()->select('id')->limit(2)->column();
+        return count($ids) === 1 ? (int) $ids[0] : null;
+    }
 }

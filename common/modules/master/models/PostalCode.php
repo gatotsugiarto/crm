@@ -142,4 +142,20 @@ class PostalCode extends ActiveRecord
     }
 
 
+
+    /**
+     * Options for a dependent dropdown: only the rows under the given parent
+     * (empty until a parent is chosen). Also used by LocationController.
+     * @return array id => label
+     */
+    public static function dropdownFor($cityId)
+    {
+        if ($cityId === null || $cityId === '') {
+            return [];
+        }
+        return static::find()->select(['code', 'id'])
+            ->where(['city_id' => $cityId])
+            ->orderBy(['code' => SORT_ASC])
+            ->indexBy('id')->column();
+    }
 }

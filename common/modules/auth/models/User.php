@@ -91,7 +91,7 @@ class User extends \yii\db\ActiveRecord
             ->where(['user_id' => $this->id, 'status_id' => 1])
             ->one();
         if ($managed !== null && (int) $this->team_id !== (int) $managed->id) {
-            $this->addError($attribute, "This user is the manager of {$managed->name}, so they must stay in that team. Assign another manager to {$managed->name} first.");
+            $this->addError($attribute, "This user is the Team Leader of {$managed->name}, so they must stay in that team. Assign another Team Leader to {$managed->name} first.");
         }
     }
 

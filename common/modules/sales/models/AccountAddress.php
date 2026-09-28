@@ -90,6 +90,9 @@ class AccountAddress extends ActiveRecord
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['province_id'], 'exist', 'skipOnError' => true, 'targetClass' => Province::class, 'targetAttribute' => ['province_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['postal_code_id'], function () {
+                \common\components\LocationRules::check($this);
+            }, 'skipOnEmpty' => false],
         ];
     }
 

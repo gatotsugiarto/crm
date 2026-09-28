@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <span class="text-secondary small">Manager</span><br>
+                <span class="text-secondary small">Team Leader</span><br>
                 <span><small><?= Html::encode($model->user?->fullname ?? '-') ?></small></span>
             </div>
 
@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php if ($members): ?>
                     <?php foreach ($members as $member): ?>
                         <span class="badge badge-<?= $member->id == $model->user_id ? 'primary' : 'light' ?> mr-1 mb-1" style="font-size: 12px;">
-                            <?= Html::encode($member->fullname) ?><?= $member->id == $model->user_id ? ' (manager)' : '' ?>
+                            <?= Html::encode($member->fullname) ?><?= $member->id == $model->user_id ? ' (leader)' : '' ?>
                         </span>
                     <?php endforeach; ?>
                 <?php else: ?>

@@ -61,9 +61,6 @@ if (isset($menuMap[$urlMenu])) {
 } else if (strpos($urlMenu, 'rbac/') === 0) {
     $baseMenu = 'User Management';
     $topUrl = array_search('User Management', $menuMap);
-} else if (strpos($urlMenu, 'member/') === 0) {
-    $baseMenu = 'User Management';
-    $topUrl = array_search('User Management', $menuMap);
 
 } else if (strpos($urlMenu, 'lead/') === 0) {
     $baseMenu = 'Sales CRM';
@@ -411,6 +408,31 @@ $(document).on('click', '.view-profile', function(e) {
 // Pastikan tombol close bekerja
 $(document).on('click', '[data-bs-dismiss="modal"]', function () {
     $('#viewProfile').modal('hide');
+});
+
+// Dropdown lokasi bertingkat (country -> province -> city -> postal code) di form
+// lead / account / account address. Select induk punya data-dep-child (selector
+// anak, dicari di form yang sama) dan data-dep-url (LocationController). Ganti
+// induk -> isi ulang anak; trigger change pada anak ikut membersihkan cucu.
+$(document).on('change', 'select[data-dep-child]', function () {
+    var parent = $(this);
+    var child = parent.closest('form').find(parent.data('dep-child'));
+    if (!child.length) return;
+    var keep = child.val();
+
+    child.empty().append(new Option('', '', false, false));
+    if (!parent.val()) {
+        child.val(null).trigger('change');
+        return;
+    }
+    $.getJSON(parent.data('dep-url'), {id: parent.val()}, function (items) {
+        var stillValid = false;
+        $.each(items, function (i, item) {
+            child.append(new Option(item.text, item.id, false, false));
+            if (String(item.id) === String(keep)) stillValid = true;
+        });
+        child.val(stillValid ? keep : null).trigger('change');
+    });
 });
 
 // Akses ditolak (403) pada request AJAX (buka form create/update di modal, delete,

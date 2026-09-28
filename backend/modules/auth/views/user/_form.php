@@ -87,7 +87,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
-                ])->hint('Team this user works in. A team can have many members; its manager is set on the Team.') ?>
+                ])->hint('Team this user works in. A team can have many members; its Team Leader is set on the Team. The Sales Manager role covers all teams, so it can stay empty for them.') ?>
             </div>
         </div>
 

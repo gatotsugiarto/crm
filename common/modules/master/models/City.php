@@ -209,4 +209,20 @@ class City extends ActiveRecord
             
         return $dropdown;
     }
+
+    /**
+     * Options for a dependent dropdown: only the rows under the given parent
+     * (empty until a parent is chosen). Also used by LocationController.
+     * @return array id => label
+     */
+    public static function dropdownFor($provinceId)
+    {
+        if ($provinceId === null || $provinceId === '') {
+            return [];
+        }
+        return static::find()->select(['name', 'id'])
+            ->where(['province_id' => $provinceId])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')->column();
+    }
 }

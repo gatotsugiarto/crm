@@ -48,13 +48,13 @@ view calls them with POST (the grid JS already does for delete).
 should not be exposed. Fix: log that the password changed without the hash values,
 and consider removing `logdata` from `viewApplication`.
 
-## 5. Missing tables: `company`, `member`, `client`
+## 5. ~~Missing tables: `company`, `member`, `client`~~ (removed 2026-09-28)
 
-Migrations exist for them, but the tables are not in production or local. Master →
-Company and the `member` screens (`/member/...`, `/auth/member/...`) throw a 500 if
-opened. `backend/controllers/MemberController.php` also has no `AccessControl` at all
-(it reached the DB error as a guest). Either remove these screens and their menu
-entries or create the tables.
+The Master Company and Member screens, whose tables never existed, were deleted
+from the backend together with their RBAC items
+(`m260928_170000_remove_company_member_rbac`). `common/models/Member` stays because
+the unused `frontend/` app still references it; the old create-table migrations stay
+as history.
 
 ## 6. Sales screens don't use the pricing data yet
 
@@ -76,6 +76,14 @@ the account's price list"), not as unfinished Product & Pricing work.
 - **Sales Team validated against the wrong table.** `owner_user_id` holds a team id
   but was validated with `exist` against `user`; it only passed because ids happened
   to overlap.
+
+## Fixed 2026-09-28 (forms)
+
+- Location dropdowns on lead / account / account address now depend on each other
+  and the chain is validated server-side; email fields on lead, account and contact
+  are validated as email addresses.
+- The team's `user_id` is labelled **Team Leader** (was "Manager"), to keep it apart
+  from the **Sales Manager** role.
 
 ## Fixed 2026-09-28 (deleting)
 

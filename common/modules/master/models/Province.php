@@ -155,4 +155,20 @@ class Province extends ActiveRecord
     }
 
 
+
+    /**
+     * Options for a dependent dropdown: only the rows under the given parent
+     * (empty until a parent is chosen). Also used by LocationController.
+     * @return array id => label
+     */
+    public static function dropdownFor($countryId)
+    {
+        if ($countryId === null || $countryId === '') {
+            return [];
+        }
+        return static::find()->select(['name', 'id'])
+            ->where(['country_id' => $countryId])
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')->column();
+    }
 }

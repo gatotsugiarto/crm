@@ -51,8 +51,8 @@ Models live in `common/modules/...` while controllers/views live in
 
 | Module | Route prefix | Entities (controller ids) |
 |---|---|---|
-| `auth` | `/auth/...` | `user`, `userassignment`, `rbac` (roles/permissions), `member` |
-| `master` | `/master/...` | `company`, `applicationsetting`, `country`, `province`, `city`, `postalcode`, `team` |
+| `auth` | `/auth/...` | `user`, `userassignment`, `rbac` (roles/permissions) |
+| `master` | `/master/...` | `applicationsetting`, `country`, `province`, `city`, `postalcode`, `team`, `location` (JSON lookups for the dependent location dropdowns) |
 | `productprice` | `/productprice/...` | `product`, `productcategory`, `productuom`, `productbundleitem`, `pricelist`, `productprice`, `productdiscount` |
 | `sales` | `/sales/...` | `lead`, `account`, `accountaddress`, `contact`, `opportunity`, `opportunityproduct`, `opportunitystagehistory`, `activity`, `quotation`, `quotationitem`, `salesorder`, `salesorderitem`, `invoice`, `invoiceitem` |
 | `logdata` | `/logdata/...` | `logactivity` (audit log viewer) |
@@ -127,5 +127,11 @@ rather than starting from Gii defaults.
   the trigger create the Sales Order).
 - **Code is mostly English, comments/flash messages are partly Indonesian.** Keep new
   UI strings in English to match the existing screens.
+- **Location fields** (country, province, city, postal code) on lead, account and
+  account address are dependent dropdowns: the parent select carries
+  `data-dep-child` / `data-dep-url`, a global handler in `layouts/main.php` refills
+  the child from `master/location/*`, and `common/components/LocationRules`
+  validates the chain server-side. New forms preselect the country when only one
+  exists.
 - **New User default password** comes from `application_setting.default_password` if
   that row exists, else `params['user.passwordDefault']` (`12345678`).

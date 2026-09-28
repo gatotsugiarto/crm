@@ -93,6 +93,10 @@ class Lead extends ActiveRecord
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
             [['postal_code_id'], 'exist', 'skipOnError' => true, 'targetClass' => PostalCode::class, 'targetAttribute' => ['postal_code_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['postal_code_id'], function () {
+                \common\components\LocationRules::check($this);
+            }, 'skipOnEmpty' => false],
+            [['email'], 'email'],
             [['owner_user_id'], function ($attribute) {
                 \common\components\rbac\SalesAccess::checkAssignment($this, $attribute);
             }, 'skipOnEmpty' => false],

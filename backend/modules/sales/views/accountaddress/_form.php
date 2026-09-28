@@ -82,11 +82,14 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
+                <?php if ($model->isNewRecord && !$model->country_id) { $model->country_id = \common\modules\master\models\Country::defaultId(); } ?>
                 <?= $form->field($model, 'country_id')->widget(Select2::classname(), [
                     'data' => \common\modules\master\models\Country::dropdown(),
                     'options' => [
                         'placeholder' => 'Country',
                         'id' => 'country_id',
+                        'data-dep-child' => '#province_id',
+                        'data-dep-url' => \yii\helpers\Url::to(['/master/location/provinces']),
                         'multiple' => false,
                     ],
                     'pluginOptions' => [
@@ -99,10 +102,12 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
             <div class="col-md-6">
                 <?= $form->field($model, 'province_id')->widget(Select2::classname(), [
-                    'data' => \common\modules\master\models\Province::dropdown(),
+                    'data' => \common\modules\master\models\Province::dropdownFor($model->country_id),
                     'options' => [
                         'placeholder' => 'Province',
                         'id' => 'province_id',
+                        'data-dep-child' => '#city_id',
+                        'data-dep-url' => \yii\helpers\Url::to(['/master/location/cities']),
                         'multiple' => false,
                     ],
                     'pluginOptions' => [
@@ -117,10 +122,12 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         <div class="row">
             <div class="col-md-6">
                 <?= $form->field($model, 'city_id')->widget(Select2::classname(), [
-                    'data' => \common\modules\master\models\City::dropdown(),
+                    'data' => \common\modules\master\models\City::dropdownFor($model->province_id),
                     'options' => [
                         'placeholder' => 'City',
                         'id' => 'city_id',
+                        'data-dep-child' => '#postal_code_id',
+                        'data-dep-url' => \yii\helpers\Url::to(['/master/location/postalcodes']),
                         'multiple' => false,
                     ],
                     'pluginOptions' => [
@@ -133,7 +140,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
             <div class="col-md-6">
                 <?= $form->field($model, 'postal_code_id')->widget(Select2::classname(), [
-                    'data' => \common\modules\master\models\PostalCode::dropdown(),
+                    'data' => \common\modules\master\models\PostalCode::dropdownFor($model->city_id),
                     'options' => [
                         'placeholder' => 'Postal Code',
                         'id' => 'postal_code_id',
