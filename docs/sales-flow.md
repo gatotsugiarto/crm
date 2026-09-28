@@ -24,13 +24,13 @@ contact or opportunity at any point.
 ## 1. Lead
 
 A prospect not yet in the customer base: company name, contact person, source,
-industry, location, owner (a team).
+industry, optional customer segment, location, owner (a team).
 
 - **Owner change** is recorded in `record_owner_history` by trigger
   `trg_lead_owner_update`.
 - **Convert** (`/sales/lead/convert`, the ⇄ button on the Lead grid) calls stored
   procedure `sp_convert_lead_to_customer`, which in one transaction creates:
-  - an **Account** (type `Prospect`, same owner),
+  - an **Account** (type `Prospect`, same owner and customer segment),
   - a primary **Contact**,
   - an **Opportunity** "Opportunity - {company}" at `Prospecting`, 10%, closing in 30 days,
 

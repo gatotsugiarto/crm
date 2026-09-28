@@ -77,6 +77,30 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         </div>
 
         <div class="row">
+            <div class="col-md-6">
+                <?php
+                // tags mode accepts free text; keep a saved value that isn't in the suggestion list
+                $segmentData = \common\modules\sales\models\Account::optsCustomerSegment();
+                if ($model->customer_segment && !isset($segmentData[$model->customer_segment])) {
+                    $segmentData[$model->customer_segment] = $model->customer_segment;
+                }
+                ?>
+                <?= $form->field($model, 'customer_segment')->widget(Select2::class, [
+                    'data' => $segmentData,
+                    'options' => [
+                        'placeholder' => 'Customer Segment (optional)',
+                        'id' => 'lead-customer_segment',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'tags' => true,
+                    ],
+                ])->hint('Copied to the Account on Convert.') ?>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+        <div class="row">
             <div class="col-md-12">
                 <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
             </div>

@@ -62,6 +62,13 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Customer Segment</span><br>
+                <span><small><?= Html::encode($model->customer_segment ?? '-') ?></small></span>
+            </div>
+        </div>
+
         <hr class="my-2">
 
         <div class="row mb-3">

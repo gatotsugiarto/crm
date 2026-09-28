@@ -16,7 +16,7 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `lead` | company_name, contact_name, email, phone, lead_source, industry, address, city/province/country/postal_code_id, **is_converted**, converted_account_id, converted_contact_id, owner_user_id → team | Converted by `sp_convert_lead_to_customer` |
+| `lead` | company_name, contact_name, email, phone, lead_source, industry, customer_segment (optional, carried to the account on convert), address, city/province/country/postal_code_id, **is_converted**, converted_account_id, converted_contact_id, owner_user_id → team | Converted by `sp_convert_lead_to_customer` |
 | `account` | parent_account_id → account (holding/group), code (unique), name, **account_type** enum(Prospect, Customer, Partner, Reseller, Vendor) shown as "Customer Type", **customer_segment** (free text, same list as `product.customer_type`), industry, tax_number, contact info, location FKs, price_list_id, owner_user_id → team ("Sales Team"), **assigned_user_id** → user ("Assigned Sales", ON DELETE SET NULL) | |
 | `account_address` | account_id, **address_type** enum(Billing, Shipping, Office), address, location FKs | Extra addresses besides the account's main address. Was Invoice/Branch until `m260928_130000` |
 | `account_attachment` | account_id (ON DELETE CASCADE), file_name (original), stored_name (on disk), mime_type, file_size, description | Documents per account. Files live in `params['accountAttachmentPath']/<account_id>/` (default `backend/runtime/attachments/account`, outside the web root) |
@@ -84,7 +84,8 @@ Called by `LeadController::actionConvert`. In one transaction:
 
 1. Locks the lead (`FOR UPDATE`) where `is_converted = 0`; if none,
    `SIGNAL '45000' 'Lead not found or already converted'`.
-2. Inserts an `account` (type `Prospect`) from the lead's company/location fields.
+2. Inserts an `account` (type `Prospect`) from the lead's company/location fields and
+   `customer_segment` (since `m260928_140000`).
    Owner = lead owner, or the converting user if the lead has none.
 3. Inserts a primary `contact` from the lead's contact fields.
 4. Inserts an `opportunity` "Opportunity - {company}" at stage `Prospecting`,

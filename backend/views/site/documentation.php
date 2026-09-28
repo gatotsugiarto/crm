@@ -446,6 +446,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>Phone <span class="text-danger">*</span></td><td>Contact phone</td><td>0812-3456-7890</td></tr>
 	        <tr><td>Lead Source <span class="text-danger">*</span></td><td>Where the lead came from (free text)</td><td>Website, Referral, Cold Call, Exhibition, Event</td></tr>
 	        <tr><td>Industry <span class="text-danger">*</span></td><td>Line of business (free text)</td><td>Hospitality, Retail, Technology, Property</td></tr>
+	        <tr><td>Customer Segment</td><td>Optional. Segment/channel, same list as Product (pick or type). Copied to the Account on Convert</td><td>Hospitality, B2B2C (ISP), B2B, B2C</td></tr>
 	        <tr><td>Address <span class="text-danger">*</span></td><td>Full street address</td><td>Jl. Sudirman No. 10</td></tr>
 	        <tr><td>Country / Province / City / Postal Code <span class="text-danger">*</span></td><td>Pick from the lists (Master Data)</td><td>INDONESIA / DKI JAKARTA / JAKARTA SELATAN / 12190</td></tr>
 	        <tr><td>Owner User <span class="text-danger">*</span></td><td>The <strong>sales team</strong> handling this lead (a team, not a person)</td><td>Enterprise Sales, SMB Sales</td></tr>
@@ -460,7 +461,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    <li><strong>Edit</strong> &mdash; pencil icon on the Lead's row.</li>
 	    <li><strong>Convert</strong> &mdash; the <i class="fa fa-exchange-alt"></i> icon, once the Lead is qualified. After confirming, the system creates in one step:
 	      <ul>
-	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>),</li>
+	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment),</li>
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
 	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; at stage <em>Prospecting</em>, 10% probability, closing in 30 days.</li>
 	      </ul>
@@ -502,6 +503,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0812-1111-2233</td></tr>
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Exhibition</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
+	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Jend. Sudirman Kav. 52, Senayan</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -522,6 +524,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0813-2222-3344</td></tr>
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Referral</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Telecommunication</td></tr>
+	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2B2C (ISP)</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pemuda No. 88, Rawamangun</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -542,6 +545,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0857-3333-4455</td></tr>
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Website</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Food &amp; Beverage</td></tr>
+	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2B</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Kebon Sirih No. 12, Menteng</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -562,6 +566,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0821-4444-5566</td></tr>
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Cold Call</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Retail</td></tr>
+	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2C</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Daan Mogot Km. 11, Cengkareng</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -582,6 +587,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0811-5555-6677</td></tr>
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Event</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Property</td></tr>
+	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pantai Indah Kapuk Boulevard No. 1</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>

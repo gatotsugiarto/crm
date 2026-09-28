@@ -76,7 +76,7 @@ class Lead extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_name', 'contact_name', 'email', 'phone', 'lead_source', 'industry', 'converted_account_id', 'converted_contact_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['company_name', 'contact_name', 'email', 'phone', 'lead_source', 'industry', 'customer_segment', 'converted_account_id', 'converted_contact_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['is_converted'], 'default', 'value' => 0],
             [['status_id'], 'default', 'value' => 1],
             [['is_converted', 'converted_account_id', 'converted_contact_id', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'owner_user_id', 'status_id', 'created_by', 'updated_by'], 'integer'],
@@ -87,6 +87,7 @@ class Lead extends ActiveRecord
             [['email'], 'string', 'max' => 150],
             [['phone'], 'string', 'max' => 50],
             [['lead_source', 'industry'], 'string', 'max' => 100],
+            [['customer_segment'], 'string', 'max' => 50],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
             [['province_id'], 'exist', 'skipOnError' => true, 'targetClass' => Province::class, 'targetAttribute' => ['province_id' => 'id']],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
@@ -108,6 +109,7 @@ class Lead extends ActiveRecord
             'phone' => 'Phone',
             'lead_source' => 'Lead Source',
             'industry' => 'Industry',
+            'customer_segment' => 'Customer Segment',
             'city_id' => 'City',
             'province_id' => 'Province',
             'country_id' => 'Country',
