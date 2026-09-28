@@ -40,10 +40,27 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <span class="text-secondary small">User</span><br>
+                <span class="text-secondary small">Manager</span><br>
                 <span><small><?= Html::encode($model->user?->fullname ?? '-') ?></small></span>
             </div>
 
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <?php $members = $model->getUsers()->orderBy(['fullname' => SORT_ASC])->all(); ?>
+                <span class="text-secondary small">Members (<?= count($members) ?>)</span><br>
+                <?php if ($members): ?>
+                    <?php foreach ($members as $member): ?>
+                        <span class="badge badge-<?= $member->id == $model->user_id ? 'primary' : 'light' ?> mr-1 mb-1" style="font-size: 12px;">
+                            <?= Html::encode($member->fullname) ?><?= $member->id == $model->user_id ? ' (manager)' : '' ?>
+                        </span>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <small>-</small>
+                <?php endif; ?>
+                <br><small class="text-muted">Add or move members in User Management &rarr; Edit User Access &rarr; Sales Team.</small>
+            </div>
         </div>
 
 

@@ -69,8 +69,30 @@ class User extends \yii\db\ActiveRecord
                 'message' => 'Password must be at least 8 characters long and contain at least one uppercase letter, one number, and one special character.'
             ],
 
+            [['team_id'], 'default', 'value' => null],
+            [['team_id'], 'integer'],
+            [['team_id'], 'exist', 'skipOnError' => true, 'targetClass' => \common\modules\master\models\Team::class, 'targetAttribute' => ['team_id' => 'id']],
+            [['team_id'], 'validateManagerTeam', 'skipOnEmpty' => false],
+
             [['form_token'], 'safe'],
         ];
+    }
+
+    /**
+     * A team's manager (team.user_id) must stay a member of that team, otherwise the
+     * team would list a manager who isn't in it. Change the team's manager first.
+     */
+    public function validateManagerTeam($attribute)
+    {
+        if ($this->isNewRecord) {
+            return;
+        }
+        $managed = \common\modules\master\models\Team::find()
+            ->where(['user_id' => $this->id, 'status_id' => 1])
+            ->one();
+        if ($managed !== null && (int) $this->team_id !== (int) $managed->id) {
+            $this->addError($attribute, "This user is the manager of {$managed->name}, so they must stay in that team. Assign another manager to {$managed->name} first.");
+        }
     }
 
     public function attributeLabels()
@@ -84,6 +106,7 @@ class User extends \yii\db\ActiveRecord
             'password_reset_token' => 'Password Reset Token',
             'email' => 'Email',
             'role' => 'Basic Role',
+            'team_id' => 'Sales Team',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -136,6 +159,11 @@ class User extends \yii\db\ActiveRecord
             return true;
         }
         return false;
+    }
+
+    public function getTeam()
+    {
+        return $this->hasOne(\common\modules\master\models\Team::class, ['id' => 'team_id']);
     }
 
     public function getAuthAssignments()

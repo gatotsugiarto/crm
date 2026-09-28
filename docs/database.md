@@ -58,7 +58,7 @@ on opportunity/quotation items are entered manually (see
 | Table | Notes |
 |---|---|
 | `country` → `province` → `city` (type enum CITY/REGENCY) → `postal_code` | Location hierarchy used by lead/account/address |
-| `team` | name, description, **user_id** (manager) → user. `user.team_id` → team |
+| `team` | name, description, **user_id** (manager) → user. Members are the users whose `user.team_id` points to the team (set in User Management → Edit User Access → Sales Team); a manager must stay a member of the team they manage |
 | `application_setting` | `default_password` for new/reset users. Also has leftover payroll columns (`payroll_period`, `hr_default_password`) |
 | `status_active` | 1 Active, 2 Non Active |
 | `status` | 1 Yes, 2 No |

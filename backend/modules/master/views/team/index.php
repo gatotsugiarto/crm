@@ -169,6 +169,12 @@ $gridColumns = [
                 return $model->user?->fullname ?? '-';
             },
         ],
+        [
+            'label' => 'Members',
+            'value' => fn($model) => $model->getUsers()->count(),
+            'contentOptions' => ['class' => 'text-center'],
+            'headerOptions' => ['class' => 'text-white text-center'],
+        ],
         //'created_at',
         //'createdBy.fullname',
         //'updated_at',

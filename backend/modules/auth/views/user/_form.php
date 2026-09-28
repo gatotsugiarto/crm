@@ -76,6 +76,21 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-12">
+                <?= $form->field($model, 'team_id')->widget(Select2::class, [
+                    'data' => \common\modules\master\models\Team::dropdown() ?? [],
+                    'options' => [
+                        'placeholder' => 'Sales Team (optional)',
+                        'id' => 'user-team_id',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ])->hint('Team this user works in. A team can have many members; its manager is set on the Team.') ?>
+            </div>
+        </div>
+
     </div>
 </div>
 <div class="d-flex justify-content-end gap-2 mt-3">

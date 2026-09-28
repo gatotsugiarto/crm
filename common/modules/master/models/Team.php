@@ -88,7 +88,7 @@ class Team extends ActiveRecord
             'id' => 'ID',
             'name' => 'Sales Team',
             'description' => 'Description',
-            'user_id' => 'User',
+            'user_id' => 'Manager',
             'status_id' => 'Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
