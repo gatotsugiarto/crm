@@ -31,6 +31,10 @@ $gridColumns = [
     'name',
     'account_type',
     [
+        'attribute' => 'customer_segment',
+        'value' => fn($model) => $model->customer_segment ?? '-',
+    ],
+    [
         'attribute' => 'industry',
         'value' => function ($model) {
             return $model->industry ?? '-';
@@ -101,6 +105,10 @@ $gridColumns = [
         'value' => function ($model) {
             return $model->team?->name ?? '-';
         },
+    ],
+    [
+        'attribute' => 'assigned_user_id',
+        'value' => fn($model) => $model->assignedUser?->fullname ?? '-',
     ],
     [
         'attribute' => 'status_id',
@@ -260,6 +268,10 @@ $gridColumns = [
             ),
         ],
         'account_type',
+        [
+            'attribute' => 'assigned_user_id',
+            'value' => fn($model) => $model->assignedUser?->fullname ?? '-',
+        ],
         // 'industry',
         // 'tax_number',
         [

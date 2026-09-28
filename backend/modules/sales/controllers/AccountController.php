@@ -9,6 +9,9 @@ use common\modules\sales\models\Account;
 use common\modules\sales\models\AccountSearch;
 use common\modules\sales\models\ContactSearch;
 use common\modules\sales\models\AccountAddressSearch;
+use common\modules\sales\models\AccountAttachment;
+use yii\data\ActiveDataProvider;
+use yii\web\UploadedFile;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -93,13 +96,85 @@ class AccountController extends Controller
         $addressSearchModel->account_id = $id;
         $addressDataProvider = $addressSearchModel->search($this->request->queryParams);
 
+        $attachmentDataProvider = new ActiveDataProvider([
+            'query' => AccountAttachment::find()->where(['account_id' => $model->id])->with('createdBy'),
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
+            'pagination' => ['pageSize' => 20, 'pageParam' => 'attachment-page'],
+        ]);
+
         return $this->render('view', [
             'model'       => $model,
             'searchModel' => $searchModel,
             'dataProvider'=> $dataProvider,
             'addressSearchModel' => $addressSearchModel,
             'addressDataProvider'=> $addressDataProvider,
+            'attachmentDataProvider' => $attachmentDataProvider,
         ]);
+    }
+
+    /**
+     * Upload one document to an account. Called by the Kartik FileInput on the
+     * Account view (one AJAX multipart POST per file: `file`, `description`), so
+     * it answers in Kartik's format: `{}` on success, `{error: "..."}` on failure.
+     */
+    public function actionUploadattachment($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!Yii::$app->request->isPost) {
+            throw new \yii\web\MethodNotAllowedHttpException('Upload must be a POST request.');
+        }
+
+        $account = $this->findModel($id);
+        $attachment = new AccountAttachment(['account_id' => $account->id]);
+        $attachment->description = Yii::$app->request->post('description');
+        $attachment->file = UploadedFile::getInstanceByName('file');
+
+        if ($attachment->upload()) {
+            return ['success' => true, 'id' => $attachment->id];
+        }
+
+        $errors = $attachment->getFirstErrors();
+        return ['error' => $errors ? reset($errors) : 'Upload failed.'];
+    }
+
+    /**
+     * Stream a document. Read-only roles get this through viewApplication.
+     */
+    public function actionDownloadattachment($id)
+    {
+        $attachment = $this->findAttachment($id);
+        $path = $attachment->getFilePath();
+        if (!is_file($path)) {
+            throw new NotFoundHttpException('The file is missing on the server.');
+        }
+
+        return Yii::$app->response->sendFile($path, $attachment->file_name, [
+            'mimeType' => $attachment->mime_type ?: null,
+            'inline' => false,
+        ]);
+    }
+
+    public function actionDeleteattachment($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!Yii::$app->request->isPost) {
+            throw new \yii\web\MethodNotAllowedHttpException('Delete must be a POST request.');
+        }
+
+        $attachment = $this->findAttachment($id);
+        $name = $attachment->file_name;
+        $attachment->delete();
+
+        return ['success' => true, 'message' => 'Document "' . $name . '" deleted.'];
+    }
+
+    protected function findAttachment($id)
+    {
+        if (($model = AccountAttachment::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested document does not exist.');
     }
 
     /**

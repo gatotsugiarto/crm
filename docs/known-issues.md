@@ -66,6 +66,17 @@ quotation item prices are typed in by hand, and nothing reads `product_price`,
 `account.price_list_id`. Treat this as a future Sales feature ("suggest price from
 the account's price list"), not as unfinished Product & Pricing work.
 
+## Fixed 2026-09-28 (Account BRD work)
+
+- **Account form could not save.** `Account` validated `status_id` against a
+  non-existent class `ActiveStatus` (and its `getStatus()` relation pointed to a
+  non-existent `StatusActive` in the wrong namespace), so any create/edit through the
+  form threw "Class not found". The three existing accounts came from lead conversion
+  (stored procedure), which bypasses model validation.
+- **Sales Team validated against the wrong table.** `owner_user_id` holds a team id
+  but was validated with `exist` against `user`; it only passed because ids happened
+  to overlap.
+
 ## Smaller issues
 
 - **`owner_user_id` points to `team.id`**, not `user.id` (lead, account, opportunity;

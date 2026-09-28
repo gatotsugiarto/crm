@@ -11,7 +11,7 @@ use yii\behaviors\BlameableBehavior;
 use common\components\behaviors\TokenProtectedFormBehavior;
 use common\components\behaviors\LoggableBehavior;
 
-use common\modules\master\models\ActiveStatus;
+use common\modules\master\models\StatusActive;
 use common\modules\master\models\Country;
 use common\modules\master\models\Province;
 use common\modules\master\models\City;
@@ -21,6 +21,7 @@ use common\modules\master\models\Team;
 use common\modules\auth\models\User;
 
 use common\modules\productprice\models\PriceList;
+use common\modules\productprice\models\Product;
 
 class Account extends ActiveRecord
 {
@@ -83,22 +84,24 @@ class Account extends ActiveRecord
     public function rules()
     {
         return [
-            [['parent_account_id', 'code', 'industry', 'tax_number', 'phone', 'email', 'website', 'address', 'price_list_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'owner_user_id'], 'default', 'value' => null],
+            [['parent_account_id', 'code', 'industry', 'tax_number', 'phone', 'email', 'website', 'address', 'price_list_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'owner_user_id', 'assigned_user_id', 'customer_segment'], 'default', 'value' => null],
             [['account_type'], 'default', 'value' => 'Prospect'],
             [['status_id'], 'default', 'value' => 1],
-            [['parent_account_id', 'price_list_id', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'status_id', 'created_by', 'updated_by', 'owner_user_id'], 'integer'],
+            [['parent_account_id', 'price_list_id', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'status_id', 'created_by', 'updated_by', 'owner_user_id', 'assigned_user_id'], 'integer'],
             [['name'], 'required'],
             [['account_type', 'address'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['code', 'phone'], 'string', 'max' => 50],
+            [['code', 'phone', 'customer_segment'], 'string', 'max' => 50],
             [['name', 'description'], 'string', 'max' => 255],
             [['industry', 'tax_number', 'email'], 'string', 'max' => 100],
             [['website'], 'string', 'max' => 150],
             ['account_type', 'in', 'range' => array_keys(self::optsAccountType())],
             [['code'], 'unique'],
-            [['owner_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['owner_user_id' => 'id']],
+            // owner_user_id holds the sales TEAM (FK team.id), despite the name
+            [['owner_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Team::class, 'targetAttribute' => ['owner_user_id' => 'id']],
+            [['assigned_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['assigned_user_id' => 'id']],
             [['parent_account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['parent_account_id' => 'id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActiveStatus::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
             [['province_id'], 'exist', 'skipOnError' => true, 'targetClass' => Province::class, 'targetAttribute' => ['province_id' => 'id']],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
@@ -117,7 +120,8 @@ class Account extends ActiveRecord
             'parent_account_id' => 'Group Account',
             'code' => 'Code',
             'name' => 'Name',
-            'account_type' => 'Type',
+            'account_type' => 'Customer Type',
+            'customer_segment' => 'Customer Segment',
             'industry' => 'Industry',
             'tax_number' => 'Tax Number',
             'phone' => 'Phone',
@@ -135,7 +139,8 @@ class Account extends ActiveRecord
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
-            'owner_user_id' => 'Owner User',
+            'owner_user_id' => 'Sales Team',
+            'assigned_user_id' => 'Assigned Sales',
         ];
     }
 
@@ -189,6 +194,26 @@ class Account extends ActiveRecord
         return $this->hasOne(Team::class, ['id' => 'owner_user_id']);
     }
 
+    /**
+     * account_attachment rows go with the account (FK ON DELETE CASCADE); remove
+     * their files too.
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        \yii\helpers\FileHelper::removeDirectory(AccountAttachment::storageDir($this->id));
+    }
+
+    public function getAssignedUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'assigned_user_id']);
+    }
+
+    public function getAttachments()
+    {
+        return $this->hasMany(AccountAttachment::class, ['account_id' => 'id']);
+    }
+
     public function getParentAccount()
     {
         return $this->hasOne(Account::class, ['id' => 'parent_account_id']);
@@ -227,6 +252,16 @@ class Account extends ActiveRecord
     }
 
 
+
+    /**
+     * Customer segment suggestions. Same taxonomy as product.customer_type; the
+     * form accepts free text too, so new segments don't need a code change.
+     * @return string[]
+     */
+    public static function optsCustomerSegment()
+    {
+        return Product::optsCustomerType();
+    }
 
     /**
      * column account_type ENUM value labels

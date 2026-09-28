@@ -10,4 +10,8 @@ return [
     'member.passwordResetTokenExpire' => 3600,
     'member.passwordMinLength' => 8,
     'member.passwordDefault' => '12345678',
+    // Account documents; outside backend/web so files are only served through
+    // AccountController (access-checked). Override in params-local.php if needed.
+    'accountAttachmentPath' => '@backend/runtime/attachments/account',
+    'accountAttachmentMaxSize' => 10 * 1024 * 1024,
 ];

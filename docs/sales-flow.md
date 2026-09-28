@@ -39,12 +39,24 @@ industry, location, owner (a team).
 ## 2. Account, Contact, Address
 
 - **Account**: the customer company. `parent_account_id` groups subsidiaries under a
-  holding. `account_type` moves from Prospect to Customer/Partner/Reseller/Vendor by
-  hand, nothing changes it automatically. `price_list_id` links a price list, but
-  nothing uses it for pricing yet.
+  holding. **Customer Type** (`account_type`) moves from Prospect to
+  Customer/Partner/Reseller/Vendor by hand, nothing changes it automatically.
+  **Customer Segment** (`customer_segment`) is the channel/segment (B2B2C (ISP), B2C,
+  Hospitality, ...). **Sales Team** (`owner_user_id` → team) and **Assigned Sales**
+  (`assigned_user_id` → user) are independent: either, both or neither can be set, and
+  the assigned salesperson doesn't have to belong to the chosen team.
+  `price_list_id` links a price list, but nothing uses it for pricing yet.
 - **Contact**: people at the account. **Set primary** (`/sales/contact/setprimary`)
   calls `sp_set_primary_contact`, so there is at most one primary contact per account.
-- **Account Address**: extra addresses of type `Invoice` (billing) or `Branch`.
+- **Account Address**: extra addresses of type Billing, Shipping or Office.
+- **Documents**: files attached on the Account detail page (Kartik FileInput, several
+  files at once, max 10 MB each by default; pdf, office files, images, csv/txt,
+  zip/rar). The real limit is the smallest of `params['accountAttachmentMaxSize']`
+  (10 MB), PHP `upload_max_filesize` / `post_max_size`, and nginx
+  `client_max_body_size` (nginx default 1 MB; locally PHP allows 2 MB). A file over
+  the limit is rejected with an error in the widget. Downloads go through `/sales/account/downloadattachment`, so they are
+  access-checked: roles with `viewApplication` can download, only roles with write
+  access to accounts can upload or delete.
 
 ## 3. Opportunity
 

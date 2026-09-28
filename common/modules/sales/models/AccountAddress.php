@@ -25,8 +25,9 @@ class AccountAddress extends ActiveRecord
     /**
      * ENUM field values
      */
-    const ADDRESS_TYPE_INVOICE = 'Invoice';
-    const ADDRESS_TYPE_BRANCH = 'Branch';
+    const ADDRESS_TYPE_BILLING = 'Billing';
+    const ADDRESS_TYPE_SHIPPING = 'Shipping';
+    const ADDRESS_TYPE_OFFICE = 'Office';
 
     /**
      * {@inheritdoc}
@@ -78,7 +79,7 @@ class AccountAddress extends ActiveRecord
     {
         return [
             [['account_id', 'address', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
-            [['address_type'], 'default', 'value' => 'Invoice'],
+            [['address_type'], 'default', 'value' => self::ADDRESS_TYPE_BILLING],
             [['status_id'], 'default', 'value' => 1],
             [['account_id', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'status_id', 'created_by', 'updated_by'], 'integer'],
             [['address_type', 'address'], 'string'],
@@ -190,8 +191,9 @@ class AccountAddress extends ActiveRecord
     public static function optsAddressType()
     {
         return [
-            self::ADDRESS_TYPE_INVOICE => 'Invoice',
-            self::ADDRESS_TYPE_BRANCH => 'Branch',
+            self::ADDRESS_TYPE_BILLING => 'Billing Address',
+            self::ADDRESS_TYPE_SHIPPING => 'Shipping Address',
+            self::ADDRESS_TYPE_OFFICE => 'Office Address',
         ];
     }
 
@@ -200,32 +202,6 @@ class AccountAddress extends ActiveRecord
      */
     public function displayAddressType()
     {
-        return self::optsAddressType()[$this->address_type];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAddressTypeInvoice()
-    {
-        return $this->address_type === self::ADDRESS_TYPE_INVOICE;
-    }
-
-    public function setAddressTypeToInvoice()
-    {
-        $this->address_type = self::ADDRESS_TYPE_INVOICE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAddressTypeBranch()
-    {
-        return $this->address_type === self::ADDRESS_TYPE_BRANCH;
-    }
-
-    public function setAddressTypeToBranch()
-    {
-        $this->address_type = self::ADDRESS_TYPE_BRANCH;
+        return self::optsAddressType()[$this->address_type] ?? $this->address_type;
     }
 }

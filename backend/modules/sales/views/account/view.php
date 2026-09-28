@@ -5,9 +5,17 @@ use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\widgets\Pjax;
 use kartik\grid\GridView;
+use kartik\file\FileInput;
+use common\modules\sales\models\AccountAttachment;
 
 /** @var yii\web\View $this */
 /** @var common\modules\sales\models\Account $model */
+/** @var yii\data\ActiveDataProvider $attachmentDataProvider */
+
+$user = Yii::$app->user;
+$canWriteAccount = $user->can('backend.sales.account.*') || $user->can('root');
+$canUploadAttachment = $canWriteAccount || $user->can('backend.sales.account.uploadattachment');
+$canDeleteAttachment = $canWriteAccount || $user->can('backend.sales.account.deleteattachment');
 
 
 $this->title = 'Detail '.'Accounts';
@@ -52,10 +60,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <span class="text-secondary small">Account Type</span><br>
+                <span class="text-secondary small">Customer Type</span><br>
                 <span><small><?= Html::encode($model->account_type) ?></small></span>
             </div>
 
+            <div class="col-md-6">
+                <span class="text-secondary small">Customer Segment</span><br>
+                <span><small><?= Html::encode($model->customer_segment ?? '-') ?></small></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Industry</span><br>
                 <span><small><?= Html::encode($model->industry ?? '-') ?></small></span>
@@ -126,8 +141,15 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <div class="col-md-6">
-                <span class="text-secondary small">Owner User</span><br>
+                <span class="text-secondary small">Sales Team</span><br>
                 <span><small><?= Html::encode($model->team?->name ?? '-') ?></small></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Assigned Sales</span><br>
+                <span><small><?= Html::encode($model->assignedUser?->fullname ?? '-') ?></small></span>
             </div>
         </div>
 
@@ -339,7 +361,7 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'attribute'      => 'address_type',
             'label'          => 'Address Type',
-            'value'     => fn($m) => $m->address_type ?? '',
+            'value'     => fn($m) => $m->displayAddressType(),
             'contentOptions' => ['class' => 'text-left'],
             'headerOptions'  => ['class' => 'text-white text-left'],
         ],
@@ -420,6 +442,121 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php Pjax::end(); ?>
 
+<!-- =====================================================
+     DOCUMENTS (account_attachment)
+====================================================== -->
+<div class="mb-3 mt-4">
+    <div class="mb-2">
+        <div class="fw-bold" style="font-size: 15px;">
+            <i class="fa fa-paperclip"></i>&nbsp; Documents
+        </div>
+        <small class="text-muted">Files related to this client/partner (max <?= Yii::$app->formatter->asShortSize(Yii::$app->params['accountAttachmentMaxSize']) ?> per file)</small>
+    </div>
+
+    <?php if ($canUploadAttachment): ?>
+        <div class="card shadow-sm border-0 rounded-4 mb-3">
+            <div class="card-body">
+                <div class="form-group mb-2">
+                    <?= Html::textInput('attachment_description', '', [
+                        'id' => 'attachment-description',
+                        'class' => 'form-control form-control-sm',
+                        'maxlength' => 255,
+                        'placeholder' => 'Description (optional), e.g. Contract 2026, NPWP, Company Profile',
+                    ]) ?>
+                </div>
+                <?= FileInput::widget([
+                    'name' => 'file',
+                    'id' => 'attachment-file',
+                    'options' => ['multiple' => true],
+                    'pluginOptions' => [
+                        'uploadUrl' => Url::to(['uploadattachment', 'id' => $model->id]),
+                        'uploadAsync' => true,
+                        'uploadExtraData' => new \yii\web\JsExpression('function () {
+                            return {
+                                description: $("#attachment-description").val(),
+                                ' . json_encode(Yii::$app->request->csrfParam) . ': yii.getCsrfToken()
+                            };
+                        }'),
+                        'allowedFileExtensions' => AccountAttachment::EXTENSIONS,
+                        'maxFileSize' => (int) (Yii::$app->params['accountAttachmentMaxSize'] / 1024),
+                        'maxFileCount' => 10,
+                        'showPreview' => true,
+                        'showRemove' => true,
+                        'showCancel' => true,
+                        'browseLabel' => 'Choose files',
+                        'uploadLabel' => 'Upload',
+                        'browseClass' => 'btn btn-outline-primary btn-sm',
+                        'uploadClass' => 'btn btn-primary btn-sm',
+                        'removeClass' => 'btn btn-outline-secondary btn-sm',
+                        'previewFileType' => 'any',
+                        'fileActionSettings' => ['showZoom' => false, 'showDrag' => false],
+                        // uploaded files leave the preview; failed ones stay with their error
+                        'showUploadedThumbs' => false,
+                    ],
+                ]) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php Pjax::begin(['id' => 'attachment-pjax']); ?>
+<div style="overflow-x:auto; width:100%;">
+<?= GridView::widget([
+    'dataProvider'     => $attachmentDataProvider,
+    'hover'            => true,
+    'resizableColumns' => false,
+    'export'           => false,
+    'emptyText'        => 'No documents yet.',
+    'tableOptions'     => ['class' => 'table table-hover table-striped align-middle shadow-sm'],
+    'layout'           => "{items}\n<div class='d-flex justify-content-between align-items-center mt-2'>{pager}{summary}</div>",
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
+        [
+            'attribute' => 'file_name',
+            'format'    => 'raw',
+            'value'     => fn($m) => Html::a(
+                '<i class="fa fa-download"></i> ' . Html::encode($m->file_name),
+                ['downloadattachment', 'id' => $m->id],
+                ['class' => 'text-primary', 'data-pjax' => '0']
+            ),
+        ],
+        [
+            'attribute' => 'description',
+            'value'     => fn($m) => $m->description ?: '-',
+        ],
+        [
+            'attribute'      => 'file_size',
+            'value'          => fn($m) => $m->file_size !== null ? Yii::$app->formatter->asShortSize($m->file_size) : '-',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions'  => ['class' => 'text-white text-right'],
+        ],
+        [
+            'attribute' => 'created_by',
+            'value'     => fn($m) => $m->createdBy?->fullname ?? '-',
+        ],
+        [
+            'attribute' => 'created_at',
+            'value'     => fn($m) => $m->created_at ? Yii::$app->formatter->asDatetime($m->created_at) : '-',
+        ],
+        [
+            'class'          => 'yii\grid\ActionColumn',
+            'header'         => 'Action',
+            'template'       => '{delete}',
+            'visible'        => $canDeleteAttachment,
+            'contentOptions' => ['class' => 'text-center'],
+            'buttons'        => [
+                'delete' => fn($url, $m) => Html::button('<i class="fa fa-trash"></i>', [
+                    'class'     => 'btn btn-sm btn-outline-danger rounded-circle delete-attachment-js',
+                    'data-url'  => Url::to(['deleteattachment', 'id' => $m->id]),
+                    'data-name' => $m->file_name,
+                ]),
+            ],
+        ],
+    ],
+]) ?>
+</div>
+<?php Pjax::end(); ?>
+
 <!-- VIEW MODAL -->
 <div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -498,6 +635,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]) ?>
                 <form id="delete-address-form" method="post">
                     <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->getCsrfToken()) ?>
+                    <?= Html::submitButton('<i class="fa fa-trash"></i> Delete', [
+                        'class' => 'btn btn-danger px-4',
+                        'style' => 'min-width:140px;',
+                    ]) ?>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteAttachmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i> Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                Are you sure want to delete <strong id="delete-attachment-name"></strong>?
+            </div>
+            <div class="modal-footer">
+                <?= Html::button('<i class="fa fa-times"></i> Cancel', [
+                    'class' => 'btn btn-outline-secondary mr-2 px-4',
+                    'data-dismiss' => 'modal',
+                    'style' => 'min-width:140px;',
+                ]) ?>
+                <form id="delete-attachment-form" method="post">
                     <?= Html::submitButton('<i class="fa fa-trash"></i> Delete', [
                         'class' => 'btn btn-danger px-4',
                         'style' => 'min-width:140px;',
@@ -610,6 +774,50 @@ $(document).on('submit', '#delete-address-form', function (e) {
                     '<i class="fa fa-check-circle"></i> ' + (res.message || 'Operation successful.') +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button></div>'
                 );
+            }
+        });
+    }, 'json');
+});
+
+/* =========================================================
+ * DOCUMENTS — UPLOAD (Kartik FileInput) / DELETE
+ * ======================================================= */
+function showAttachmentAlert(type, icon, message) {
+    $('#alert-container').html(
+        '<div class="alert alert-' + type + ' alert-dismissible fade show mt-3">' +
+        '<i class="fa ' + icon + '"></i> ' + message +
+        '<button type="button" class="close" data-dismiss="alert">&times;</button></div>'
+    );
+}
+
+// uploadAsync sends one request per file; refresh the list once the batch is done
+var attachmentsUploaded = 0;
+$('#attachment-file').on('fileuploaded', function () {
+    attachmentsUploaded++;
+});
+$('#attachment-file').on('filebatchuploadcomplete', function () {
+    if (!attachmentsUploaded) return;
+    var n = attachmentsUploaded;
+    attachmentsUploaded = 0;
+    $('#attachment-description').val('');
+    $.pjax.reload({container: '#attachment-pjax', timeout: 500}).done(function () {
+        showAttachmentAlert('success', 'fa-check-circle', n + (n > 1 ? ' documents' : ' document') + ' uploaded.');
+    });
+});
+
+$(document).on('click', '.delete-attachment-js', function () {
+    $('#delete-attachment-name').text($(this).data('name'));
+    $('#delete-attachment-form').attr('action', $(this).data('url'));
+    $('#deleteAttachmentModal').modal('show');
+});
+
+$(document).on('submit', '#delete-attachment-form', function (e) {
+    e.preventDefault();
+    $.post($(this).attr('action'), {_csrf: yii.getCsrfToken()}, function (res) {
+        $('#deleteAttachmentModal').modal('hide');
+        $.pjax.reload({container: '#attachment-pjax', timeout: 500}).done(function () {
+            if (res && res.success) {
+                showAttachmentAlert('success', 'fa-check-circle', res.message);
             }
         });
     }, 'json');

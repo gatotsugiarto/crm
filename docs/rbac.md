@@ -50,7 +50,7 @@ permission.
 | `root` | root | | Everything, through the explicit `can('root')` bypass (no children) |
 | `superAdmin` | Super Admin | ✅ | `adminApplication` + full User, RBAC, User Assignment, Member, Log Activity |
 | `adminApplication` | Admin Application | ✅ | `masterData` (Application Setting, Master Company), `userAccess`, `userAssignment` |
-| `viewApplication` | View Application | ✅ | Read-only: `index` + `view` on every master, productprice, sales and logdata controller |
+| `viewApplication` | View Application | ✅ | Read-only: `index` + `view` on every master, productprice, sales and logdata controller, plus `backend.sales.account.downloadattachment` |
 | `sales` | Sales | ✅ | `viewApplication` + `backend.sales.<14 controllers>.*` (full write on Sales CRM) |
 | `productPricing` | Product-Pricing | ✅ | `viewApplication` + `backend.productprice.<7 controllers>.*` (full write on Product & Pricing) |
 | `staff` | Staff Application | ✅ | Nothing yet (no children) |

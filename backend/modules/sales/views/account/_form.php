@@ -71,7 +71,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                 <?= $form->field($model, 'account_type')->widget(Select2::classname(), [
                     'data' => [ 'Prospect' => 'Prospect', 'Customer' => 'Customer', 'Partner' => 'Partner', 'Reseller' => 'Reseller', 'Vendor' => 'Vendor', ],
                     'options' => [
-                        'placeholder' => 'Account Type',
+                        'placeholder' => 'Customer Type',
                         'id' => 'account_type',
                         'multiple' => false,
                     ],
@@ -86,12 +86,36 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
-                <?= $form->field($model, 'industry')->textInput(['maxlength' => true]) ?>
+                <?php
+                // tags mode accepts free text; keep a saved value that isn't in the suggestion list
+                $segmentData = \common\modules\sales\models\Account::optsCustomerSegment();
+                if ($model->customer_segment && !isset($segmentData[$model->customer_segment])) {
+                    $segmentData[$model->customer_segment] = $model->customer_segment;
+                }
+                ?>
+                <?= $form->field($model, 'customer_segment')->widget(Select2::class, [
+                    'data' => $segmentData,
+                    'options' => [
+                        'placeholder' => 'Customer Segment',
+                        'id' => 'customer_segment',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'tags' => true,
+                    ],
+                ]) ?>
             </div>
 
             <div class="col-md-6">
+                <?= $form->field($model, 'industry')->textInput(['maxlength' => true]) ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
                 <?= $form->field($model, 'tax_number')->textInput(['maxlength' => true]) ?>
             </div>
+            <div class="col-md-6"></div>
         </div>
 
         <div class="row">
@@ -214,6 +238,22 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     ],
                 ]) ?>
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <?= $form->field($model, 'assigned_user_id')->widget(Select2::class, [
+                    'data' => \common\modules\auth\models\User::dropdown() ?? [],
+                    'options' => [
+                        'placeholder' => 'Assigned Sales',
+                        'id' => 'assigned_user_id',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ]) ?>
+            </div>
+            <div class="col-md-6"></div>
         </div>
 
         <div class="row">

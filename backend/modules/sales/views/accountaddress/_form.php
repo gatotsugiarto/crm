@@ -59,7 +59,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
             <div class="col-md-6">
                 <?= $form->field($model, 'address_type')->widget(Select2::classname(), [
-                    'data' => [ 'Invoice' => 'Invoice', 'Branch' => 'Branch', ],
+                    'data' => \common\modules\sales\models\AccountAddress::optsAddressType(),
                     'options' => [
                         'placeholder' => 'Address Type',
                         'id' => 'address_type',

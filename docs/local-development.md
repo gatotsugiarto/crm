@@ -77,6 +77,7 @@ Naming follows Yii's `mYYMMDD_HHMMSS_<description>.php`. Existing ones that matt
 | `m260928_090000_create_sales_role` | `sales` basic role |
 | `m260928_100000_create_product_pricing_role` | `productPricing` basic role |
 | `m260928_120000_fix_duplicate_sales_order_items` | stops quotation approval duplicating SO items |
+| `m260928_130000_account_brd_fields` | address types, customer segment, assigned sales, account documents |
 
 After a migration runs locally, prepare the production hand-off described in
 [deployment-workflow.md](deployment-workflow.md).
