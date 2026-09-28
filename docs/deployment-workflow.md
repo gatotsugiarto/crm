@@ -5,13 +5,25 @@ this app.
 
 ## Code changes
 
-1. **Claude commits + pushes** to `origin/main` — only after the user has explicitly
-   confirmed the change is ready (never push unprompted).
-2. **User logs into the production server and pulls.** The server is reached via SSH
+1. **Claude commits** on `main`, only after the user has confirmed the change is ready.
+2. **The user pushes** from their own terminal: `git push origin main`. Claude's
+   `git push` fails (the sandbox can't read the macOS Keychain credential, and
+   bypassing the sandbox is blocked), so after committing say plainly "committed, not
+   pushed" and hand over the command. GitHub rejects account passwords: the user
+   authenticates as `gatotsugiarto` with a classic personal access token that has
+   the `repo` scope. Wait for the `<old>..<new>  main -> main` line before step 3.
+3. **User logs into the production server and pulls.** The server is reached via SSH
    as `crm@fe1-webapps`, app root at `~/public_html` (same repo layout as local:
-   `backend/`, `common/`, `console/`, `frontend/`, `vendor/`, etc.).
-3. That's it for pure code changes (models, views, controllers, migrations *files*) —
-   no further action needed on Claude's side once pushed.
+   `backend/`, `common/`, `console/`, `frontend/`, `vendor/`, etc.). The server's
+   local branch is named `master` and has no upstream, so pull explicitly:
+   `git pull origin main` (`git pull origin master` fails, because there is no
+   `master` on GitHub). Running `git branch --set-upstream-to=origin/main master`
+   once makes a bare `git pull` work.
+4. That's it for pure code changes (models, views, controllers, migrations *files*) —
+   no further action needed on Claude's side once pulled.
+
+There is also a dev server at `/home/crm-dev/public_html/`. Error traces from it map to
+local paths by dropping that prefix.
 
 ## Database schema changes (migrations)
 
@@ -46,8 +58,22 @@ So the actual flow for any migration:
      `php yii migrate/up` doesn't try to re-apply it later and fail on
      "already exists".
 
-3. Never claim a migration "has been applied to production" — only "applied and
+3. **Save the Option B SQL** as `scripts/production/YYYY-MM-DD_<what>.sql` (local only:
+   `scripts/.gitignore` ignores `*.sql`, so these never reach GitHub or the server), with a header comment saying what it
+   does and which migration/commit it matches. Use `INSERT IGNORE` / idempotent
+   statements and wrap it in a transaction, so re-running it is harmless. Test it
+   on a scratch copy of the relevant local tables that has been reset to
+   production's state (run it twice), not on `commcorp_tb` itself.
+
+4. Never claim a migration "has been applied to production" — only "applied and
    verified locally; here's what to run on production."
+
+5. `php yii migrate/up` on production lists pending migrations and asks for
+   confirmation. Tell the user which migrations they should expect to see, and to
+   answer `no` if the list has anything else.
+
+For refreshing the local DB from a production dump, see
+[local-development.md](local-development.md).
 
 ## Local dev DB
 
