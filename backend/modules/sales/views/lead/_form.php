@@ -180,6 +180,8 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     'data' => \common\modules\master\models\Team::dropdown(),
                     'options' => [
                         'placeholder' => 'Sales Team',
+                        // only a Sales Manager may reassign an existing record
+                        'disabled' => !$isNew && !\common\components\rbac\SalesAccess::canAssign(),
                         // 'id' => 'status_id',
                         'multiple' => false,
                     ],

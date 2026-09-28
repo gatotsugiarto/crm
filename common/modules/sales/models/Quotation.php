@@ -88,6 +88,15 @@ class Quotation extends ActiveRecord
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['opportunity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Opportunity::class, 'targetAttribute' => ['opportunity_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            // Approving creates the Sales Order (DB trigger), so moving into or out of
+            // Approved through the edit form needs the same right as the Approve button.
+            [['status'], function ($attribute) {
+                $old = $this->getOldAttribute('status');
+                $touchesApproved = $this->status !== $old && ($this->status === self::STATUS_APPROVED || $old === self::STATUS_APPROVED);
+                if ($touchesApproved && !\common\components\rbac\SalesAccess::canApproveQuotation()) {
+                    $this->addError($attribute, 'Only a Sales Manager can approve a quotation or change an approved one.');
+                }
+            }],
         ];
     }
 

@@ -127,6 +127,17 @@ discounts and bundle definitions, but no sales screen looks them up yet. See
 
 ## Who can do what
 
-The `sales` role can create, edit and delete everything in this flow, including the
-convert, approve, confirm and mark-sent/paid actions. Other roles see it read-only
-through `viewApplication`. Details in [rbac.md](rbac.md).
+| | Sales | Sales Manager |
+|---|:-:|:-:|
+| Lead, Account, Contact, Address, Activity: create / edit | ✅ | ✅ |
+| Convert lead | ✅ | ✅ |
+| Opportunity + products, Quotation + items (up to Sent) | ✅ | ✅ |
+| Remove opportunity products / quotation items | ✅ | ✅ |
+| Change Sales Team / Assigned Sales on existing records | ❌ | ✅ |
+| Approve quotation (creates the Sales Order, Closed Won) | ❌ | ✅ |
+| Edit Sales Order, Confirm SO (creates the Invoice) | ❌ | ✅ |
+| Edit invoice, Mark Sent / Paid | ❌ (PDF only) | ✅ |
+| Delete leads, accounts, contacts, opportunities, quotations | ❌ | ✅ |
+
+Other roles see the Sales menu read-only through `viewApplication`. Details in
+[rbac.md](rbac.md).

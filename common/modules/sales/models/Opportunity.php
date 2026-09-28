@@ -93,6 +93,9 @@ class Opportunity extends ActiveRecord
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class, 'targetAttribute' => ['contact_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['owner_user_id'], function ($attribute) {
+                \common\components\rbac\SalesAccess::checkAssignment($this, $attribute);
+            }, 'skipOnEmpty' => false],
         ];
     }
 

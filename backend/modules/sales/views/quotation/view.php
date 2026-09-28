@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="d-flex gap-2">
 
-        <?php if ($model->status !== 'Approved'): ?>
+        <?php if ($model->status !== 'Approved' && \common\components\rbac\SalesAccess::canApproveQuotation()): ?>
             <?= Html::a('<i class="fa fa-check"></i> Approve & Generate SO', 
                 ['approve', 'id' => $model->id], [
                 'class' => 'btn btn-success btn-sm',

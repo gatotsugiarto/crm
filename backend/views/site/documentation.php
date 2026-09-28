@@ -421,7 +421,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <h2 id="lead">Lead</h2>
 	  <p class="text-muted">
 	    How to record a new prospect as a Lead, what each field means, what happens when the Lead is converted, and how to complete the Account afterwards.
-	    Menu: <strong>Sales &rarr; Lead Management</strong>. Available to the <strong>Sales</strong> role, Super Admin and root.
+	    Menu: <strong>Sales &rarr; Lead Management</strong>. Available to the <strong>Sales</strong> and <strong>Sales Manager</strong> roles (and root); other roles can view only.
 	  </p>
 
 	  <!-- Add a Lead -->
@@ -483,8 +483,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	      <tbody>
 	        <tr><td>Customer Type</td><td>Stays <em>Prospect</em> after Convert. Change it to <em>Customer</em> once the deal is won (or Partner / Reseller / Vendor if that fits better).</td></tr>
 	        <tr><td>Customer Segment</td><td>Filled from the Lead. Check it, or set it if the Lead didn't have one (e.g. <em>Hospitality</em>).</td></tr>
-	        <tr><td>Sales Team</td><td>Filled from the Lead's Owner User.</td></tr>
-	        <tr><td>Assigned Sales</td><td>The individual salesperson responsible for this account. Can be anyone; it does not have to be a member of the Sales Team.</td></tr>
+	        <tr><td>Sales Team</td><td>Filled from the Lead's Owner User. Only a <strong>Sales Manager</strong> can change it afterwards (the field is locked for the Sales role).</td></tr>
+	        <tr><td>Assigned Sales</td><td>The individual salesperson responsible for this account, set by the <strong>Sales Manager</strong> (locked for the Sales role). Can be anyone; it does not have to be a member of the Sales Team.</td></tr>
 	        <tr><td>Price List</td><td>The price tier for this customer: <em>Corporate Price</em> for companies (hotels, apartments, ISPs), <em>Retail Price</em> for individuals or small shops.
 	            Don't use <em>Promotional Price</em> as a default. For now this is informational only &mdash; prices on Opportunities and Quotations are still typed in by hand.</td></tr>
 	      </tbody>

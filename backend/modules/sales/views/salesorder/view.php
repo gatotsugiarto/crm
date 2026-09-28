@@ -35,7 +35,7 @@ $invoice = $model->invoices[0] ?? null;
 
     <div class="d-flex gap-2">
 
-        <?php if ($model->status === 'Draft'): ?>
+        <?php if ($model->status === 'Draft' && \common\components\rbac\SalesAccess::can('backend.sales.salesorder.confirm')): ?>
             <?= Html::a('<i class="fa fa-check"></i> Confirm SO',
                 ['confirm', 'id' => $model->id], [
                 'class'        => 'btn btn-success btn-sm',

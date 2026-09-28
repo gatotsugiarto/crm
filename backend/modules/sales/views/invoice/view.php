@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="d-flex gap-2">
 
-        <?php if ($model->status === 'Draft'): ?>
+        <?php if ($model->status === 'Draft' && \common\components\rbac\SalesAccess::can('backend.sales.invoice.mark-sent')): ?>
             <?= Html::a('<i class="fa fa-paper-plane"></i> Mark as Sent',
                 ['mark-sent', 'id' => $model->id], [
                 'class'        => 'btn btn-info btn-sm',
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         <?php endif; ?>
 
-        <?php if ($model->status === 'Sent'): ?>
+        <?php if ($model->status === 'Sent' && \common\components\rbac\SalesAccess::can('backend.sales.invoice.mark-paid')): ?>
             <?= Html::a('<i class="fa fa-check-circle"></i> Mark as Paid',
                 ['mark-paid', 'id' => $model->id], [
                 'class'        => 'btn btn-success btn-sm',

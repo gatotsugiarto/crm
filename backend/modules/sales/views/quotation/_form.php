@@ -133,16 +133,21 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     $model->status = 'Draft';
                 }
                 ?>
+                <?php
+                // Approved is set with the Approve button (Sales Manager); others can't pick it
+                // or change an approved quotation's status here.
+                $canApprove = \common\components\rbac\SalesAccess::canApproveQuotation();
+                $statusData = ['Draft' => 'Draft', 'Sent' => 'Sent', 'Approved' => 'Approved', 'Rejected' => 'Rejected'];
+                if (!$canApprove && $model->status !== 'Approved') {
+                    unset($statusData['Approved']);
+                }
+                ?>
                 <?= $form->field($model, 'status')->widget(Select2::classname(), [
-                    'data' => [ 
-                        'Draft' => 'Draft', 
-                        'Sent' => 'Sent', 
-                        'Approved' => 'Approved', 
-                        'Rejected' => 'Rejected', 
-                    ],
+                    'data' => $statusData,
                     'options' => [
                         'placeholder' => 'Status',
                         'id' => 'status',
+                        'disabled' => !$canApprove && $model->status === 'Approved',
                         'multiple' => false,
                     ],
                     'pluginOptions' => [

@@ -51,7 +51,8 @@ permission.
 | `superAdmin` | Super Admin | ✅ | `adminApplication` + full User, RBAC, User Assignment, Member, Log Activity |
 | `adminApplication` | Admin Application | ✅ | `masterData` (Application Setting, Master Company), `userAccess`, `userAssignment` |
 | `viewApplication` | View Application | ✅ | Read-only: `index` + `view` on every master, productprice, sales and logdata controller, plus `backend.sales.account.downloadattachment` |
-| `sales` | Sales | ✅ | `viewApplication` + `backend.sales.<14 controllers>.*` (full write on Sales CRM) |
+| `salesManager` | Sales Manager | ✅ | `viewApplication` + `backend.sales.<14 controllers>.*` (full write on Sales CRM: approve quotation, confirm SO, invoice mark sent/paid, delete) + `backend.sales.assign` |
+| `sales` | Sales | ✅ | `viewApplication` + specific actions: create/update/reactive/nonactive on lead (incl. `convert`), account (incl. upload/download documents), address, contact (incl. set primary), activity, opportunity, opportunity product, quotation, quotation item; `delete` only on opportunity products and quotation items; `invoice.pdf`. Sales orders, invoices and stage history are read-only |
 | `productPricing` | Product-Pricing | ✅ | `viewApplication` + `backend.productprice.<7 controllers>.*` (full write on Product & Pricing) |
 | `staff` | Staff Application | ✅ | Nothing yet (no children) |
 
@@ -61,7 +62,32 @@ Other `type = 1` items (`masterData`, `userAccess`, `userAssignment`, `rbac`,
 not assigned to users directly.
 
 `sales` and `productPricing` were added by migrations
-`m260928_090000_create_sales_role` and `m260928_100000_create_product_pricing_role`.
+`m260928_090000_create_sales_role` and `m260928_100000_create_product_pricing_role`;
+`m260928_160000_sales_manager_role` added `salesManager` and narrowed `sales`.
+
+### Rules below the action level (`common/components/rbac/SalesAccess.php`)
+
+Some limits can't be expressed as "may run this action", because the user is
+allowed to open the edit form. These are checked in the models (and the forms hide
+or lock the matching inputs):
+
+- **Reassigning**: on an existing lead, account or opportunity, only users with
+  `backend.sales.assign` (Sales Manager, root) may change `owner_user_id` (Sales
+  Team) or `assigned_user_id` (Assigned Sales). Setting them while creating a record
+  is open to everyone.
+- **Approving**: moving a quotation into or out of `Approved` through the edit form
+  needs `backend.sales.quotation.approve`, same as the Approve button (approval
+  creates the Sales Order in a DB trigger).
+- The Approve, Confirm SO and Mark Sent/Paid buttons are only shown to users who
+  may use them.
+
+`SalesAccess::can()` mirrors the controllers' check (action permission, its
+controller's `.*`, or `root`) and allows everything outside a web request, so
+console code and migrations are never blocked.
+
+Team leader (`team.user_id`, Master Data → Sales Teams) and the Sales Manager role
+are independent: making someone team leader grants nothing; give them the Sales
+Manager basic role in User Management.
 
 ### Basic role
 
