@@ -36,9 +36,9 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <a class="nav-link text-white fw-bold" href="#productpricing">Product &amp; Pricing</a>
 	        </li>
 
-	    <!-- BUSINESS SCENARIOS -->
+	    <!-- LEAD -->
 	    <li class="nav-item">
-	          <a class="nav-link text-white fw-bold" href="#businessscenarios">Business Scenarios</a>
+	          <a class="nav-link text-white fw-bold" href="#lead">Lead</a>
 	        </li>
 
 	  </ul>
@@ -331,11 +331,9 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <!-- Product Bundle Item -->
 	  <h3 id="pp-bundle">7. Product Bundle Item</h3>
 	  <p>Combines multiple Products into a single sellable bundle (e.g. a starter package), so the bundle can be quoted and sold as one line item instead of adding each Product separately.</p>
-	</section>
 
-	<!-- Business Scenarios Documentation -->
-	<section class="col-md-9">
-	  <h2 id="businessscenarios">Business Scenarios</h2>
+	  <!-- Business Scenarios -->
+	  <h3 id="pp-scenarios">8. Business Scenarios</h3>
 	  <p class="text-muted">
 	    Real-world walkthroughs showing how Product, Price List, Product Price, Product Discount, and Product Bundle Item work together.
 	  </p>
@@ -417,6 +415,212 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  </ul>
 	  <p>To support this, <code>Product Discount</code> would need at minimum: an <code>is_stackable</code> flag, a <code>sequence</code>/priority for the order discounts are applied in, and a place to store the cap (per Price List, per Product, or global). Without a cap, combining too many promotions at once can silently erode margin as more promotions are introduced over time.</p>
 	</section>
+
+	<!-- Lead Documentation -->
+	<section class="col-md-9">
+	  <h2 id="lead">Lead</h2>
+	  <p class="text-muted">
+	    How to record a new prospect as a Lead, what each field means, and what happens when the Lead is converted.
+	    Menu: <strong>Sales &rarr; Lead Management</strong>. Available to the <strong>Sales</strong> role, Super Admin and root.
+	  </p>
+
+	  <!-- Add a Lead -->
+	  <h3 id="lead-add">1. Add a New Lead</h3>
+	  <ol>
+	    <li>Open <strong>Sales</strong> in the sidebar and click the <strong>Lead Management</strong> card.</li>
+	    <li>Click <strong>+ New Data</strong> (top right). The form opens in a pop-up.</li>
+	    <li>Fill in the fields below. Fields marked <span class="text-danger">*</span> are required.</li>
+	    <li>Click <strong>Save</strong>. The pop-up closes, a green message appears, and the Lead shows up in the list.
+	        If a required field is empty, a red message appears under it &mdash; complete it and save again.</li>
+	  </ol>
+
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:820px;">
+	      <thead class="thead-light">
+	        <tr><th>Field</th><th>What to enter</th><th>Example</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>Company Name <span class="text-danger">*</span></td><td>Prospect company name</td><td>PT Contoh Media</td></tr>
+	        <tr><td>Contact Name <span class="text-danger">*</span></td><td>Person you are talking to</td><td>Rina Wijaya</td></tr>
+	        <tr><td>Email <span class="text-danger">*</span></td><td>Contact email</td><td>rina@contoh.co.id</td></tr>
+	        <tr><td>Phone <span class="text-danger">*</span></td><td>Contact phone</td><td>0812-3456-7890</td></tr>
+	        <tr><td>Lead Source <span class="text-danger">*</span></td><td>Where the lead came from (free text)</td><td>Website, Referral, Cold Call, Exhibition, Event</td></tr>
+	        <tr><td>Industry <span class="text-danger">*</span></td><td>Line of business (free text)</td><td>Hospitality, Retail, Technology, Property</td></tr>
+	        <tr><td>Address <span class="text-danger">*</span></td><td>Full street address</td><td>Jl. Sudirman No. 10</td></tr>
+	        <tr><td>Country / Province / City / Postal Code <span class="text-danger">*</span></td><td>Pick from the lists (Master Data)</td><td>INDONESIA / DKI JAKARTA / JAKARTA SELATAN / 12190</td></tr>
+	        <tr><td>Owner User <span class="text-danger">*</span></td><td>The <strong>sales team</strong> handling this lead (a team, not a person)</td><td>Enterprise Sales, SMB Sales</td></tr>
+	        <tr><td>Description</td><td>Optional notes</td><td>Interested in the Hospitality package</td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+
+	  <!-- After saving -->
+	  <h3 id="lead-convert">2. After Saving: Edit and Convert</h3>
+	  <ul>
+	    <li><strong>Edit</strong> &mdash; pencil icon on the Lead's row.</li>
+	    <li><strong>Convert</strong> &mdash; the <i class="fa fa-exchange-alt"></i> icon, once the Lead is qualified. After confirming, the system creates in one step:
+	      <ul>
+	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>),</li>
+	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
+	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; at stage <em>Prospecting</em>, 10% probability, closing in 30 days.</li>
+	      </ul>
+	      A Lead can only be converted once. Continue the work in <strong>Accounts</strong> and <strong>Opportunities</strong>;
+	      the individual salesperson can be set on the Account as <strong>Assigned Sales</strong>.
+	    </li>
+	  </ul>
+
+	  <!-- Notes -->
+	  <h3 id="lead-notes">3. Things to Watch</h3>
+	  <ul>
+	    <li><strong>Location data currently covers Jakarta only</strong> (DKI Jakarta, 5 cities, 10 postal codes). All four location fields are required,
+	        so a Lead from another city can only be saved after that city and postal code are added in <strong>Master Data</strong> (currently root only).</li>
+	    <li><strong>The location lists don't filter each other</strong> &mdash; choosing a city does not narrow the postal codes. Make sure the postal code belongs to the chosen city.</li>
+	    <li><strong>Email format is not checked</strong> &mdash; double-check it before saving.</li>
+	    <li><strong>Lead Source and Industry are free text</strong> &mdash; use consistent spelling (e.g. <em>Website, Referral, Cold Call</em>) so reports group them correctly.</li>
+	  </ul>
+
+	  <!-- Sample data -->
+	  <h3 id="lead-samples">4. Sample Data</h3>
+	  <p>Ready-made dummy Leads for testing or training. Cities and postal codes match the existing master data. Click a value to copy it, then paste it into the form
+	     (<span class="badge badge-info">type</span> = paste into the text field, <span class="badge badge-secondary">select</span> = pick that option in the dropdown).</p>
+
+	  <ul class="nav nav-tabs" role="tablist">
+	    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#lead-sample-1" role="tab">Lead 1 &mdash; Hotel</a></li>
+	    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lead-sample-2" role="tab">Lead 2 &mdash; ISP</a></li>
+	    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lead-sample-3" role="tab">Lead 3 &mdash; Cafe</a></li>
+	    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lead-sample-4" role="tab">Lead 4 &mdash; Retail</a></li>
+	    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lead-sample-5" role="tab">Lead 5 &mdash; Apartment</a></li>
+	  </ul>
+	  <div class="tab-content">
+	    <div class="tab-pane fade show active" id="lead-sample-1" role="tabpanel">
+	      <table class="table table-sm table-bordered mt-2" style="max-width:760px;">
+	        <thead class="thead-light"><tr><th style="width:150px;">Field</th><th style="width:70px;">Input</th><th>Value <small class="text-muted">(click to copy)</small></th></tr></thead>
+	        <tbody>
+	          <tr><td>Company Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">PT Grand Sentosa Hotel</td></tr>
+	          <tr><td>Contact Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Andi Pratama</td></tr>
+	          <tr><td>Email</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">andi.pratama@grandsentosa.co.id</td></tr>
+	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0812-1111-2233</td></tr>
+	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Exhibition</td></tr>
+	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
+	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Jend. Sudirman Kav. 52, Senayan</td></tr>
+	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
+	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
+	          <tr><td>City</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">JAKARTA SELATAN</td></tr>
+	          <tr><td>Postal Code</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">12190</td></tr>
+	          <tr><td>Owner User</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Enterprise Sales</td></tr>
+	          <tr><td>Description</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Butuh IPTV untuk 250 kamar, minta demo bulan depan</td></tr>
+	        </tbody>
+	      </table>
+	    </div>
+	    <div class="tab-pane fade" id="lead-sample-2" role="tabpanel">
+	      <table class="table table-sm table-bordered mt-2" style="max-width:760px;">
+	        <thead class="thead-light"><tr><th style="width:150px;">Field</th><th style="width:70px;">Input</th><th>Value <small class="text-muted">(click to copy)</small></th></tr></thead>
+	        <tbody>
+	          <tr><td>Company Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">PT Jaringan Nusa Link</td></tr>
+	          <tr><td>Contact Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Siti Rahmawati</td></tr>
+	          <tr><td>Email</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">siti.rahma@nusalink.net.id</td></tr>
+	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0813-2222-3344</td></tr>
+	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Referral</td></tr>
+	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Telecommunication</td></tr>
+	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pemuda No. 88, Rawamangun</td></tr>
+	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
+	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
+	          <tr><td>City</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">JAKARTA TIMUR</td></tr>
+	          <tr><td>Postal Code</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">13410</td></tr>
+	          <tr><td>Owner User</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Enterprise Sales</td></tr>
+	          <tr><td>Description</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">ISP lokal, tertarik bundling Vision+ untuk pelanggan broadband</td></tr>
+	        </tbody>
+	      </table>
+	    </div>
+	    <div class="tab-pane fade" id="lead-sample-3" role="tabpanel">
+	      <table class="table table-sm table-bordered mt-2" style="max-width:760px;">
+	        <thead class="thead-light"><tr><th style="width:150px;">Field</th><th style="width:70px;">Input</th><th>Value <small class="text-muted">(click to copy)</small></th></tr></thead>
+	        <tbody>
+	          <tr><td>Company Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">CV Kopi Kita Bersama</td></tr>
+	          <tr><td>Contact Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Budi Hartono</td></tr>
+	          <tr><td>Email</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">budi@kopikita.id</td></tr>
+	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0857-3333-4455</td></tr>
+	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Website</td></tr>
+	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Food &amp; Beverage</td></tr>
+	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Kebon Sirih No. 12, Menteng</td></tr>
+	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
+	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
+	          <tr><td>City</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">JAKARTA PUSAT</td></tr>
+	          <tr><td>Postal Code</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">10110</td></tr>
+	          <tr><td>Owner User</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">SMB Sales</td></tr>
+	          <tr><td>Description</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">5 cabang kafe, butuh konten TV untuk area pelanggan</td></tr>
+	        </tbody>
+	      </table>
+	    </div>
+	    <div class="tab-pane fade" id="lead-sample-4" role="tabpanel">
+	      <table class="table table-sm table-bordered mt-2" style="max-width:760px;">
+	        <thead class="thead-light"><tr><th style="width:150px;">Field</th><th style="width:70px;">Input</th><th>Value <small class="text-muted">(click to copy)</small></th></tr></thead>
+	        <tbody>
+	          <tr><td>Company Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">PT Maju Elektronik Sejahtera</td></tr>
+	          <tr><td>Contact Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Dewi Lestari</td></tr>
+	          <tr><td>Email</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">dewi.lestari@majuelektronik.com</td></tr>
+	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0821-4444-5566</td></tr>
+	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Cold Call</td></tr>
+	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Retail</td></tr>
+	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Daan Mogot Km. 11, Cengkareng</td></tr>
+	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
+	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
+	          <tr><td>City</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">JAKARTA BARAT</td></tr>
+	          <tr><td>Postal Code</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">11220</td></tr>
+	          <tr><td>Owner User</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">SMB Sales</td></tr>
+	          <tr><td>Description</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Toko elektronik, minat jual STB retail (beli putus)</td></tr>
+	        </tbody>
+	      </table>
+	    </div>
+	    <div class="tab-pane fade" id="lead-sample-5" role="tabpanel">
+	      <table class="table table-sm table-bordered mt-2" style="max-width:760px;">
+	        <thead class="thead-light"><tr><th style="width:150px;">Field</th><th style="width:70px;">Input</th><th>Value <small class="text-muted">(click to copy)</small></th></tr></thead>
+	        <tbody>
+	          <tr><td>Company Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">PT Pantai Indah Residence</td></tr>
+	          <tr><td>Contact Name</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Hendra Wijaya</td></tr>
+	          <tr><td>Email</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">hendra.w@pantaiindahresidence.co.id</td></tr>
+	          <tr><td>Phone</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">0811-5555-6677</td></tr>
+	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Event</td></tr>
+	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Property</td></tr>
+	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pantai Indah Kapuk Boulevard No. 1</td></tr>
+	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
+	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
+	          <tr><td>City</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">JAKARTA UTARA</td></tr>
+	          <tr><td>Postal Code</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">14240</td></tr>
+	          <tr><td>Owner User</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Enterprise Sales</td></tr>
+	          <tr><td>Description</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Apartemen 3 tower, butuh layanan TV berlangganan untuk penghuni</td></tr>
+	        </tbody>
+	      </table>
+	    </div>
+	  </div>
+	  <p class="text-muted small">After adding them, try <strong>Convert</strong> on one (e.g. Lead 1) to see its Account, Contact and Opportunity being created.</p>
+	</section>
+
+<style>
+	.lead-copy { cursor: pointer; }
+	.lead-copy:hover { background: #fff8e6; }
+	.lead-copy.copied { background: #e6f4ea; }
+</style>
+<?php
+$this->registerJs(<<<JS
+function leadCopyFallback(text) {
+    var ta = $('<textarea>').val(text).css({position: 'fixed', top: 0, left: 0, opacity: 0}).appendTo('body');
+    ta[0].select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+}
+$(document).on('click', '.lead-copy', function () {
+    var cell = $(this), text = cell.text().trim();
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(function () { leadCopyFallback(text); });
+    } else {
+        leadCopyFallback(text);
+    }
+    cell.addClass('copied');
+    setTimeout(function () { cell.removeClass('copied'); }, 800);
+});
+JS);
+?>
 
   </div>
 </div>
