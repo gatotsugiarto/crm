@@ -420,7 +420,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	<section class="col-md-9">
 	  <h2 id="lead">Lead</h2>
 	  <p class="text-muted">
-	    How to record a new prospect as a Lead, what each field means, and what happens when the Lead is converted.
+	    How to record a new prospect as a Lead, what each field means, what happens when the Lead is converted, and how to complete the Account afterwards.
 	    Menu: <strong>Sales &rarr; Lead Management</strong>. Available to the <strong>Sales</strong> role, Super Admin and root.
 	  </p>
 
@@ -472,18 +472,60 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    </li>
 	  </ul>
 
+	  <!-- Complete the Account -->
+	  <h3 id="lead-account">3. After Converting: Complete the Account</h3>
+	  <p>Open <strong>Sales &rarr; Accounts</strong>, click the company name, then use the pencil icon on the Accounts list to edit it.</p>
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:820px;">
+	      <thead class="thead-light">
+	        <tr><th>Field</th><th>What to do</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>Customer Type</td><td>Stays <em>Prospect</em> after Convert. Change it to <em>Customer</em> once the deal is won (or Partner / Reseller / Vendor if that fits better).</td></tr>
+	        <tr><td>Customer Segment</td><td>Filled from the Lead. Check it, or set it if the Lead didn't have one (e.g. <em>Hospitality</em>).</td></tr>
+	        <tr><td>Sales Team</td><td>Filled from the Lead's Owner User.</td></tr>
+	        <tr><td>Assigned Sales</td><td>The individual salesperson responsible for this account. Can be anyone; it does not have to be a member of the Sales Team.</td></tr>
+	        <tr><td>Price List</td><td>The price tier for this customer: <em>Corporate Price</em> for companies (hotels, apartments, ISPs), <em>Retail Price</em> for individuals or small shops.
+	            Don't use <em>Promotional Price</em> as a default. For now this is informational only &mdash; prices on Opportunities and Quotations are still typed in by hand.</td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+
+	  <p><strong>Account Addresses.</strong> Convert copies the Lead's address into three addresses. Scroll to <strong>Other Address</strong> on the Account detail page and edit any that differ:</p>
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:820px;">
+	      <thead class="thead-light">
+	        <tr><th>Address Type</th><th>Used for</th><th>Example of a different address</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>Billing Address</td><td>Where invoices are sent (finance department)</td><td>Tower A Lt. 2, Finance &ndash; Building Management</td></tr>
+	        <tr><td>Shipping Address</td><td>Where goods are delivered (e.g. STB to the installation site)</td><td>Loading Dock Tower C, attn. Engineering</td></tr>
+	        <tr><td>Office Address</td><td>The customer's office or another branch</td><td>Marketing Gallery, Jl. Pluit Raya No. 25</td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+	  <p>Use <strong>Add Address</strong> for extra branches or delivery sites. The Account's own <em>Main Address</em> stays as entered on the Lead.</p>
+
+	  <ul>
+	    <li><strong>Contacts</strong> &mdash; the Lead's contact is already there as primary. Use <strong>Add Contact</strong> for other people (finance, engineering) and click <em>Yes/No</em> in the <em>Is Primary</em> column to change the main contact.</li>
+	    <li><strong>Documents</strong> &mdash; upload contracts, NPWP, company profile, etc. (several files at once; pdf, Office files, images, zip). Everyone with read access can download them.</li>
+	    <li>Then continue with the <strong>Opportunity</strong> created by Convert: add products, move it through the stages, and create a Quotation.</li>
+	  </ul>
+
 	  <!-- Notes -->
-	  <h3 id="lead-notes">3. Things to Watch</h3>
+	  <h3 id="lead-notes">4. Things to Watch</h3>
 	  <ul>
 	    <li><strong>Location data currently covers Jakarta only</strong> (DKI Jakarta, 5 cities, 10 postal codes). All four location fields are required,
 	        so a Lead from another city can only be saved after that city and postal code are added in <strong>Master Data</strong> (currently root only).</li>
 	    <li><strong>The location lists don't filter each other</strong> &mdash; choosing a city does not narrow the postal codes. Make sure the postal code belongs to the chosen city.</li>
 	    <li><strong>Email format is not checked</strong> &mdash; double-check it before saving.</li>
 	    <li><strong>Lead Source and Industry are free text</strong> &mdash; use consistent spelling (e.g. <em>Website, Referral, Cold Call</em>) so reports group them correctly.</li>
+	    <li><strong>There is no duplicate check</strong> &mdash; entering and converting the same company twice creates two Accounts, two Contacts and two Opportunities.
+	        Search <strong>Lead Management</strong> and <strong>Accounts</strong> for the company name first; if it's already there, edit that record instead.</li>
 	  </ul>
 
 	  <!-- Sample data -->
-	  <h3 id="lead-samples">4. Sample Data</h3>
+	  <h3 id="lead-samples">5. Sample Data</h3>
 	  <p>Ready-made dummy Leads for testing or training. Cities and postal codes match the existing master data. Click a value to copy it, then paste it into the form
 	     (<span class="badge badge-info">type</span> = paste into the text field, <span class="badge badge-secondary">select</span> = pick that option in the dropdown).</p>
 
