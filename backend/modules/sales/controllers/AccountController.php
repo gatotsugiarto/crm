@@ -285,26 +285,43 @@ class AccountController extends Controller
     }
 
     /**
-     * Deletes an existing Account model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Deletes an Account: its contacts, addresses and documents first, then the
+     * account itself (Account::deleteWithDependents). Refused, with the reason,
+     * while it still has opportunities, quotations, sales orders, invoices or
+     * activities.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return \yii\web\Response|array
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->delete();
 
-        if (Yii::$app->request->isAjax) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return [
-                'success' => true,
-                'message' => 'Account deleted successfully.'
-            ];
+        $blocker = $model->deleteBlockers();
+        if ($blocker !== null) {
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ['success' => false, 'message' => $blocker];
+            }
+            Yii::$app->session->setFlash('error', $blocker);
+            return $this->redirect(['index']);
         }
 
-        Yii::$app->session->setFlash('success', 'Account deleted successfully.');
+        $removed = $model->deleteWithDependents();
+        $parts = [];
+        foreach (['contacts' => 'contact', 'addresses' => 'address', 'documents' => 'document'] as $key => $label) {
+            if ($removed[$key] > 0) {
+                $parts[] = $removed[$key] . ' ' . ($removed[$key] === 1 ? $label : $key);
+            }
+        }
+        $message = 'Account "' . $model->name . '" deleted' . ($parts ? ', with ' . implode(', ', $parts) : '') . '.';
+
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ['success' => true, 'message' => $message];
+        }
+
+        Yii::$app->session->setFlash('success', $message);
         return $this->redirect(['index']);
     }
 

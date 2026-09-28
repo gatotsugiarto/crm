@@ -77,6 +77,15 @@ the account's price list"), not as unfinished Product & Pricing work.
   but was validated with `exist` against `user`; it only passed because ids happened
   to overlap.
 
+## Fixed 2026-09-28 (deleting)
+
+- Deleting an account failed with "Request failed" whenever it had contacts (FK
+  RESTRICT), and addresses were left orphaned (FK SET NULL). Account delete now
+  removes contacts, addresses and documents first and explains what blocks it
+  otherwise. The FKs themselves are unchanged, so a raw SQL `DELETE FROM account`
+  still behaves the old way.
+- Converted leads can no longer be deleted (kept as history).
+
 ## Smaller issues
 
 - **`owner_user_id` points to `team.id`**, not `user.id` (lead, account, opportunity;

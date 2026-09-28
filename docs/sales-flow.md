@@ -52,6 +52,11 @@ industry, optional customer segment, location, owner (a team).
   `price_list_id` links a price list, but nothing uses it for pricing yet.
 - **Contact**: people at the account. **Set primary** (`/sales/contact/setprimary`)
   calls `sp_set_primary_contact`, so there is at most one primary contact per account.
+- **Deleting an account** (Sales Manager) first deletes its contacts, addresses and
+  documents (files too), then the account, in one transaction
+  (`Account::deleteWithDependents()`). It is refused, with the reason, while the
+  account still has opportunities, quotations, sales orders, invoices or activities
+  (also ones pointing at its contacts).
 - **Account Address**: extra addresses of type Billing, Shipping or Office.
 - **Documents**: files attached on the Account detail page (Kartik FileInput, several
   files at once, max 10 MB each by default; pdf, office files, images, csv/txt,

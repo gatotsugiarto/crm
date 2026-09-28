@@ -198,6 +198,80 @@ class Account extends ActiveRecord
     }
 
     /**
+     * Why this account can't be deleted, or null if it can. Sales records
+     * (opportunities, quotations, sales orders, invoices, activities, also those
+     * pointing at one of its contacts) must be deleted or moved first; contacts,
+     * addresses and documents go with the account (see deleteWithDependents()).
+     */
+    public function deleteBlockers()
+    {
+        $contactIds = Contact::find()->select('id')->where(['account_id' => $this->id])->column();
+        $counts = [
+            'opportunity' => (int) Opportunity::find()->where(['account_id' => $this->id])
+                ->orFilterWhere(['contact_id' => $contactIds ?: null])->count(),
+            'quotation'   => (int) Quotation::find()->where(['account_id' => $this->id])->count(),
+            'sales order' => (int) SalesOrder::find()->where(['account_id' => $this->id])->count(),
+            'invoice'     => (int) Invoice::find()->where(['account_id' => $this->id])->count(),
+            'activity'    => (int) Activity::find()->where(['account_id' => $this->id])
+                ->orFilterWhere(['contact_id' => $contactIds ?: null])->count(),
+        ];
+
+        $parts = [];
+        foreach ($counts as $label => $n) {
+            if ($n > 0) {
+                $plural = $label === 'activity' ? 'activities' : $label . 's';
+                $parts[] = $n . ' ' . ($n === 1 ? $label : $plural);
+            }
+        }
+        if (!$parts) {
+            return null;
+        }
+
+        $last = array_pop($parts);
+        $list = $parts ? implode(', ', $parts) . ' and ' . $last : $last;
+        return "{$this->name} still has {$list}. Delete or move them first.";
+    }
+
+    /**
+     * Deletes, in one transaction and in this order, the account's contacts,
+     * addresses and documents (files too), then the account itself. Records are
+     * deleted through their models so each deletion lands in the audit log.
+     *
+     * @return array|false ['contacts' => n, 'addresses' => n, 'documents' => n], or false when blocked
+     */
+    public function deleteWithDependents()
+    {
+        if ($this->deleteBlockers() !== null) {
+            return false;
+        }
+
+        $transaction = static::getDb()->beginTransaction();
+        try {
+            $contacts = Contact::find()->where(['account_id' => $this->id])->all();
+            foreach ($contacts as $contact) {
+                $contact->delete();
+            }
+            $addresses = AccountAddress::find()->where(['account_id' => $this->id])->all();
+            foreach ($addresses as $address) {
+                $address->delete();
+            }
+            $documents = AccountAttachment::find()->where(['account_id' => $this->id])->all();
+            foreach ($documents as $document) {
+                $document->delete();
+            }
+            if ($this->delete() === false) {
+                throw new \RuntimeException('Account could not be deleted.');
+            }
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        return ['contacts' => count($contacts), 'addresses' => count($addresses), 'documents' => count($documents)];
+    }
+
+    /**
      * account_attachment rows go with the account (FK ON DELETE CASCADE); remove
      * their files too.
      */

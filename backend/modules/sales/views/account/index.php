@@ -354,6 +354,8 @@ DELETE MODAL
             </div>
             <div class="modal-body">
                 Are you sure want to delete <strong id="delete-modal-name"></strong>?
+                <br><small class="text-muted">Its contacts, addresses and documents will be deleted too.
+                An account that still has opportunities, quotations, sales orders, invoices or activities can't be deleted.</small>
             </div>
             <div class="modal-footer">
                 <?= Html::button('<i class="fa fa-times"></i> Cancel', [
@@ -488,6 +490,14 @@ $(document).on('submit', '#delete-modal-form', function(e) {
                            '<span aria-hidden="true">&times;</span></button>' +
                            '</div>';
                 $('#alert-container').html(html);
+            } else if (res && res.message) {
+                $('#alert-container').html(
+                    '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">' +
+                    '<i class="fa fa-ban"></i> ' + $('<div>').text(res.message).html() +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button>' +
+                    '</div>'
+                );
             }
         });
     }, 'json').fail(function(xhr) {
