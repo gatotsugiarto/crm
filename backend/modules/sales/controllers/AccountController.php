@@ -285,10 +285,10 @@ class AccountController extends Controller
     }
 
     /**
-     * Deletes an Account: its contacts, addresses and documents first, then the
-     * account itself (Account::deleteWithDependents). Refused, with the reason,
-     * while it still has opportunities, quotations, sales orders, invoices or
-     * activities.
+     * Deletes an Account: its untouched opportunities, contacts, addresses and
+     * documents first, then the account itself (Account::deleteWithDependents).
+     * Refused, with the reason, while it still has opportunities in progress,
+     * quotations, sales orders, invoices or activities.
      * @param int $id ID
      * @return \yii\web\Response|array
      * @throws NotFoundHttpException if the model cannot be found
@@ -309,7 +309,7 @@ class AccountController extends Controller
 
         $removed = $model->deleteWithDependents();
         $parts = [];
-        foreach (['contacts' => 'contact', 'addresses' => 'address', 'documents' => 'document'] as $key => $label) {
+        foreach (['opportunities' => 'opportunity', 'contacts' => 'contact', 'addresses' => 'address', 'documents' => 'document'] as $key => $label) {
             if ($removed[$key] > 0) {
                 $parts[] = $removed[$key] . ' ' . ($removed[$key] === 1 ? $label : $key);
             }

@@ -354,8 +354,9 @@ DELETE MODAL
             </div>
             <div class="modal-body">
                 Are you sure want to delete <strong id="delete-modal-name"></strong>?
-                <br><small class="text-muted">Its contacts, addresses and documents will be deleted too.
-                An account that still has opportunities, quotations, sales orders, invoices or activities can't be deleted.</small>
+                <br><small class="text-muted">Its contacts, addresses, documents and untouched opportunities (still Prospecting,
+                no products, quotations or activities) will be deleted too. An account with an opportunity in progress, quotations,
+                sales orders, invoices or activities can't be deleted.</small>
             </div>
             <div class="modal-footer">
                 <?= Html::button('<i class="fa fa-times"></i> Cancel', [

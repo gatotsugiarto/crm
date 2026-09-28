@@ -515,6 +515,9 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    <li><strong>Contacts</strong> &mdash; the Lead's contact is already there as primary. Use <strong>Add Contact</strong> for other people (finance, engineering) and click <em>Yes/No</em> in the <em>Is Primary</em> column to change the main contact.</li>
 	    <li><strong>Documents</strong> &mdash; upload contracts, NPWP, company profile, etc. (several files at once; pdf, Office files, images, zip). Everyone with read access can download them.</li>
 	    <li>Then continue with the <strong>Opportunity</strong> created by Convert: add products, move it through the stages, and create a Quotation.</li>
+	    <li><strong>Deleting an Account</strong> (Sales Manager) also deletes its contacts, addresses, documents and any opportunity that was never worked on
+	        (still Prospecting, no products, quotations or activities). If it has an opportunity in progress or closed, quotations, sales orders,
+	        invoices or activities, the delete is refused and the message says what is left.</li>
 	  </ul>
 
 	  <!-- Notes -->

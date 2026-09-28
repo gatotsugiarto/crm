@@ -198,25 +198,57 @@ class Account extends ActiveRecord
     }
 
     /**
-     * Why this account can't be deleted, or null if it can. Sales records
-     * (opportunities, quotations, sales orders, invoices, activities, also those
-     * pointing at one of its contacts) must be deleted or moved first; contacts,
-     * addresses and documents go with the account (see deleteWithDependents()).
+     * Opportunities of this account that were never worked on, like the one
+     * Convert creates: still Prospecting, and no products, quotations or
+     * activities. These go with the account; any other opportunity blocks it.
+     *
+     * @return Opportunity[]
+     */
+    public function untouchedOpportunities()
+    {
+        return Opportunity::find()->alias('o')
+            ->where(['o.account_id' => $this->id, 'o.stage' => 'Prospecting'])
+            ->andWhere(['not exists', OpportunityProduct::find()->where('opportunity_id = o.id')])
+            ->andWhere(['not exists', Quotation::find()->where('opportunity_id = o.id')])
+            ->andWhere(['not exists', Activity::find()->where('opportunity_id = o.id')])
+            ->all();
+    }
+
+    /**
+     * Why this account can't be deleted, or null if it can. Opportunities in
+     * progress, quotations, sales orders, invoices and activities (also those
+     * pointing at one of its contacts) must be deleted or moved first; untouched
+     * opportunities, contacts, addresses and documents go with the account (see
+     * deleteWithDependents()).
      */
     public function deleteBlockers()
     {
         $contactIds = Contact::find()->select('id')->where(['account_id' => $this->id])->column();
+        $untouchedIds = array_map(fn($o) => $o->id, $this->untouchedOpportunities());
+
+        $parts = [];
+
+        $inProgress = Opportunity::find()->where(['account_id' => $this->id])
+            ->orFilterWhere(['contact_id' => $contactIds ?: null])
+            ->andFilterWhere(['not in', 'id', $untouchedIds ?: null])
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
+        if (count($inProgress) === 1) {
+            $o = $inProgress[0];
+            $kind = in_array($o->stage, ['Closed Won', 'Closed Lost'], true) ? 'closed opportunity' : 'opportunity in progress';
+            $parts[] = sprintf('1 %s ("%s", stage %s, Rp %s)',
+                $kind, $o->name, $o->stage, number_format((float) $o->amount, 0, ',', '.'));
+        } elseif ($inProgress) {
+            $parts[] = count($inProgress) . ' opportunities that are in progress or closed';
+        }
+
         $counts = [
-            'opportunity' => (int) Opportunity::find()->where(['account_id' => $this->id])
-                ->orFilterWhere(['contact_id' => $contactIds ?: null])->count(),
             'quotation'   => (int) Quotation::find()->where(['account_id' => $this->id])->count(),
             'sales order' => (int) SalesOrder::find()->where(['account_id' => $this->id])->count(),
             'invoice'     => (int) Invoice::find()->where(['account_id' => $this->id])->count(),
             'activity'    => (int) Activity::find()->where(['account_id' => $this->id])
                 ->orFilterWhere(['contact_id' => $contactIds ?: null])->count(),
         ];
-
-        $parts = [];
         foreach ($counts as $label => $n) {
             if ($n > 0) {
                 $plural = $label === 'activity' ? 'activities' : $label . 's';
@@ -229,15 +261,17 @@ class Account extends ActiveRecord
 
         $last = array_pop($parts);
         $list = $parts ? implode(', ', $parts) . ' and ' . $last : $last;
-        return "{$this->name} still has {$list}. Delete or move them first.";
+        $it = (count($parts) === 0 && (count($inProgress) === 1 || array_sum($counts) === 1)) ? 'it' : 'them';
+        return "{$this->name} still has {$list}. Delete or move {$it} first.";
     }
 
     /**
-     * Deletes, in one transaction and in this order, the account's contacts,
+     * Deletes, in one transaction and in this order, the account's untouched
+     * opportunities (their stage history goes by FK cascade), contacts,
      * addresses and documents (files too), then the account itself. Records are
      * deleted through their models so each deletion lands in the audit log.
      *
-     * @return array|false ['contacts' => n, 'addresses' => n, 'documents' => n], or false when blocked
+     * @return array|false counts per kind ('opportunities', 'contacts', 'addresses', 'documents'), or false when blocked
      */
     public function deleteWithDependents()
     {
@@ -247,6 +281,10 @@ class Account extends ActiveRecord
 
         $transaction = static::getDb()->beginTransaction();
         try {
+            $opportunities = $this->untouchedOpportunities();
+            foreach ($opportunities as $opportunity) {
+                $opportunity->delete();
+            }
             $contacts = Contact::find()->where(['account_id' => $this->id])->all();
             foreach ($contacts as $contact) {
                 $contact->delete();
@@ -268,7 +306,12 @@ class Account extends ActiveRecord
             throw $e;
         }
 
-        return ['contacts' => count($contacts), 'addresses' => count($addresses), 'documents' => count($documents)];
+        return [
+            'opportunities' => count($opportunities),
+            'contacts'      => count($contacts),
+            'addresses'     => count($addresses),
+            'documents'     => count($documents),
+        ];
     }
 
     /**
