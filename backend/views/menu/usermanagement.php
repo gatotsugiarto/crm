@@ -60,7 +60,7 @@ $baseUrl = Yii::$app->request->baseUrl;
             <i class="nc-icon nc-support-17"></i>
           </div>
           <div class="menu-title fw-bold text-primary">Assignments</div>
-          <div class="menu-desc text-muted">Navigate to user/member</div>
+          <div class="menu-desc text-muted">Navigate to users</div>
         </div>
       </a>
     </div>
@@ -96,20 +96,6 @@ $baseUrl = Yii::$app->request->baseUrl;
     </div>
     <?php } ?>
 
-    <!-- members -->
-    <?php if (\Yii::$app->user->can('backend.auth.member.index') || \Yii::$app->user->can("root")) { ?>
-    <div class="col-6 col-md-4 col-lg-3 mb-4">
-      <a href="<?=$baseUrl ?>/auth/member/index" class="text-decoration-none">
-        <div class="card menu-card text-center p-4 h-100">
-          <div class="menu-icon mb-2">
-            <i class="nc-icon nc-circle-09"></i>
-          </div>
-          <div class="menu-title fw-bold text-primary">Members Access</div>
-          <div class="menu-desc text-muted">List of frontend/client users</div>
-        </div>
-      </a>
-    </div>
-    <?php } ?>
 
   </div>
 </div>

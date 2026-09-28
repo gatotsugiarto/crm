@@ -48,8 +48,8 @@ permission.
 | Role (`name`) | Shown as | Basic role | What it grants |
 |---|---|---|---|
 | `root` | root | | Everything, through the explicit `can('root')` bypass (no children) |
-| `superAdmin` | Super Admin | ✅ | `adminApplication` + full User, RBAC, User Assignment, Member, Log Activity |
-| `adminApplication` | Admin Application | ✅ | `masterData` (Application Setting, Master Company), `userAccess`, `userAssignment` |
+| `superAdmin` | Super Admin | ✅ | `adminApplication` + full User, RBAC, User Assignment, Log Activity (no write access to Sales) |
+| `adminApplication` | Admin Application | ✅ | `masterData` (Application Setting), `userAccess`, `userAssignment` |
 | `viewApplication` | View Application | ✅ | Read-only: `index` + `view` on every master, productprice, sales and logdata controller, plus `backend.sales.account.downloadattachment` |
 | `salesManager` | Sales Manager | ✅ | `viewApplication` + `backend.sales.<14 controllers>.*` (full write on Sales CRM: approve quotation, confirm SO, invoice mark sent/paid, delete) + `backend.sales.assign` |
 | `sales` | Sales | ✅ | `viewApplication` + specific actions: create/update/reactive/nonactive on lead (incl. `convert`), account (incl. upload/download documents), address, contact (incl. set primary), activity, opportunity, opportunity product, quotation, quotation item; `delete` only on opportunity products and quotation items; `invoice.pdf`. Sales orders, invoices and stage history are read-only |
@@ -57,8 +57,7 @@ permission.
 | `staff` | Staff Application | ✅ | Nothing yet (no children) |
 
 Other `type = 1` items (`masterData`, `userAccess`, `userAssignment`, `rbac`,
-`logActivity`, `memberAccess`, `applicationSetting`, `masterCompany`,
-`userManagement`, `opportunityproduct`) are permission groups used as building blocks,
+`logActivity`, `applicationSetting`, `userManagement`, `opportunityproduct`) are permission groups used as building blocks,
 not assigned to users directly.
 
 `sales` and `productPricing` were added by migrations
@@ -93,9 +92,10 @@ or lock the matching inputs):
 controller's `.*`, or `root`) and allows everything outside a web request, so
 console code and migrations are never blocked.
 
-Team leader (`team.user_id`, Master Data → Sales Teams) and the Sales Manager role
-are independent: making someone team leader grants nothing; give them the Sales
-Manager basic role in User Management.
+The **Team Leader** (`team.user_id`, Master Data → Sales Teams) and the **Sales
+Manager** role are independent: being Team Leader grants nothing. The Sales Manager
+role works across all teams (lead team checks and reassigning), so a Sales Manager
+can leave Sales Team empty; a user can be Team Leader of only one active team.
 
 ### Basic role
 

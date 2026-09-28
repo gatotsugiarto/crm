@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use common\models\LoginForm;
 use common\models\User;
-use common\models\Member;
 use common\modules\master\models\ApplicationSetting;
 
 use Yii;
@@ -28,7 +27,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'verify', 'memberverify'],
+                        'actions' => ['login', 'error', 'verify'],
                         'allow' => true,
                     ],
                     [
@@ -137,22 +136,6 @@ class SiteController extends Controller
         return $this->redirect(['site/login']);
     }
 
-    public function actionMemberverify($token)
-    {
-        $member = Member::findOne(['verification_token' => $token, 'status' => [0,9]]);
-
-        if ($member) {
-            $member->status = 1;
-            $member->verification_token = null;
-            $member->save(false);
-            Yii::$app->session->setFlash('success', 'Akun Anda telah aktif.');
-        } else {
-            Yii::$app->session->setFlash('error', 'Token tidak valid atau akun sudah aktif.');
-        }
-
-        // return $this->redirect(['site/login']);
-        return $this->redirect('http://localhost:8085/site/login');
-    }
 
     public function actionDocumentation()
     {

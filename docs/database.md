@@ -73,8 +73,8 @@ on opportunity/quotation items are entered manually (see
 | `migration` | Yii migration history |
 
 The migrations for `member`, `company` and `client` exist in `console/migrations`,
-but **those tables do not exist** in production or local. The Master Company and
-Member screens will error if opened.
+but those tables do not exist in production or local; the screens that used them
+were removed (see known-issues.md #5).
 
 ## Stored procedures
 

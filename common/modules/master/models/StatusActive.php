@@ -11,7 +11,6 @@ use Yii;
  * @property string $status_active
  *
  * @property Client[] $clients
- * @property Company[] $companies
  */
 class StatusActive extends \yii\db\ActiveRecord
 {
@@ -57,15 +56,6 @@ class StatusActive extends \yii\db\ActiveRecord
         return $this->hasMany(Client::class, ['status_id' => 'id']);
     }
 
-    /**
-     * Gets query for [[Companies]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCompanies()
-    {
-        return $this->hasMany(Company::class, ['status_id' => 'id']);
-    }
 
     public static function dropdown()
     {
