@@ -25,6 +25,43 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 </div>
 
+<?php
+$quotations = $model->getQuotations()->orderBy(['id' => SORT_DESC])->all();
+$canCreateQuotation = \common\components\rbac\SalesAccess::can('backend.sales.quotation.create-from-opportunity')
+    && !in_array($model->stage, ['Closed Won', 'Closed Lost'], true);
+$quotationBlocker = $canCreateQuotation ? $model->quotationBlocker() : null;
+?>
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <div class="small">
+        <span class="text-secondary">Quotations:</span>
+        <?php if ($quotations): ?>
+            <?php foreach ($quotations as $q): ?>
+                <?= Html::a(Html::encode($q->quotation_number) . ' <span class="badge badge-light">' . Html::encode($q->status) . '</span>',
+                    ['/sales/quotation/view', 'id' => $q->id], ['class' => 'mr-2']) ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <span class="text-muted">none yet</span>
+        <?php endif; ?>
+    </div>
+    <?php if ($canCreateQuotation): ?>
+        <?php if ($quotationBlocker === null): ?>
+            <?= Html::a('<i class="fa fa-file-invoice"></i> Create Quotation',
+                ['/sales/quotation/create-from-opportunity', 'id' => $model->id], [
+                'class'        => 'btn btn-success btn-sm px-3 rounded-pill shadow-sm',
+                'data-method'  => 'post',
+                'data-confirm' => 'Create a Draft quotation with this opportunity\'s products?',
+            ]) ?>
+        <?php else: ?>
+            <span title="<?= Html::encode($quotationBlocker) ?>" style="cursor: not-allowed;">
+                <?= Html::button('<i class="fa fa-file-invoice"></i> Create Quotation', [
+                    'class' => 'btn btn-outline-secondary btn-sm px-3 rounded-pill', 'disabled' => true, 'style' => 'pointer-events: none;',
+                ]) ?>
+            </span>
+            <small class="text-muted ml-2"><?= Html::encode($quotationBlocker) ?></small>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
 <div class="card shadow-sm border-0 rounded-4">
     <div class="card-body">
 

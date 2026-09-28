@@ -87,6 +87,15 @@ A potential deal with an account: stage, amount, close date, probability.
 A formal offer to the account, linked to an opportunity. Status: Draft → Sent →
 Approved / Rejected.
 
+- **Create Quotation** (button on the opportunity view,
+  `QuotationController::actionCreateFromOpportunity` → `Opportunity::createQuotation()`):
+  makes a Draft quotation for the opportunity's account, dated today, valid 30 days,
+  with one item per active opportunity product (qty, price, discount), then opens
+  it. Refused while the opportunity has no products or already has an approved
+  quotation; the button is hidden on Closed Won / Closed Lost opportunities. The
+  opportunity view lists its quotations. Several quotations per opportunity are
+  allowed (revisions). Creating a quotation moves the opportunity to Proposal.
+
 - **Quotation Items**: triggers compute each line's `total = qty*price - discount`
   and keep `quotation.total_amount = SUM(total)`.
 - **Status → Sent** (trigger `trg_quotation_after_update_status`): the opportunity

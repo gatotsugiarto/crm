@@ -194,6 +194,80 @@ class Opportunity extends ActiveRecord
     }
 
     /**
+     * Why a quotation can't be created from this opportunity yet, or null.
+     */
+    public function quotationBlocker()
+    {
+        $approved = $this->getQuotations()->where(['status' => Quotation::STATUS_APPROVED])->one();
+        if ($approved !== null) {
+            return "This opportunity already has an approved quotation ({$approved->quotation_number}).";
+        }
+        if (!$this->getOpportunityProducts()->andWhere(['or', ['status_id' => 1], ['status_id' => null]])->exists()) {
+            return 'Add products to this opportunity first; they are copied into the quotation.';
+        }
+        return null;
+    }
+
+    /**
+     * Creates a Draft quotation for this opportunity's account, dated today and
+     * valid for 30 days, with one item per active opportunity product (qty,
+     * price, discount; totals are computed by the quotation_item triggers).
+     * Creating a quotation moves the opportunity to Proposal (Quotation::afterSave).
+     *
+     * @return Quotation
+     * @throws \RuntimeException with quotationBlocker()'s reason
+     */
+    public function createQuotation()
+    {
+        $blocker = $this->quotationBlocker();
+        if ($blocker !== null) {
+            throw new \RuntimeException($blocker);
+        }
+
+        $transaction = static::getDb()->beginTransaction();
+        try {
+            $quotation = new Quotation([
+                'account_id'     => $this->account_id,
+                'opportunity_id' => $this->id,
+                'quotation_date' => date('Y-m-d'),
+                'valid_until'    => date('Y-m-d', strtotime('+30 days')),
+                'status'         => Quotation::STATUS_DRAFT,
+                'status_id'      => 1,
+            ]);
+            $quotation->detachBehavior('tokenProtection');
+            if (!$quotation->save()) {
+                throw new \RuntimeException('Quotation could not be created: ' . implode(' ', $quotation->getFirstErrors()));
+            }
+
+            $products = $this->getOpportunityProducts()
+                ->andWhere(['or', ['status_id' => 1], ['status_id' => null]])
+                ->orderBy(['id' => SORT_ASC])->all();
+            foreach ($products as $product) {
+                $item = new QuotationItem([
+                    'quotation_id' => $quotation->id,
+                    'product_id'   => $product->product_id,
+                    'qty'          => $product->qty,
+                    'price'        => $product->price,
+                    'discount'     => $product->discount,
+                    'status_id'    => 1,
+                ]);
+                $item->detachBehavior('tokenProtection');
+                if (!$item->save()) {
+                    throw new \RuntimeException('Quotation item could not be created: ' . implode(' ', $item->getFirstErrors()));
+                }
+            }
+
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        $quotation->refresh();
+        return $quotation;
+    }
+
+    /**
      * Gets query for [[Status]].
      *
      * @return \yii\db\ActiveQuery

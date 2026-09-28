@@ -8,6 +8,7 @@ use Yii;
 use common\modules\sales\models\Quotation;
 use common\modules\sales\models\QuotationSearch;
 use common\modules\sales\models\QuotationItemSearch;
+use common\modules\sales\models\Opportunity;
 
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -329,6 +330,34 @@ class QuotationController extends Controller
         return $this->redirect(['index']);
     }
     */
+
+    /**
+     * Creates a Draft quotation from an opportunity, copying its products as
+     * items (Opportunity::createQuotation), then opens it. POST, from the
+     * "Create Quotation" button on the opportunity view.
+     * @param int $id opportunity id
+     */
+    public function actionCreateFromOpportunity($id)
+    {
+        if (!Yii::$app->request->isPost) {
+            throw new \yii\web\MethodNotAllowedHttpException('Use the Create Quotation button.');
+        }
+        $opportunity = Opportunity::findOne($id);
+        if ($opportunity === null) {
+            throw new NotFoundHttpException('The requested opportunity does not exist.');
+        }
+
+        try {
+            $quotation = $opportunity->createQuotation();
+        } catch (\RuntimeException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->redirect(['/sales/opportunity/view', 'id' => $opportunity->id]);
+        }
+
+        $count = $quotation->getQuotationItems()->count();
+        Yii::$app->session->setFlash('success', "Quotation {$quotation->quotation_number} created with {$count} " . ($count == 1 ? 'item' : 'items') . ' from the opportunity. Review it, then set it to Sent.');
+        return $this->redirect(['view', 'id' => $quotation->id]);
+    }
 
     /**
      * Finds the Quotation model based on its primary key value.
