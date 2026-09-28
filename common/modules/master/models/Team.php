@@ -76,6 +76,21 @@ class Team extends ActiveRecord
             [['description'], 'string', 'max' => 255],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            // A user belongs to one team (user.team_id), and the DB trigger moves the
+            // Team Leader into the team they lead, so leading two teams would silently
+            // pull them out of the first one.
+            [['user_id'], function ($attribute) {
+                if (!$this->isNewRecord && !$this->isAttributeChanged('user_id', false)) {
+                    return;
+                }
+                $other = static::find()
+                    ->where(['user_id' => $this->user_id, 'status_id' => 1])
+                    ->andFilterWhere(['<>', 'id', $this->id])
+                    ->one();
+                if ($other !== null) {
+                    $this->addError($attribute, "This user is already the Team Leader of {$other->name}. A user can lead only one team.");
+                }
+            }],
         ];
     }
 

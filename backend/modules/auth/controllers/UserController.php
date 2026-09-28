@@ -92,6 +92,7 @@ class UserController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
                 if ($model->validate() && $model->save()) {
+                    $model->saveRole($model->role);
                     $model->getBehavior('tokenProtection')->consumeToken();
 
                     return [
@@ -118,6 +119,7 @@ class UserController extends Controller
         // === Fallback Non-AJAX ===
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
+                $model->saveRole($model->role);
                 $model->getBehavior('tokenProtection')->consumeToken();
                 Yii::$app->session->setFlash('success', 'User created successfully.');
                 return $this->redirect(['index']);
