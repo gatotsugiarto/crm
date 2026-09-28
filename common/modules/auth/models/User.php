@@ -84,7 +84,9 @@ class User extends \yii\db\ActiveRecord
      */
     public function validateManagerTeam($attribute)
     {
-        if ($this->isNewRecord) {
+        // Only when the team is being changed, so older data where a Team Leader
+        // isn't a member of their team doesn't block editing other fields.
+        if ($this->isNewRecord || !$this->isAttributeChanged('team_id', false)) {
             return;
         }
         $managed = \common\modules\master\models\Team::find()
