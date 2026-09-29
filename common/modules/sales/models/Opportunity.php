@@ -93,6 +93,7 @@ class Opportunity extends ActiveRecord
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class, 'targetAttribute' => ['contact_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['amount'], 'validateAmountFromProducts'],
             [['owner_user_id'], function ($attribute) {
                 \common\components\rbac\SalesAccess::checkAssignment($this, $attribute);
             }, 'skipOnEmpty' => false],
@@ -188,6 +189,19 @@ class Opportunity extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+    /**
+     * Inline-validator body for amount: once the opportunity has products, the
+     * amount is their total (kept by the opportunity_product triggers), so it
+     * can't be typed in.
+     */
+    public function validateAmountFromProducts($attribute)
+    {
+        if (!$this->isNewRecord && $this->isAttributeChanged('amount', false)
+            && $this->getOpportunityProducts()->exists()) {
+            $this->addError($attribute, 'Amount is calculated from the products; change the products instead.');
+        }
+    }
+
     public function getQuotations()
     {
         return $this->hasMany(Quotation::class, ['opportunity_id' => 'id']);

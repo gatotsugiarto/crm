@@ -125,13 +125,23 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             </div>
 
             <div class="col-md-6">
+                <?php
+                // Amount is an estimate until products are added; from then on the
+                // opportunity_product triggers keep it equal to the products' total.
+                $amountFromProducts = !$isNew && $model->getOpportunityProducts()->exists();
+                ?>
                 <?= $form->field($model, 'amount')->widget(NumberControl::class, [
                     'maskedInputOptions' => ['allowMinus' => false],
                     'options' => [
                         'class'       => 'form-control',
-                        'placeholder' => 'Amount',
+                        'placeholder' => 'Estimated amount',
+                        'disabled'    => $amountFromProducts,
                     ],
-                ]) ?>
+                    'displayOptions' => [
+                        'class'    => 'form-control',
+                        'disabled' => $amountFromProducts,
+                    ],
+                ])->hint($amountFromProducts ? 'Calculated from products.' : 'Estimate; replaced by the products\' total once products are added.') ?>
             </div>
         </div>
 
@@ -141,7 +151,12 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     'type'          => DateControl::FORMAT_DATE,
                     'saveFormat'    => 'php:Y-m-d',
                     'displayFormat' => 'php:d-m-Y',
-                    'options'       => ['placeholder' => 'Close Date'],
+                    // the module has autoWidget off, so name the picker explicitly
+                    'widgetClass'   => DatePicker::class,
+                    'widgetOptions' => [
+                        'options'       => ['placeholder' => 'Close Date'],
+                        'pluginOptions' => ['autoclose' => true, 'todayHighlight' => true],
+                    ],
                 ]) ?>
             </div>
 

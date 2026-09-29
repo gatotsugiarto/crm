@@ -78,6 +78,10 @@ A potential deal with an account: stage, amount, close date, probability.
 - **Stages**: Prospecting → Qualification → Proposal → Negotiation → Closed Won /
   Closed Lost. Every stage change (including the initial one) is written to
   `opportunity_stage_history` by triggers, and the Stage History menu shows it.
+- **Amount**: an estimate typed in while the opportunity has no products; once it
+  has products the field is locked in the form ("Calculated from products") and the
+  model rejects manual changes, because the triggers keep it equal to the products'
+  total.
 - **Opportunity Products**: products and quantities being discussed. `total` is a
   generated column (`qty*price - discount`), and triggers keep
   `opportunity.amount = SUM(total)` whenever a product line is added, changed or
@@ -96,7 +100,8 @@ Approved / Rejected.
   it. Refused while the opportunity has no products or already has an approved
   quotation; the button is hidden on Closed Won / Closed Lost opportunities. The
   opportunity view lists its quotations. Several quotations per opportunity are
-  allowed (revisions). Creating a quotation moves the opportunity to Proposal.
+  allowed (revisions). Creating a quotation moves the opportunity to Proposal and
+  raises its probability to 50% if it was lower (`Quotation::setOpportunityProposal`).
 
 - **Quotation Items**: triggers compute each line's `total = qty*price - discount`
   and keep `quotation.total_amount = SUM(total)`.

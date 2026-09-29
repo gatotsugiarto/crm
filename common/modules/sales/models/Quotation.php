@@ -175,6 +175,10 @@ class Quotation extends ActiveRecord
 
         if ($opportunity && $opportunity->stage !== 'Closed Won') {
             $opportunity->stage = 'Proposal';
+            // match the Proposal stage (the DB trigger does the same on Sent)
+            if ((int) $opportunity->probability < 50) {
+                $opportunity->probability = 50;
+            }
             $opportunity->save(false);
         }
     }
