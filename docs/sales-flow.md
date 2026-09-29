@@ -111,8 +111,9 @@ Approved / Rejected.
   the copies can be edited per quotation. Payment method defaults from the
   recurring products' revenue model (Bulanan / Tahunan (di depan)).
 - **Signer** ("Diajukan Oleh"): free-text name and job title, default set in Layout
-  Quotation and copied into each new quotation (editable there). When empty, the
-  PDF uses the account's Assigned Sales name and user *Job Title*.
+  Quotation and copied into each new quotation (editable there). The PDF uses the
+  quotation's signer, else the current Layout Quotation default, else the
+  account's Assigned Sales name and user *Job Title*.
 - Product *Package Info* (e.g. "101 Channel Terlampir") is printed on the SPH.
 
 - **Create Quotation** (button on the opportunity view,
