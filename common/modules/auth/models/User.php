@@ -74,6 +74,8 @@ class User extends \yii\db\ActiveRecord
             [['team_id'], 'exist', 'skipOnError' => true, 'targetClass' => \common\modules\master\models\Team::class, 'targetAttribute' => ['team_id' => 'id']],
             [['team_id'], 'validateManagerTeam', 'skipOnEmpty' => false],
 
+            [['job_title'], 'default', 'value' => null],
+            [['job_title'], 'string', 'max' => 100],
             [['form_token'], 'safe'],
         ];
     }
@@ -103,6 +105,7 @@ class User extends \yii\db\ActiveRecord
             'id' => 'ID',
             'username' => 'Username',
             'fullname' => 'Fullname',
+            'job_title' => 'Job Title',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password',
             'password_reset_token' => 'Password Reset Token',

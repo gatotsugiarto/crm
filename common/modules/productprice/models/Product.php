@@ -78,7 +78,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'category_id', 'uom_id', 'description', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
+            [['code', 'category_id', 'uom_id', 'description', 'package_info', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['type'], 'default', 'value' => 'Service'],
             [['bundle_price_type'], 'default', 'value' => 'fixed'],
             [['base_price'], 'default', 'value' => 0.00],
@@ -86,6 +86,7 @@ class Product extends ActiveRecord
             [['name'], 'required'],
             [['category_id', 'parent_product_id', 'uom_id', 'is_bundle_expand', 'status_id', 'created_by', 'updated_by'], 'integer'],
             [['type', 'bundle_price_type', 'description'], 'string'],
+            [['package_info'], 'string', 'max' => 255],
             [['base_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 50],
@@ -119,6 +120,7 @@ class Product extends ActiveRecord
             'revenue_model' => 'Revenue Model',
             'bundle_price_type' => 'Bundle Price Type',
             'description' => 'Description',
+            'package_info' => 'Package Info',
             'base_price' => 'Base Price (COGS)',
             'is_bundle_expand' => 'Is Bundle Expand',
             'status_id' => 'Status',

@@ -152,6 +152,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         <div class="row">
             <div class="col-md-6">
                 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+                <?= $form->field($model, 'package_info')->textInput(['maxlength' => true, 'placeholder' => 'e.g. 101 Channel Terlampir'])->hint('Printed on the quotation (SPH) next to this product.') ?>
             </div>
 
             <div class="col-md-6">

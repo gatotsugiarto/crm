@@ -12,6 +12,7 @@ use common\components\behaviors\TokenProtectedFormBehavior;
 use common\components\behaviors\LoggableBehavior;
 
 use common\modules\master\models\StatusActive;
+use common\modules\master\models\QuotationLayout;
 use common\modules\auth\models\User;
 
 use common\modules\sales\models\Opportunity;
@@ -84,6 +85,10 @@ class Quotation extends ActiveRecord
             [['total_amount'], 'number'],
             [['status'], 'string'],
             [['quotation_number'], 'string', 'max' => 50],
+            [['contract_months', 'payment_method', 'opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'default', 'value' => null],
+            [['contract_months'], 'integer', 'min' => 1, 'max' => 240],
+            [['payment_method'], 'string', 'max' => 50],
+            [['opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'string'],
             ['status', 'in', 'range' => array_keys(self::optsStatus())],
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['opportunity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Opportunity::class, 'targetAttribute' => ['opportunity_id' => 'id']],
@@ -115,6 +120,12 @@ class Quotation extends ActiveRecord
             'total_amount' => 'Total Amount',
             'status' => 'Status',
             'status_id' => 'Status',
+            'contract_months' => 'Contract Duration (months)',
+            'payment_method' => 'Payment Method',
+            'opening_text' => 'Opening Text',
+            'terms_text' => 'Terms & Conditions (one per line)',
+            'installation_notes' => 'Installation Notes (one per line)',
+            'closing_text' => 'Closing Text',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -124,24 +135,71 @@ class Quotation extends ActiveRecord
 
     public function beforeSave($insert)
     {
-        if ($insert && empty($this->quotation_number)) {
-            $this->quotation_number = Yii::$app->db->createCommand("
-                SELECT CONCAT(
-                    'QTN/',
-                    DATE_FORMAT(NOW(), '%Y%m%d'),
-                    '/',
-                    LPAD(
-                        IFNULL(MAX(CAST(SUBSTRING_INDEX(quotation_number, '/', -1) AS UNSIGNED)), 0) + 1,
-                        4,
-                        '0'
-                    )
-                )
-                FROM quotation
-                WHERE DATE(created_at) = CURDATE()
-            ")->queryScalar();
+        if ($insert) {
+            if (empty($this->quotation_number)) {
+                $this->quotation_number = self::nextSphNumber($this->quotation_date ?: date('Y-m-d'));
+            }
+            // Snapshot the SPH template so an issued quotation keeps its wording.
+            $layout = QuotationLayout::findOne(1);
+            if ($layout !== null) {
+                foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text'] as $attr) {
+                    if ($this->$attr === null || $this->$attr === '') {
+                        $this->$attr = $layout->$attr;
+                    }
+                }
+                if (!$this->contract_months) {
+                    $this->contract_months = $layout->default_contract_months;
+                }
+            }
         }
 
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * Next SPH number for the year of $date: "0001/SPH/SLS-NHS/EXT/IX/2026". The
+     * running number restarts every year (the year is part of the number, so it
+     * never collides) and only counts numbers in this format, so older QTN/QUO
+     * numbers are ignored. The rows read are locked (FOR UPDATE) so concurrent
+     * inserts take turns; ux_quotation_number rejects a duplicate regardless.
+     */
+    public static function nextSphNumber($date)
+    {
+        $time = strtotime($date) ?: time();
+        $year = date('Y', $time);
+        $roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][(int) date('n', $time) - 1];
+        $layout = QuotationLayout::findOne(1);
+        $code = $layout ? trim($layout->number_code, '/') : 'SPH';
+
+        $last = (int) Yii::$app->db->createCommand(
+            "SELECT MAX(CAST(SUBSTRING_INDEX(quotation_number, '/', 1) AS UNSIGNED))
+               FROM quotation
+              WHERE quotation_number REGEXP '^[0-9]{4,}/'
+                AND quotation_number LIKE :suffix
+                FOR UPDATE",
+            [':suffix' => '%/' . $year]
+        )->queryScalar();
+
+        return sprintf('%04d/%s/%s/%s', $last + 1, $code, $roman, $year);
+    }
+
+    /**
+     * Payment method to print when none was entered: from the recurring items'
+     * product revenue model (monthly billing -> "Bulanan", yearly upfront ->
+     * "Tahunan (di depan)").
+     */
+    public function defaultPaymentMethod()
+    {
+        foreach ($this->quotationItems as $item) {
+            $model = (string) ($item->product->revenue_model ?? '');
+            if (stripos($model, 'Bulanan') !== false) {
+                return 'Bulanan';
+            }
+            if (stripos($model, 'Tahun') !== false) {
+                return 'Tahunan (di depan)';
+            }
+        }
+        return null;
     }
 
     public function afterSave($insert, $changedAttributes)

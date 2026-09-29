@@ -79,6 +79,7 @@ Naming follows Yii's `mYYMMDD_HHMMSS_<description>.php`. Existing ones that matt
 | `m260928_120000_fix_duplicate_sales_order_items` | stops quotation approval duplicating SO items |
 | `m260928_130000_account_brd_fields` | address types, customer segment, assigned sales, account documents |
 | `m260928_140000_add_customer_segment_to_lead` | customer segment on lead, copied by `sp_convert_lead_to_customer` |
+| `m260929_100000_quotation_sph` | SPH numbering + PDF: `quotation_layout`, quotation terms/contract fields, product package info, user job title, permissions |
 | `m260929_090000_convert_copies_lead_description` | convert copies the lead's description into the account and the opportunity (lead description is required) |
 | `m260928_180000_quotation_from_opportunity_permission` | permission for the Create Quotation button (Sales + Sales Manager) |
 | `m260928_150000_convert_lead_adds_account_addresses` | convert also adds the lead's address as Billing, Shipping and Office account addresses |

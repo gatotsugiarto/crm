@@ -183,6 +183,29 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             <div class="col-md-6"></div>
         </div>
 
+        <div class="row">
+            <div class="col-md-6">
+                <?= $form->field($model, 'contract_months')->textInput(['type' => 'number', 'min' => 1, 'placeholder' => 'e.g. 36']) ?>
+            </div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'payment_method')->widget(Select2::class, [
+                    'data' => ['Bulanan' => 'Bulanan', 'Tahunan (di depan)' => 'Tahunan (di depan)', 'Sekali Bayar' => 'Sekali Bayar'],
+                    'options' => ['placeholder' => 'From products if empty', 'id' => 'quotation-payment_method'],
+                    'pluginOptions' => ['allowClear' => true, 'tags' => true],
+                ]) ?>
+            </div>
+        </div>
+
+        <details class="mb-3" <?= $isNew ? '' : 'open' ?>>
+            <summary class="text-primary" style="cursor:pointer">SPH texts (copied from Master Data &rarr; Layout Quotation; edit for this quotation only)</summary>
+            <div class="mt-2">
+                <?= $form->field($model, 'opening_text')->textarea(['rows' => 3]) ?>
+                <?= $form->field($model, 'terms_text')->textarea(['rows' => 8]) ?>
+                <?= $form->field($model, 'installation_notes')->textarea(['rows' => 2]) ?>
+                <?= $form->field($model, 'closing_text')->textarea(['rows' => 4]) ?>
+            </div>
+        </details>
+
     </div>
 </div>
 

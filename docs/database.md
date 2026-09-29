@@ -25,7 +25,8 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 | `opportunity_product` | opportunity_id, product_id, qty, price, discount, **total (generated: `qty*price-discount`, STORED)**, is_upsell, parent_product_id → opportunity_product | |
 | `opportunity_stage_history` | opportunity_id, old_stage, new_stage, changed_at, changed_by → user, description, days_in_previous_stage | Written only by triggers |
 | `activity` | account_id, contact_id, opportunity_id, reference_type/reference_id, assigned_to → team, **activity_type** enum(Call, Meeting, Email, Task, Note), priority enum(Low, Normal, High, Urgent), subject, activity_date, due_date, reminder_at, is_completed, completed_at, outcome | |
-| `quotation` | quotation_number, account_id, opportunity_id, quotation_date, valid_until, total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
+| `quotation` | quotation_number (**unique**, SPH format), account_id, opportunity_id, quotation_date, valid_until, contract_months, payment_method, opening_text / terms_text / installation_notes / closing_text (copied from `quotation_layout`), total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
+| `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code, city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
 | `quotation_item` | quotation_id, product_id, qty, price, discount, total | `total` computed by trigger |
 | `sales_order` | order_number, account_id, quotation_id, order_date, total_amount, **status** enum(Draft, Confirmed, Completed, Cancelled) | Created by trigger on quotation approval |
 | `sales_order_item` | sales_order_id, product_id, qty, price, discount, total | `total` computed by trigger |

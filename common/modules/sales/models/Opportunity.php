@@ -271,6 +271,11 @@ class Opportunity extends ActiveRecord
                 }
             }
 
+            $paymentMethod = $quotation->defaultPaymentMethod();
+            if ($paymentMethod !== null) {
+                $quotation->updateAttributes(['payment_method' => $paymentMethod]);
+            }
+
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();

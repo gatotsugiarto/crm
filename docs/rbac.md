@@ -87,6 +87,10 @@ or lock the matching inputs):
   server message; the default AccessControl denial keeps the generic text.
 - The Approve, Confirm SO and Mark Sent/Paid buttons are only shown to users who
   may use them.
+- **Layout Quotation** (`backend.master.quotationlayout.*`) is edited by
+  `adminApplication` (so Super Admin) and root; `viewApplication` can view it. The
+  **SPH PDF** (`backend.sales.quotation.pdf`) is available to Sales, Sales Manager
+  and `viewApplication`.
 
 `SalesAccess::can()` mirrors the controllers' check (action permission, its
 controller's `.*`, or `root`) and allows everything outside a web request, so

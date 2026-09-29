@@ -18,6 +18,23 @@ $baseUrl = Yii::$app->request->baseUrl;
   <div class="row g-4">
 
 
+    <!-- Layout Quotation -->
+    <?php if (\Yii::$app->user->can('backend.master.quotationlayout.index') || \Yii::$app->user->can("root")) { ?>
+    <div class="col-6 col-md-4 col-lg-3 mb-4">
+      <a href="<?=$baseUrl ?>/master/quotationlayout/index" class="text-decoration-none">
+        <div class="card menu-card text-center p-4 h-100">
+          <div class="menu-icon mb-2">
+            <i class="nc-icon nc-paper-2"></i>
+          </div>
+          <div class="menu-title fw-bold text-primary">Layout Quotation</div>
+          <div class="menu-desc text-muted">Letterhead, numbering and terms for quotation letters (SPH)</div>
+        </div>
+      </a>
+    </div>
+    <?php
+    }
+    ?>
+
     <!-- Postal Code -->
     <?php if (\Yii::$app->user->can('backend.master.postalcode.index') || \Yii::$app->user->can("root")) { ?>
     <div class="col-6 col-md-4 col-lg-3 mb-4">

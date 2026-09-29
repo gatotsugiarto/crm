@@ -43,6 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         <?php endif; ?>
 
+        <?php if (\common\components\rbac\SalesAccess::can('backend.sales.quotation.pdf')): ?>
+            <?= Html::a('<i class="fa fa-file-pdf"></i> SPH (PDF)', ['pdf', 'id' => $model->id], [
+                'class'  => 'btn btn-outline-danger btn-sm',
+                'target' => '_blank',
+                'data-pjax' => '0',
+            ]) ?>
+        <?php endif; ?>
+
         <?php if ($model->status === 'Approved' && $model->salesOrder): ?>
             <?= Html::a('<i class="fa fa-file-invoice"></i> View Sales Order', 
                 ['/sales/salesorder/view', 'id' => $model->salesOrder->id], [
@@ -125,6 +133,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 </span>
             </div>
 
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Contract Duration</span><br>
+                <span><small><?= $model->contract_months ? Html::encode($model->contract_months . ' months') : '-' ?></small></span>
+            </div>
+            <div class="col-md-6">
+                <span class="text-secondary small">Payment Method</span><br>
+                <span><small><?= Html::encode($model->payment_method ?: ($model->defaultPaymentMethod() ? $model->defaultPaymentMethod() . ' (from products)' : '-')) ?></small></span>
+            </div>
         </div>
 
 

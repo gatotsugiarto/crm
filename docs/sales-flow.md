@@ -93,6 +93,26 @@ A potential deal with an account: stage, amount, close date, probability.
 A formal offer to the account, linked to an opportunity. Status: Draft → Sent →
 Approved / Rejected.
 
+- **Number**: `0001/SPH/SLS-NHS/EXT/IX/2026` — running number per year (restarts in
+  January; the year is part of the number, and `ux_quotation_number` keeps numbers
+  unique), the code from the template, Roman month and year of the quotation date
+  (`Quotation::nextSphNumber`). Older `QTN/...` / `QUO/...` numbers are left as they
+  are and ignored by the counter.
+- **SPH PDF** (button *SPH (PDF)* on the quotation view, `actionPdf`, mPDF): the
+  "Proposal Penawaran Harga" letter — letterhead logo and coloured footer on every
+  page, recipient, opening text, one block per recurring item (Harga Paket, Jumlah
+  Unit, Diskon, Total), a subscription total when there are several, non-recurring
+  items (e.g. an installation-fee product) as their own rows, contract duration,
+  payment method, terms, installation notes, closing text and signatures (Assigned
+  Sales name + job title / account).
+- **Template**: Master Data → *Layout Quotation* (`quotation_layout`, one row).
+  New quotations copy its opening / terms / installation notes / closing texts and
+  default contract length, so an issued SPH never changes when the template does;
+  the copies can be edited per quotation. Payment method defaults from the
+  recurring products' revenue model (Bulanan / Tahunan (di depan)).
+- Product *Package Info* (e.g. "101 Channel Terlampir") and user *Job Title* are
+  printed on the SPH.
+
 - **Create Quotation** (button on the opportunity view,
   `QuotationController::actionCreateFromOpportunity` → `Opportunity::createQuotation()`):
   makes a Draft quotation for the opportunity's account, dated today, valid 30 days,

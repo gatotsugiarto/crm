@@ -40,6 +40,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             </div>
             <div class="col-md-6">
                 <?= $form->field($model, 'fullname')->textInput() ?>
+                <?= $form->field($model, 'job_title')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Account Manager'])->hint('Printed under the name on quotations (SPH).') ?>
             </div>
         </div>
 

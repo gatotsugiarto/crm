@@ -9,6 +9,7 @@ use common\modules\sales\models\Quotation;
 use common\modules\sales\models\QuotationSearch;
 use common\modules\sales\models\QuotationItemSearch;
 use common\modules\sales\models\Opportunity;
+use common\modules\master\models\QuotationLayout;
 
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -330,6 +331,65 @@ class QuotationController extends Controller
         return $this->redirect(['index']);
     }
     */
+
+    /**
+     * The quotation letter (SPH) as a PDF, opened in the browser (print / save).
+     * Letterhead logo and the coloured footer repeat on every page.
+     */
+    public function actionPdf($id)
+    {
+        $model = $this->findModel($id);
+        $layout = QuotationLayout::current();
+
+        $months = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $idDate = function ($ymd) use ($months) {
+            $t = strtotime($ymd) ?: time();
+            return date('j', $t) . ' ' . $months[(int) date('n', $t)] . ' ' . date('Y', $t);
+        };
+
+        $tempDir = Yii::getAlias('@runtime/mpdf');
+        \yii\helpers\FileHelper::createDirectory($tempDir, 0775, true);
+        $pdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 20, 'margin_right' => 20,
+            'margin_top' => 38, 'margin_bottom' => 28,
+            'margin_header' => 10, 'margin_footer' => 8,
+            'tempDir' => $tempDir,
+            'default_font' => 'dejavusans',
+        ]);
+        $pdf->SetTitle('Proposal Penawaran Harga ' . $model->quotation_number);
+        $pdf->SetAuthor($layout->company_name);
+
+        $logo = $layout->hasLogo()
+            ? '<img src="' . $layout->getLogoPath() . '" style="height:18mm">'
+            : '<span style="font-size:14pt;font-weight:bold;color:#1a3a6e">' . \yii\helpers\Html::encode($layout->company_name) . '</span>';
+        $pdf->SetHTMLHeader('<div style="padding-left:2mm">' . $logo . '</div>');
+
+        $footerLine = '<b>' . \yii\helpers\Html::encode($layout->company_name) . '</b>'
+            . ($layout->company_address ? ' | ' . \yii\helpers\Html::encode($layout->company_address) : '')
+            . '<br>' . \yii\helpers\Html::encode(trim($layout->company_phone . ($layout->company_website ? ' | ' . $layout->company_website : ''), ' |'));
+        $pdf->SetHTMLFooter(
+            '<table width="100%" style="border-collapse:collapse;margin-bottom:2mm"><tr>'
+            . '<td style="height:1.4mm;background:#1b2a57;width:40%"></td>'
+            . '<td style="height:1.4mm;background:#d81f26;width:35%"></td>'
+            . '<td style="height:1.4mm;background:#f2c300;width:17%"></td>'
+            . '<td style="height:1.4mm;background:#1f8f3a;width:8%"></td>'
+            . '</tr></table>'
+            . '<div style="font-size:7.5pt;color:#333">' . $footerLine . '</div>'
+        );
+
+        $pdf->WriteHTML($this->renderPartial('_pdf_sph', [
+            'model' => $model,
+            'layout' => $layout,
+            'idDate' => $idDate,
+        ]));
+
+        $fileName = 'SPH ' . str_replace('/', '-', $model->quotation_number) . ' - ' . ($model->account->name ?? '') . '.pdf';
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', \Mpdf\Output\Destination::STRING_RETURN), $fileName, [
+            'mimeType' => 'application/pdf',
+            'inline' => true,
+        ]);
+    }
 
     /**
      * Creates a Draft quotation from an opportunity, copying its products as

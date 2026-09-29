@@ -48,6 +48,9 @@ if (isset($menuMap[$urlMenu])) {
 } else if (strpos($urlMenu, 'applicationsetting/') === 0) {
     $baseMenu = 'Master Data';
     $topUrl = array_search('Master Data', $menuMap);
+} else if (strpos($urlMenu, 'quotationlayout/') === 0) {
+    $baseMenu = 'Master Data';
+    $topUrl = array_search('Master Data', $menuMap);
 } else if (strpos($urlMenu, 'team/') === 0) {
     $baseMenu = 'Master Data';
     $topUrl = array_search('Master Data', $menuMap);
