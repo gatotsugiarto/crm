@@ -19,15 +19,17 @@ $recurring = array_values(array_filter($items, fn($i) => stripos((string) ($i->p
 $oneTime = array_values(array_filter($items, fn($i) => stripos((string) ($i->product->revenue_model ?? ''), 'Recurring') === false));
 $recurringTotal = array_sum(array_map(fn($i) => (float) $i->total, $recurring));
 $paymentMethod = $model->payment_method ?: $model->defaultPaymentMethod();
-// signer: the quotation's own name/title, else the Layout Quotation default (covers
-// quotations created before the default was set), else the account's Assigned Sales
+// signer: a name typed on this quotation, else the account's Assigned Sales (name +
+// Job Title), else the Layout Quotation fallback, else whoever created the quotation
+$assigned = $model->account->assignedUser ?? null;
 if ($model->signer_name) {
     [$signerName, $signerTitle] = [$model->signer_name, (string) $model->signer_title];
+} elseif ($assigned !== null) {
+    [$signerName, $signerTitle] = [$assigned->fullname, (string) $assigned->job_title];
 } elseif ($layout->signer_name) {
     [$signerName, $signerTitle] = [$layout->signer_name, (string) $layout->signer_title];
 } else {
-    $fallback = $model->account->assignedUser ?? $model->createdBy;
-    [$signerName, $signerTitle] = [$fallback->fullname ?? '', $fallback->job_title ?? ''];
+    [$signerName, $signerTitle] = [$model->createdBy->fullname ?? '', (string) ($model->createdBy->job_title ?? '')];
 }
 $terms = QuotationLayout::lines($model->terms_text);
 $notes = QuotationLayout::lines($model->installation_notes);

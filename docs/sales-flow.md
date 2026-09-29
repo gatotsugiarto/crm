@@ -111,10 +111,10 @@ Approved / Rejected.
   the copies can be edited per quotation. In these texts `**...**` prints bold
   (`QuotationLayout::inline`); everything else is escaped. Payment method defaults from the
   recurring products' revenue model (Bulanan / Tahunan (di depan)).
-- **Signer** ("Diajukan Oleh"): free-text name and job title, default set in Layout
-  Quotation and copied into each new quotation (editable there). The PDF uses the
-  quotation's signer, else the current Layout Quotation default, else the
-  account's Assigned Sales name and user *Job Title*.
+- **Signer** ("Diajukan Oleh"): the account's **Assigned Sales** (name + user
+  *Job Title*). A name typed on the quotation overrides it; the Layout Quotation
+  signer is only a fallback for accounts without Assigned Sales (it is not copied
+  into quotations).
 - Product *Package Info* (e.g. "101 Channel Terlampir") is printed on the SPH.
 
 - **Create Quotation** (button on the opportunity view,

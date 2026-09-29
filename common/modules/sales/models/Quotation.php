@@ -145,7 +145,8 @@ class Quotation extends ActiveRecord
             // Snapshot the SPH template so an issued quotation keeps its wording.
             $layout = QuotationLayout::findOne(1);
             if ($layout !== null) {
-                foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text', 'signer_name', 'signer_title'] as $attr) {
+                // signer is not copied: it defaults to the account's Assigned Sales at print time
+                foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text'] as $attr) {
                     if ($this->$attr === null || $this->$attr === '') {
                         $this->$attr = $layout->$attr;
                     }

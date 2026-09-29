@@ -43,7 +43,7 @@ $this->title = 'Edit Layout Quotation';
         <div class="col-md-4"><?= $form->field($model, 'recipient_title')->textInput(['maxlength' => true]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'sign_left_label')->textInput(['maxlength' => true]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'sign_right_label')->textInput(['maxlength' => true]) ?></div>
-        <div class="col-md-6"><?= $form->field($model, 'signer_name')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Risma Dewi Marthen'])->hint('Default for new quotations. Leave empty to use the account\'s Assigned Sales.') ?></div>
+        <div class="col-md-6"><?= $form->field($model, 'signer_name')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Risma Dewi Marthen'])->hint('Only used when the account has no Assigned Sales. Normally the Assigned Sales (and their Job Title) signs.') ?></div>
         <div class="col-md-6"><?= $form->field($model, 'signer_title')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Account Manager']) ?></div>
     </div>
     <?= $form->field($model, 'opening_text')->textarea(['rows' => 4]) ?>

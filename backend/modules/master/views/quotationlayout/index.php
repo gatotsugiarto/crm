@@ -43,5 +43,5 @@ $list = fn($text) => ($items = QuotationLayout::lines($text))
     <?= $line('Installation Notes', $list($model->installation_notes)) ?>
     <?= $line('Closing Text', nl2br(QuotationLayout::inline($model->closing_text))) ?>
     <?= $line('Signatures', Html::encode($model->sign_left_label) . ' &nbsp;/&nbsp; ' . Html::encode($model->sign_right_label)) ?>
-    <?= $line('Signer (Diajukan Oleh)', $model->signer_name ? Html::encode($model->signer_name) . ($model->signer_title ? ' &mdash; ' . Html::encode($model->signer_title) : '') : '<span class="text-muted">Assigned Sales of the account</span>') ?>
+    <?= $line('Signer (Diajukan Oleh)', 'Assigned Sales of the account (name + Job Title)' . ($model->signer_name ? '<br><span class="text-muted">Fallback when none: ' . Html::encode($model->signer_name) . ($model->signer_title ? ' &mdash; ' . Html::encode($model->signer_title) : '') . '</span>' : '')) ?>
 </div></div>

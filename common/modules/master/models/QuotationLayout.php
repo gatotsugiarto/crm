@@ -114,8 +114,8 @@ class QuotationLayout extends ActiveRecord
             'closing_text' => 'Closing Text',
             'sign_left_label' => 'Left Signature Label',
             'sign_right_label' => 'Right Signature Label',
-            'signer_name' => 'Signer Name (Diajukan Oleh)',
-            'signer_title' => 'Signer Job Title',
+            'signer_name' => 'Fallback Signer Name',
+            'signer_title' => 'Fallback Signer Job Title',
             'default_contract_months' => 'Default Contract (months)',
         ];
     }
