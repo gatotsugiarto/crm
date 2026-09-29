@@ -448,7 +448,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>Address <span class="text-danger">*</span></td><td>Full street address</td><td>Jl. Sudirman No. 10</td></tr>
 	        <tr><td>Country / Province / City / Postal Code <span class="text-danger">*</span></td><td>Pick from the lists (Master Data)</td><td>INDONESIA / DKI JAKARTA / JAKARTA SELATAN / 12190</td></tr>
 	        <tr><td>Owner User <span class="text-danger">*</span></td><td>The <strong>sales team</strong> handling this lead (a team, not a person)</td><td>Enterprise Sales, SMB Sales</td></tr>
-	        <tr><td>Description <span class="text-danger">*</span></td><td>What the prospect needs. Copied to the Opportunity's description on Convert</td><td>Apartemen 3 tower, butuh layanan TV berlangganan untuk penghuni</td></tr>
+	        <tr><td>Description <span class="text-danger">*</span></td><td>What the prospect needs. Copied to the Account's and the Opportunity's description on Convert</td><td>Apartemen 3 tower, butuh layanan TV berlangganan untuk penghuni</td></tr>
 	      </tbody>
 	    </table>
 	  </div>
@@ -461,7 +461,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        (the delete button is greyed out); deleting a Lead never removes its Account, Contact or Opportunity.</li>
 	    <li><strong>Convert</strong> &mdash; the <i class="fa fa-exchange-alt"></i> icon, once the Lead is qualified. After confirming, the system creates in one step:
 	      <ul>
-	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment),
+	        <li>an <strong>Account</strong> (the company, Customer Type <em>Prospect</em>, with the Lead's Customer Segment and description),
 	            whose address is also listed under <strong>Account Addresses</strong> as <em>Billing</em>, <em>Shipping</em> and <em>Office</em> addresses
 	            (edit any that differ),</li>
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>

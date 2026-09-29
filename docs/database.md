@@ -84,8 +84,8 @@ Called by `LeadController::actionConvert`. In one transaction:
 
 1. Locks the lead (`FOR UPDATE`) where `is_converted = 0`; if none,
    `SIGNAL '45000' 'Lead not found or already converted'`.
-2. Inserts an `account` (type `Prospect`) from the lead's company/location fields and
-   `customer_segment` (since `m260928_140000`).
+2. Inserts an `account` (type `Prospect`) from the lead's company/location fields,
+   `customer_segment` (since `m260928_140000`) and `description` (since `m260929_090000`).
    Owner = lead owner, or the converting user if the lead has none.
 3. Inserts three `account_address` rows, `Billing`, `Shipping` and `Office`, all with the
    lead's address and location (since `m260928_150000`; skipped if the lead has no

@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Lead conversion copies the lead's description into the new opportunity's
- * description (it used to be left empty). Lead description is now required in
- * the Lead model, so converted opportunities always carry it.
+ * Lead conversion copies the lead's description into the new account's and
+ * opportunity's description (both used to be left empty). Lead description is
+ * now required in the Lead model, so converted records always carry it.
  *
  * Recreates sp_convert_lead_to_customer from the m260928_150000 version with
  * only that change; down() restores that version. Needs CREATE/ALTER ROUTINE.
@@ -70,11 +70,11 @@ BEGIN
 
     -- 2. Insert ACCOUNT
         INSERT INTO `account` (
-        name, account_type, customer_segment, industry, phone, email, address,
+        name, account_type, customer_segment, industry, phone, email, address, description,
         city_id, province_id, country_id, postal_code_id,
         status_id, created_at, created_by, updated_at, updated_by, owner_user_id
     ) VALUES (
-        v_company_name, 'Prospect', v_customer_segment, v_industry, v_phone, v_email, v_address,
+        v_company_name, 'Prospect', v_customer_segment, v_industry, v_phone, v_email, v_address, v_description,
         v_city_id, v_province_id, v_country_id, v_postal_id,
         1, NOW(), p_user_id, NOW(), p_user_id, v_owner_user_id
     );
