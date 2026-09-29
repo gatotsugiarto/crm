@@ -42,7 +42,6 @@ $paragraphs = fn($text) => implode('', array_map(
     table.offer td.k { width: 40%; }
     table.offer td.v { font-weight: normal; }
     table.offer tr.head td { font-weight: bold; }
-    table.offer tr.sep td { border-left: none; border-right: none; padding: 2px; }
     ol, ul { margin: 2px 0 10px 0; padding-left: 26px; }
     li { margin-bottom: 2px; text-align: justify; }
     table.sign { width: 100%; margin-top: 18px; }
@@ -64,9 +63,8 @@ $paragraphs = fn($text) => implode('', array_map(
 <?= $paragraphs($model->opening_text) ?>
 
 <table class="offer">
-    <?php foreach ($recurring as $n => $item): ?>
+    <?php foreach ($recurring as $item): ?>
         <?php $uom = $item->product->uom->name ?? 'Unit'; ?>
-        <?php if ($n > 0): ?><tr class="sep"><td colspan="2"></td></tr><?php endif; ?>
         <tr class="head"><td class="k" style="font-weight:normal">Nama Produk</td><td class="v"><b><?= Html::encode($item->product->name ?? '-') ?></b></td></tr>
         <?php if (!empty($item->product->package_info)): ?>
             <tr><td class="k">Keterangan Paket</td><td class="v"><?= Html::encode($item->product->package_info) ?></td></tr>
@@ -80,7 +78,6 @@ $paragraphs = fn($text) => implode('', array_map(
     <?php endforeach; ?>
 
     <?php if (count($recurring) > 1): ?>
-        <tr class="sep"><td colspan="2"></td></tr>
         <tr><td class="k"><b>Total Harga Berlangganan</b></td><td class="v"><b><?= $rupiah($recurringTotal) ?> (Exc PPN)</b></td></tr>
     <?php endif; ?>
 
