@@ -133,5 +133,11 @@ rather than starting from Gii defaults.
   the child from `master/location/*`, and `common/components/LocationRules`
   validates the chain server-side. New forms preselect the country when only one
   exists.
+- **Date pickers in modals**: the theme hides every `.dropdown-menu` unless it is
+  inside `.show`, which made the Kartik/bootstrap-datepicker popup (appended to
+  `<body>`) invisible; `web/css/custom-app.css` re-shows
+  `.datepicker.datepicker-dropdown.dropdown-menu`. `DateControl` needs an explicit
+  `widgetClass` (the module has `autoWidget` off) and a picker `format` matching its
+  `displayFormat` (e.g. `dd-mm-yyyy` for `php:d-m-Y`).
 - **New User default password** comes from `application_setting.default_password` if
   that row exists, else `params['user.passwordDefault']` (`12345678`).

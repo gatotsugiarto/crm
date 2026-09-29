@@ -468,3 +468,14 @@ body {
         padding-left: .5rem;
     }
 
+
+/* Kartik / bootstrap-datepicker popup. The theme hides every .dropdown-menu
+   (visibility: hidden; opacity: 0) unless it sits inside a .show element, but the
+   datepicker appends its popup (class "datepicker-dropdown dropdown-menu") to
+   <body> and toggles it with display instead, so it opened invisibly and clicks
+   fell through to the form behind it. */
+.datepicker.datepicker-dropdown.dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    filter: none;
+}

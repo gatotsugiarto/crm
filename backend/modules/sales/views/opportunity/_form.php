@@ -155,7 +155,8 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     'widgetClass'   => DatePicker::class,
                     'widgetOptions' => [
                         'options'       => ['placeholder' => 'Close Date'],
-                        'pluginOptions' => ['autoclose' => true, 'todayHighlight' => true],
+                        // must match displayFormat above (php d-m-Y)
+                        'pluginOptions' => ['autoclose' => true, 'todayHighlight' => true, 'format' => 'dd-mm-yyyy'],
                     ],
                 ]) ?>
             </div>

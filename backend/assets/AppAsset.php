@@ -14,7 +14,7 @@ class AppAsset extends AssetBundle
         'css/light-bootstrap-dashboard.css?v=2.0.0',
         
         // Tambahkan di baris paling bawah:
-        'css/custom-app.css?v=1.2',  // beri versi supaya browser update
+        'css/custom-app.css?v=1.3',  // beri versi supaya browser update
     ];
 
     public $js = [
