@@ -91,7 +91,8 @@ Called by `LeadController::actionConvert`. In one transaction:
    lead's address and location (since `m260928_150000`; skipped if the lead has no
    address; users edit the ones that differ), then a primary
    `contact` from the lead's contact fields.
-4. Inserts an `opportunity` "Opportunity - {company}" at stage `Prospecting`,
+4. Inserts an `opportunity` "Opportunity - {company}" with the lead's description
+   (since `m260929_090000`) at stage `Prospecting`,
    probability 10, amount 0, close date today + 30 days.
 5. Marks the lead `is_converted = 1` with the new account/contact ids.
 

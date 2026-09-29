@@ -448,7 +448,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>Address <span class="text-danger">*</span></td><td>Full street address</td><td>Jl. Sudirman No. 10</td></tr>
 	        <tr><td>Country / Province / City / Postal Code <span class="text-danger">*</span></td><td>Pick from the lists (Master Data)</td><td>INDONESIA / DKI JAKARTA / JAKARTA SELATAN / 12190</td></tr>
 	        <tr><td>Owner User <span class="text-danger">*</span></td><td>The <strong>sales team</strong> handling this lead (a team, not a person)</td><td>Enterprise Sales, SMB Sales</td></tr>
-	        <tr><td>Description</td><td>Optional notes</td><td>Interested in the Hospitality package</td></tr>
+	        <tr><td>Description <span class="text-danger">*</span></td><td>What the prospect needs. Copied to the Opportunity's description on Convert</td><td>Apartemen 3 tower, butuh layanan TV berlangganan untuk penghuni</td></tr>
 	      </tbody>
 	    </table>
 	  </div>
@@ -465,7 +465,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	            whose address is also listed under <strong>Account Addresses</strong> as <em>Billing</em>, <em>Shipping</em> and <em>Office</em> addresses
 	            (edit any that differ),</li>
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
-	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; at stage <em>Prospecting</em>, 10% probability, closing in 30 days.</li>
+	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; with the Lead's description, at stage <em>Prospecting</em>, 10% probability, closing in 30 days.
+	            Rename it to describe the deal (e.g. &ldquo;TV Berlangganan 3 Tower&rdquo;), since one company can have several opportunities.</li>
 	      </ul>
 	      A Lead can only be converted once, and only by <strong>members of the Lead's Sales Team</strong> or the <strong>Sales Manager</strong>
 	      (others see &ldquo;This lead belongs to &hellip;&rdquo;). The same applies to editing a Lead. Sales users need a team

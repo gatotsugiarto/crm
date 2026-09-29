@@ -80,7 +80,7 @@ class Lead extends ActiveRecord
             [['is_converted'], 'default', 'value' => 0],
             [['status_id'], 'default', 'value' => 1],
             [['is_converted', 'converted_account_id', 'converted_contact_id', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'owner_user_id', 'status_id', 'created_by', 'updated_by'], 'integer'],
-            [['company_name', 'contact_name', 'email', 'phone', 'lead_source', 'industry', 'owner_user_id', 'address', 'city_id', 'province_id', 'country_id', 'postal_code_id'], 'required'],
+            [['company_name', 'contact_name', 'email', 'phone', 'lead_source', 'industry', 'owner_user_id', 'address', 'city_id', 'province_id', 'country_id', 'postal_code_id', 'description'], 'required'],
             [['address', 'created_at', 'updated_at'], 'safe'],
             [['company_name', 'description'], 'string', 'max' => 255],
             [['contact_name'], 'string', 'max' => 200],
