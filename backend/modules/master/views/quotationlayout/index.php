@@ -12,7 +12,7 @@ $canEdit = Yii::$app->user->can('backend.master.quotationlayout.update')
 $line = fn($label, $value) => '<div class="row mb-2"><div class="col-md-3 text-secondary small">' . Html::encode($label)
     . '</div><div class="col-md-9"><small>' . ($value === null || $value === '' ? '-' : $value) . '</small></div></div>';
 $list = fn($text) => ($items = QuotationLayout::lines($text))
-    ? '<ol class="pl-3 mb-0">' . implode('', array_map(fn($t) => '<li>' . Html::encode($t) . '</li>', $items)) . '</ol>' : '-';
+    ? '<ol class="pl-3 mb-0">' . implode('', array_map(fn($t) => '<li>' . QuotationLayout::inline($t) . '</li>', $items)) . '</ol>' : '-';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -38,10 +38,10 @@ $list = fn($text) => ($items = QuotationLayout::lines($text))
     <?= $line('City', Html::encode($model->city)) ?>
     <?= $line('Recipient Title', Html::encode($model->recipient_title)) ?>
     <?= $line('Default Contract', $model->default_contract_months ? Html::encode($model->default_contract_months . ' months') : null) ?>
-    <?= $line('Opening Text', nl2br(Html::encode($model->opening_text))) ?>
+    <?= $line('Opening Text', nl2br(QuotationLayout::inline($model->opening_text))) ?>
     <?= $line('Terms & Conditions', $list($model->terms_text)) ?>
     <?= $line('Installation Notes', $list($model->installation_notes)) ?>
-    <?= $line('Closing Text', nl2br(Html::encode($model->closing_text))) ?>
+    <?= $line('Closing Text', nl2br(QuotationLayout::inline($model->closing_text))) ?>
     <?= $line('Signatures', Html::encode($model->sign_left_label) . ' &nbsp;/&nbsp; ' . Html::encode($model->sign_right_label)) ?>
     <?= $line('Signer (Diajukan Oleh)', $model->signer_name ? Html::encode($model->signer_name) . ($model->signer_title ? ' &mdash; ' . Html::encode($model->signer_title) : '') : '<span class="text-muted">Assigned Sales of the account</span>') ?>
 </div></div>

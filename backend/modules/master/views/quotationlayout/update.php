@@ -47,8 +47,8 @@ $this->title = 'Edit Layout Quotation';
         <div class="col-md-6"><?= $form->field($model, 'signer_title')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Account Manager']) ?></div>
     </div>
     <?= $form->field($model, 'opening_text')->textarea(['rows' => 4]) ?>
-    <?= $form->field($model, 'terms_text')->textarea(['rows' => 12])->hint('One clause per line; the PDF numbers them.') ?>
-    <?= $form->field($model, 'installation_notes')->textarea(['rows' => 3])->hint('One note per line.') ?>
+    <?= $form->field($model, 'terms_text')->textarea(['rows' => 12])->hint('One clause per line; the PDF numbers them. Wrap text in <code>**...**</code> to print it bold.') ?>
+    <?= $form->field($model, 'installation_notes')->textarea(['rows' => 3])->hint('One note per line. <code>**...**</code> = bold.') ?>
     <?= $form->field($model, 'closing_text')->textarea(['rows' => 5]) ?>
 </div></div>
 

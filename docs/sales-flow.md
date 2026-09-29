@@ -108,7 +108,8 @@ Approved / Rejected.
 - **Template**: Master Data → *Layout Quotation* (`quotation_layout`, one row).
   New quotations copy its opening / terms / installation notes / closing texts and
   default contract length, so an issued SPH never changes when the template does;
-  the copies can be edited per quotation. Payment method defaults from the
+  the copies can be edited per quotation. In these texts `**...**` prints bold
+  (`QuotationLayout::inline`); everything else is escaped. Payment method defaults from the
   recurring products' revenue model (Bulanan / Tahunan (di depan)).
 - **Signer** ("Diajukan Oleh"): free-text name and job title, default set in Layout
   Quotation and copied into each new quotation (editable there). The PDF uses the

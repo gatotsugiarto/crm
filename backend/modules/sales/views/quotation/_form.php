@@ -197,7 +197,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         </div>
 
         <details class="mb-3" <?= $isNew ? '' : 'open' ?>>
-            <summary class="text-primary" style="cursor:pointer">SPH texts (copied from Master Data &rarr; Layout Quotation; edit for this quotation only)</summary>
+            <summary class="text-primary" style="cursor:pointer">SPH texts (copied from Master Data &rarr; Layout Quotation; edit for this quotation only; <code>**...**</code> = bold)</summary>
             <div class="mt-2">
                 <?= $form->field($model, 'opening_text')->textarea(['rows' => 3]) ?>
                 <?= $form->field($model, 'terms_text')->textarea(['rows' => 8]) ?>

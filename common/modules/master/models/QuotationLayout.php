@@ -167,6 +167,15 @@ class QuotationLayout extends ActiveRecord
         return true;
     }
 
+    /**
+     * HTML for one line of template text: escaped, with **text** turned into bold
+     * (the only markup the SPH texts support).
+     */
+    public static function inline($text)
+    {
+        return preg_replace('/\*\*(.+?)\*\*/s', '<b>$1</b>', \yii\helpers\Html::encode((string) $text));
+    }
+
     /** Splits a one-item-per-line text into trimmed, non-empty lines. */
     public static function lines($text)
     {

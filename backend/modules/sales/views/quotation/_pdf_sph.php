@@ -32,7 +32,7 @@ if ($model->signer_name) {
 $terms = QuotationLayout::lines($model->terms_text);
 $notes = QuotationLayout::lines($model->installation_notes);
 $paragraphs = fn($text) => implode('', array_map(
-    fn($p) => '<p class="para">' . nl2br(Html::encode(trim($p))) . '</p>',
+    fn($p) => '<p class="para">' . nl2br(QuotationLayout::inline(trim($p))) . '</p>',
     array_filter(preg_split('/\R\s*\R/', (string) $text), fn($p) => trim($p) !== '')
 ));
 ?>
@@ -102,14 +102,14 @@ $paragraphs = fn($text) => implode('', array_map(
 <?php if ($terms): ?>
     <p class="para" style="margin-bottom:2px">Syarat &amp; Ketentuan :</p>
     <ol>
-        <?php foreach ($terms as $t): ?><li><?= Html::encode($t) ?></li><?php endforeach; ?>
+        <?php foreach ($terms as $t): ?><li><?= QuotationLayout::inline($t) ?></li><?php endforeach; ?>
     </ol>
 <?php endif; ?>
 
 <?php if ($notes): ?>
     <p class="para" style="margin-bottom:2px"><b>Notes Instalasi</b> :</p>
     <ul>
-        <?php foreach ($notes as $t): ?><li><?= Html::encode($t) ?></li><?php endforeach; ?>
+        <?php foreach ($notes as $t): ?><li><?= QuotationLayout::inline($t) ?></li><?php endforeach; ?>
     </ul>
 <?php endif; ?>
 
