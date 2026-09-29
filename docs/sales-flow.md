@@ -47,8 +47,9 @@ industry, optional customer segment, location, owner (a team).
   Customer/Partner/Reseller/Vendor by hand, nothing changes it automatically.
   **Customer Segment** (`customer_segment`) is the channel/segment (B2B2C (ISP), B2C,
   Hospitality, ...). **Sales Team** (`owner_user_id` → team) and **Assigned Sales**
-  (`assigned_user_id` → user) are independent: either, both or neither can be set, and
-  the assigned salesperson doesn't have to belong to the chosen team.
+  (`assigned_user_id` → user): the Assigned Sales list only offers members of the
+  chosen Sales Team (refreshed from `master/lookup/team-members` when the team
+  changes), and the model rejects a salesperson from another team.
   `price_list_id` links a price list, but nothing uses it for pricing yet.
 - **Contact**: people at the account. **Set primary** (`/sales/contact/setprimary`)
   calls `sp_set_primary_contact`, so there is at most one primary contact per account.

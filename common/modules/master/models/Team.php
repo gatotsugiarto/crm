@@ -168,4 +168,20 @@ class Team extends ActiveRecord
         return $dropdown;
     }
 
+
+    /**
+     * Active members of a team, for the Assigned Sales dropdown (empty until a
+     * team is chosen). Also used by master/lookup/team-members.
+     * @return array user id => fullname
+     */
+    public static function membersDropdown($teamId)
+    {
+        if ($teamId === null || $teamId === '') {
+            return [];
+        }
+        return User::find()->select(['fullname', 'id'])
+            ->where(['team_id' => $teamId, 'status' => 10])
+            ->orderBy(['fullname' => SORT_ASC])
+            ->indexBy('id')->column();
+    }
 }

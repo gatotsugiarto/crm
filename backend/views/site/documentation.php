@@ -487,7 +487,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>Customer Type</td><td>Stays <em>Prospect</em> after Convert. Change it to <em>Customer</em> once the deal is won (or Partner / Reseller / Vendor if that fits better).</td></tr>
 	        <tr><td>Customer Segment</td><td>Filled from the Lead. Check it, or set it if the Lead didn't have one (e.g. <em>Hospitality</em>).</td></tr>
 	        <tr><td>Sales Team</td><td>Filled from the Lead's Owner User. Only a <strong>Sales Manager</strong> can change it afterwards (the field is locked for the Sales role).</td></tr>
-	        <tr><td>Assigned Sales</td><td>The individual salesperson responsible for this account, set by the <strong>Sales Manager</strong> (locked for the Sales role). Can be anyone; it does not have to be a member of the Sales Team.</td></tr>
+	        <tr><td>Assigned Sales</td><td>The individual salesperson responsible for this account, set by the <strong>Sales Manager</strong> (locked for the Sales role). The list only shows members of the chosen Sales Team, and changes when the Sales Team changes.</td></tr>
 	        <tr><td>Price List</td><td>The price tier for this customer: <em>Corporate Price</em> for companies (hotels, apartments, ISPs), <em>Retail Price</em> for individuals or small shops.
 	            Don't use <em>Promotional Price</em> as a default. For now this is informational only &mdash; prices on Opportunities and Quotations are still typed in by hand.</td></tr>
 	      </tbody>

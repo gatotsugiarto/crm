@@ -237,6 +237,10 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                         'placeholder' => 'Sales Team',
                         // only a Sales Manager may reassign an existing record
                         'disabled' => !$isNew && !\common\components\rbac\SalesAccess::canAssign(),
+                        // Assigned Sales lists only this team's members
+                        'id' => 'account-owner_user_id',
+                        'data-dep-child' => '#assigned_user_id',
+                        'data-dep-url' => \yii\helpers\Url::to(['/master/lookup/team-members']),
                         // 'id' => 'status_id',
                         'multiple' => false,
                     ],
@@ -251,8 +255,15 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
+                <?php
+                $assignedData = \common\modules\master\models\Team::membersDropdown($model->owner_user_id);
+                if ($model->assigned_user_id && !isset($assignedData[$model->assigned_user_id])) {
+                    // keep showing an older assignment that is no longer a team member
+                    $assignedData[$model->assigned_user_id] = $model->assignedUser?->fullname ?? $model->assigned_user_id;
+                }
+                ?>
                 <?= $form->field($model, 'assigned_user_id')->widget(Select2::class, [
-                    'data' => \common\modules\auth\models\User::dropdown() ?? [],
+                    'data' => $assignedData,
                     'options' => [
                         'placeholder' => 'Assigned Sales',
                         'id' => 'assigned_user_id',

@@ -106,6 +106,24 @@ class Account extends ActiveRecord
                 \common\components\LocationRules::check($this);
             }, 'skipOnEmpty' => false],
             [['email'], 'email'],
+            // Assigned Sales must belong to the account's Sales Team. Checked only when
+            // either changes, so older assignments don't block unrelated edits.
+            [['assigned_user_id'], function ($attribute) {
+                if (!$this->assigned_user_id) {
+                    return;
+                }
+                $changed = $this->isNewRecord
+                    || $this->isAttributeChanged('assigned_user_id', false)
+                    || $this->isAttributeChanged('owner_user_id', false);
+                if (!$changed) {
+                    return;
+                }
+                if (!$this->owner_user_id) {
+                    $this->addError($attribute, 'Choose a Sales Team before assigning a salesperson.');
+                } elseif (!User::find()->where(['id' => $this->assigned_user_id, 'team_id' => $this->owner_user_id])->exists()) {
+                    $this->addError($attribute, 'Assigned Sales must be a member of the selected Sales Team.');
+                }
+            }, 'skipOnEmpty' => false],
             [['owner_user_id', 'assigned_user_id'], function ($attribute) {
                 \common\components\rbac\SalesAccess::checkAssignment($this, $attribute);
             }, 'skipOnEmpty' => false],
