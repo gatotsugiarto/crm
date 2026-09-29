@@ -19,7 +19,10 @@ $recurring = array_values(array_filter($items, fn($i) => stripos((string) ($i->p
 $oneTime = array_values(array_filter($items, fn($i) => stripos((string) ($i->product->revenue_model ?? ''), 'Recurring') === false));
 $recurringTotal = array_sum(array_map(fn($i) => (float) $i->total, $recurring));
 $paymentMethod = $model->payment_method ?: $model->defaultPaymentMethod();
-$signer = $model->account->assignedUser ?? $model->createdBy;
+// signer: the quotation's own name/title (copied from Layout Quotation), else the Assigned Sales
+$fallback = $model->account->assignedUser ?? $model->createdBy;
+$signerName = $model->signer_name ?: ($fallback->fullname ?? '');
+$signerTitle = $model->signer_name ? (string) $model->signer_title : ($fallback->job_title ?? '');
 $terms = QuotationLayout::lines($model->terms_text);
 $notes = QuotationLayout::lines($model->installation_notes);
 $paragraphs = fn($text) => implode('', array_map(
@@ -119,8 +122,8 @@ $paragraphs = fn($text) => implode('', array_map(
         <tr><td style="height:70px"></td><td></td></tr>
         <tr>
             <td>
-                <span class="signname"><?= Html::encode($signer->fullname ?? '') ?></span><br>
-                <?= Html::encode($signer->job_title ?? '') ?>
+                <span class="signname"><?= Html::encode($signerName) ?></span><br>
+                <?= Html::encode($signerTitle) ?>
             </td>
             <td><b><?= Html::encode($model->account->name ?? '') ?></b></td>
         </tr>

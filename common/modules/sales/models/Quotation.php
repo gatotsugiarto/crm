@@ -85,7 +85,8 @@ class Quotation extends ActiveRecord
             [['total_amount'], 'number'],
             [['status'], 'string'],
             [['quotation_number'], 'string', 'max' => 50],
-            [['contract_months', 'payment_method', 'opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'default', 'value' => null],
+            [['contract_months', 'payment_method', 'opening_text', 'terms_text', 'installation_notes', 'closing_text', 'signer_name', 'signer_title'], 'default', 'value' => null],
+            [['signer_name', 'signer_title'], 'string', 'max' => 100],
             [['contract_months'], 'integer', 'min' => 1, 'max' => 240],
             [['payment_method'], 'string', 'max' => 50],
             [['opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'string'],
@@ -126,6 +127,8 @@ class Quotation extends ActiveRecord
             'terms_text' => 'Terms & Conditions (one per line)',
             'installation_notes' => 'Installation Notes (one per line)',
             'closing_text' => 'Closing Text',
+            'signer_name' => 'Signer Name (Diajukan Oleh)',
+            'signer_title' => 'Signer Job Title',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -142,7 +145,7 @@ class Quotation extends ActiveRecord
             // Snapshot the SPH template so an issued quotation keeps its wording.
             $layout = QuotationLayout::findOne(1);
             if ($layout !== null) {
-                foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text'] as $attr) {
+                foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text', 'signer_name', 'signer_title'] as $attr) {
                     if ($this->$attr === null || $this->$attr === '') {
                         $this->$attr = $layout->$attr;
                     }

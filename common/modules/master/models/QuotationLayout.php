@@ -31,6 +31,8 @@ use common\components\behaviors\LoggableBehavior;
  * @property string|null $closing_text
  * @property string $sign_left_label
  * @property string $sign_right_label
+ * @property string|null $signer_name default "Diajukan Oleh" name
+ * @property string|null $signer_title default "Diajukan Oleh" job title
  * @property int|null $default_contract_months
  */
 class QuotationLayout extends ActiveRecord
@@ -86,7 +88,7 @@ class QuotationLayout extends ActiveRecord
             [['company_name', 'number_code', 'city', 'sign_left_label', 'sign_right_label'], 'required'],
             [['company_name'], 'string', 'max' => 150],
             [['company_address'], 'string', 'max' => 255],
-            [['company_phone', 'company_website', 'recipient_title'], 'string', 'max' => 100],
+            [['company_phone', 'company_website', 'recipient_title', 'signer_name', 'signer_title'], 'string', 'max' => 100],
             [['number_code', 'city', 'sign_left_label', 'sign_right_label'], 'string', 'max' => 50],
             [['number_code'], 'match', 'pattern' => '/^[A-Za-z0-9\-\/]+$/', 'message' => 'Use letters, digits, "-" and "/" only.'],
             [['opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'string'],
@@ -112,6 +114,8 @@ class QuotationLayout extends ActiveRecord
             'closing_text' => 'Closing Text',
             'sign_left_label' => 'Left Signature Label',
             'sign_right_label' => 'Right Signature Label',
+            'signer_name' => 'Signer Name (Diajukan Oleh)',
+            'signer_title' => 'Signer Job Title',
             'default_contract_months' => 'Default Contract (months)',
         ];
     }

@@ -110,8 +110,10 @@ Approved / Rejected.
   default contract length, so an issued SPH never changes when the template does;
   the copies can be edited per quotation. Payment method defaults from the
   recurring products' revenue model (Bulanan / Tahunan (di depan)).
-- Product *Package Info* (e.g. "101 Channel Terlampir") and user *Job Title* are
-  printed on the SPH.
+- **Signer** ("Diajukan Oleh"): free-text name and job title, default set in Layout
+  Quotation and copied into each new quotation (editable there). When empty, the
+  PDF uses the account's Assigned Sales name and user *Job Title*.
+- Product *Package Info* (e.g. "101 Channel Terlampir") is printed on the SPH.
 
 - **Create Quotation** (button on the opportunity view,
   `QuotationController::actionCreateFromOpportunity` → `Opportunity::createQuotation()`):

@@ -43,6 +43,8 @@ $this->title = 'Edit Layout Quotation';
         <div class="col-md-4"><?= $form->field($model, 'recipient_title')->textInput(['maxlength' => true]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'sign_left_label')->textInput(['maxlength' => true]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'sign_right_label')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-6"><?= $form->field($model, 'signer_name')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Risma Dewi Marthen'])->hint('Default for new quotations. Leave empty to use the account\'s Assigned Sales.') ?></div>
+        <div class="col-md-6"><?= $form->field($model, 'signer_title')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Account Manager']) ?></div>
     </div>
     <?= $form->field($model, 'opening_text')->textarea(['rows' => 4]) ?>
     <?= $form->field($model, 'terms_text')->textarea(['rows' => 12])->hint('One clause per line; the PDF numbers them.') ?>

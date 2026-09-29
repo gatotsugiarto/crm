@@ -203,6 +203,10 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                 <?= $form->field($model, 'terms_text')->textarea(['rows' => 8]) ?>
                 <?= $form->field($model, 'installation_notes')->textarea(['rows' => 2]) ?>
                 <?= $form->field($model, 'closing_text')->textarea(['rows' => 4]) ?>
+                <div class="row">
+                    <div class="col-md-6"><?= $form->field($model, 'signer_name')->textInput(['maxlength' => true, 'placeholder' => 'Empty = Assigned Sales of the account']) ?></div>
+                    <div class="col-md-6"><?= $form->field($model, 'signer_title')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Account Manager']) ?></div>
+                </div>
             </div>
         </details>
 
