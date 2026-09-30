@@ -62,6 +62,26 @@ The closest-but-different existing things in the app, for reference:
 - `PriceList` (currently: "Retail Price", "Corporate Price", "Promotional Price") — a
   coarse pricing tier, not this taxonomy.
 
+## Business Line (implemented)
+
+`product.business_line` (migration `m260930_090000_business_line`) — the sales line
+that quotes the product. It is the `{LINE}` part of the SPH number
+(`001/SPH/SLS-NHS/EXT/IX/2026`), and a quotation holds products of **one** line only
+(an opportunity mixing lines gets one quotation per line — see
+[sales-flow.md](sales-flow.md#4-quotation)).
+
+| Code | Line | Products (local mapping) |
+|---|---|---|
+| `NHS` | NextSys Hospitality | NextSys Hospitality, Vision+ / Multicast (hotel), Sewa STB |
+| `NXG` | NextGO | KAI, Damri (transport) |
+| `IPTV` | Vision+ | the Vision+ TV tree: B2B2C ISP (With STB / Apps Only / STB Only), B2C retail STB, Vision+ TV apps |
+
+Short uppercase code (letters/digits, 2–20); the form suggests these three
+(`Product::optsBusinessLine()`) and accepts a new code (tags mode). Set it on every
+product that can be quoted — Create Quotation and quotation items refuse products
+without one. Grouping-only nodes and internal items (e.g. Plaza MNC Group, Sunter)
+can stay empty.
+
 ## Revenue MKM product hierarchy (as classified so far)
 
 ```

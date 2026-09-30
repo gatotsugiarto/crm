@@ -49,7 +49,7 @@ $quotationBlocker = $canCreateQuotation ? $model->quotationBlocker() : null;
                 ['/sales/quotation/create-from-opportunity', 'id' => $model->id], [
                 'class'        => 'btn btn-success btn-sm px-3 rounded-pill shadow-sm',
                 'data-method'  => 'post',
-                'data-confirm' => 'Create a Draft quotation with this opportunity\'s products?',
+                'data-confirm' => 'Create Draft quotation(s) with this opportunity\'s products? One quotation per business line (NHS, NXG, IPTV, ...); lines that already have an approved quotation are skipped.',
             ]) ?>
         <?php else: ?>
             <span title="<?= Html::encode($quotationBlocker) ?>" style="cursor: not-allowed;">

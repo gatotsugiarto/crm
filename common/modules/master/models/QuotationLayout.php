@@ -22,7 +22,8 @@ use common\components\behaviors\LoggableBehavior;
  * @property string|null $company_phone
  * @property string|null $company_website
  * @property string|null $logo_file
- * @property string $number_code middle part of the SPH number, e.g. SPH/SLS-NHS/EXT
+ * @property string $number_code middle part of the SPH number, e.g. SPH/SLS-{LINE}/EXT
+ *           ({LINE} = the quotation's business line: NHS, NXG, IPTV, ...)
  * @property string $city
  * @property string|null $recipient_title
  * @property string|null $opening_text
@@ -90,7 +91,7 @@ class QuotationLayout extends ActiveRecord
             [['company_address'], 'string', 'max' => 255],
             [['company_phone', 'company_website', 'recipient_title', 'signer_name', 'signer_title'], 'string', 'max' => 100],
             [['number_code', 'city', 'sign_left_label', 'sign_right_label'], 'string', 'max' => 50],
-            [['number_code'], 'match', 'pattern' => '/^[A-Za-z0-9\-\/]+$/', 'message' => 'Use letters, digits, "-" and "/" only.'],
+            [['number_code'], 'match', 'pattern' => '/^([A-Za-z0-9\-\/]|\{LINE\})+$/', 'message' => 'Use letters, digits, "-", "/" and {LINE} only.'],
             [['opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'string'],
             [['default_contract_months'], 'integer', 'min' => 1, 'max' => 240],
             [['logoUpload'], 'file', 'skipOnEmpty' => true, 'extensions' => self::LOGO_EXTENSIONS, 'maxSize' => 2 * 1024 * 1024],

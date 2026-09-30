@@ -207,83 +207,147 @@ class Opportunity extends ActiveRecord
         return $this->hasMany(Quotation::class, ['opportunity_id' => 'id']);
     }
 
+    /** Active products of this opportunity (the ones copied into quotations). */
+    private function activeProducts()
+    {
+        return $this->getOpportunityProducts()
+            ->andWhere(['or', ['status_id' => 1], ['status_id' => null]])
+            ->with('product')->orderBy(['id' => SORT_ASC])->all();
+    }
+
     /**
-     * Why a quotation can't be created from this opportunity yet, or null.
+     * Business lines that still need a quotation: lines of the active products
+     * that don't have an approved quotation yet.
+     * @return array line => OpportunityProduct[]
+     */
+    private function linesToQuote()
+    {
+        $approved = $this->getQuotations()->select('business_line')
+            ->where(['status' => Quotation::STATUS_APPROVED])->column();
+        $lines = [];
+        foreach ($this->activeProducts() as $row) {
+            $line = $row->product->business_line ?? null;
+            if ($line !== null && !in_array($line, $approved, true)) {
+                $lines[$line][] = $row;
+            }
+        }
+        return $lines;
+    }
+
+    /**
+     * Why quotations can't be created from this opportunity yet, or null.
      */
     public function quotationBlocker()
     {
-        $approved = $this->getQuotations()->where(['status' => Quotation::STATUS_APPROVED])->one();
-        if ($approved !== null) {
-            return "This opportunity already has an approved quotation ({$approved->quotation_number}).";
-        }
-        if (!$this->getOpportunityProducts()->andWhere(['or', ['status_id' => 1], ['status_id' => null]])->exists()) {
+        $products = $this->activeProducts();
+        if (!$products) {
             return 'Add products to this opportunity first; they are copied into the quotation.';
+        }
+        $missing = [];
+        foreach ($products as $row) {
+            if (empty($row->product->business_line)) {
+                $missing[] = $row->product->name ?? ('#' . $row->product_id);
+            }
+        }
+        if ($missing) {
+            return 'Set the Business Line (Product & Pricing -> Products) for: ' . implode(', ', array_unique($missing)) . '.';
+        }
+        if (!$this->linesToQuote()) {
+            return 'Every business line of this opportunity already has an approved quotation.';
         }
         return null;
     }
 
     /**
-     * Creates a Draft quotation for this opportunity's account, dated today and
-     * valid for 30 days, with one item per active opportunity product (qty,
-     * price, discount; totals are computed by the quotation_item triggers).
-     * Creating a quotation moves the opportunity to Proposal (Quotation::afterSave).
+     * Creates one Draft quotation per business line of this opportunity's products
+     * (lines that already have an approved quotation are skipped), each for the
+     * opportunity's account, dated today, valid 30 days, numbered in its line, with
+     * one item per product of that line (qty, price, discount; totals by the
+     * quotation_item triggers). Creating a quotation moves the opportunity to
+     * Proposal (Quotation::afterSave).
      *
-     * @return Quotation
+     * @return Quotation[]
      * @throws \RuntimeException with quotationBlocker()'s reason
      */
-    public function createQuotation()
+    public function createQuotations()
     {
         $blocker = $this->quotationBlocker();
         if ($blocker !== null) {
             throw new \RuntimeException($blocker);
         }
 
+        $created = [];
         $transaction = static::getDb()->beginTransaction();
         try {
-            $quotation = new Quotation([
-                'account_id'     => $this->account_id,
-                'opportunity_id' => $this->id,
-                'quotation_date' => date('Y-m-d'),
-                'valid_until'    => date('Y-m-d', strtotime('+30 days')),
-                'status'         => Quotation::STATUS_DRAFT,
-                'status_id'      => 1,
-            ]);
-            $quotation->detachBehavior('tokenProtection');
-            if (!$quotation->save()) {
-                throw new \RuntimeException('Quotation could not be created: ' . implode(' ', $quotation->getFirstErrors()));
-            }
-
-            $products = $this->getOpportunityProducts()
-                ->andWhere(['or', ['status_id' => 1], ['status_id' => null]])
-                ->orderBy(['id' => SORT_ASC])->all();
-            foreach ($products as $product) {
-                $item = new QuotationItem([
-                    'quotation_id' => $quotation->id,
-                    'product_id'   => $product->product_id,
-                    'qty'          => $product->qty,
-                    'price'        => $product->price,
-                    'discount'     => $product->discount,
-                    'status_id'    => 1,
+            foreach ($this->linesToQuote() as $line => $rows) {
+                $quotation = new Quotation([
+                    'account_id'     => $this->account_id,
+                    'opportunity_id' => $this->id,
+                    'business_line'  => $line,
+                    'quotation_date' => date('Y-m-d'),
+                    'valid_until'    => date('Y-m-d', strtotime('+30 days')),
+                    'status'         => Quotation::STATUS_DRAFT,
+                    'status_id'      => 1,
                 ]);
-                $item->detachBehavior('tokenProtection');
-                if (!$item->save()) {
-                    throw new \RuntimeException('Quotation item could not be created: ' . implode(' ', $item->getFirstErrors()));
+                $quotation->detachBehavior('tokenProtection');
+                if (!$quotation->save()) {
+                    throw new \RuntimeException('Quotation could not be created: ' . implode(' ', $quotation->getFirstErrors()));
                 }
-            }
 
-            $paymentMethod = $quotation->defaultPaymentMethod();
-            if ($paymentMethod !== null) {
-                $quotation->updateAttributes(['payment_method' => $paymentMethod]);
-            }
+                foreach ($rows as $row) {
+                    $item = new QuotationItem([
+                        'quotation_id' => $quotation->id,
+                        'product_id'   => $row->product_id,
+                        'qty'          => $row->qty,
+                        'price'        => $row->price,
+                        'discount'     => $row->discount,
+                        'status_id'    => 1,
+                    ]);
+                    $item->detachBehavior('tokenProtection');
+                    if (!$item->save()) {
+                        throw new \RuntimeException('Quotation item could not be created: ' . implode(' ', $item->getFirstErrors()));
+                    }
+                }
 
+                $paymentMethod = $quotation->defaultPaymentMethod();
+                if ($paymentMethod !== null) {
+                    $quotation->updateAttributes(['payment_method' => $paymentMethod]);
+                }
+                $created[] = $quotation;
+            }
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();
             throw $e;
         }
 
-        $quotation->refresh();
-        return $quotation;
+        foreach ($created as $quotation) {
+            $quotation->refresh();
+        }
+        return $created;
+    }
+
+    /**
+     * Closes the opportunity once none of its quotations is still Draft/Sent:
+     * Closed Won with the approved quotations' total if any was approved, else
+     * Closed Lost. Same rule as the trg_quotation_to_sales_order trigger; called
+     * when a quotation is approved or rejected through the model.
+     */
+    public function syncStageFromQuotations()
+    {
+        $statuses = $this->getQuotations()->select('status')->column();
+        if (!$statuses || array_intersect($statuses, [Quotation::STATUS_DRAFT, Quotation::STATUS_SENT])) {
+            return;
+        }
+        if (in_array(Quotation::STATUS_APPROVED, $statuses, true)) {
+            $this->stage = 'Closed Won';
+            $this->probability = 100;
+            $this->amount = (float) $this->getQuotations()->where(['status' => Quotation::STATUS_APPROVED])->sum('total_amount');
+        } else {
+            $this->stage = 'Closed Lost';
+            $this->probability = 0;
+        }
+        $this->save(false);
     }
 
     /**

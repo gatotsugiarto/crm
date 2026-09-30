@@ -102,6 +102,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
+                <span class="text-secondary small">Business Line</span><br>
+                <span><small><?= $model->business_line ? Html::encode($model::optsBusinessLine()[$model->business_line] ?? $model->business_line) : '<span class="text-muted">(belum diset)</span>' ?></small></span>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
                 <span class="text-secondary small">Description</span><br>
                 <span><small><?= Html::encode($model->description) ?></small></span>
             </div>

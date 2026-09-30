@@ -392,8 +392,8 @@ class QuotationController extends Controller
     }
 
     /**
-     * Creates a Draft quotation from an opportunity, copying its products as
-     * items (Opportunity::createQuotation), then opens it. POST, from the
+     * Creates Draft quotations from an opportunity, one per business line of its
+     * products (Opportunity::createQuotations), and opens it when there is one. POST, from the
      * "Create Quotation" button on the opportunity view.
      * @param int $id opportunity id
      */
@@ -408,15 +408,23 @@ class QuotationController extends Controller
         }
 
         try {
-            $quotation = $opportunity->createQuotation();
+            $quotations = $opportunity->createQuotations();
         } catch (\RuntimeException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             return $this->redirect(['/sales/opportunity/view', 'id' => $opportunity->id]);
         }
 
-        $count = $quotation->getQuotationItems()->count();
-        Yii::$app->session->setFlash('success', "Quotation {$quotation->quotation_number} created with {$count} " . ($count == 1 ? 'item' : 'items') . ' from the opportunity. Review it, then set it to Sent.');
-        return $this->redirect(['view', 'id' => $quotation->id]);
+        if (count($quotations) === 1) {
+            $quotation = $quotations[0];
+            $count = $quotation->getQuotationItems()->count();
+            Yii::$app->session->setFlash('success', "Quotation {$quotation->quotation_number} created with {$count} " . ($count == 1 ? 'item' : 'items') . ' from the opportunity. Review it, then set it to Sent.');
+            return $this->redirect(['view', 'id' => $quotation->id]);
+        }
+
+        // products from several business lines: one quotation (SPH) per line
+        $numbers = implode(', ', array_map(fn($q) => $q->quotation_number, $quotations));
+        Yii::$app->session->setFlash('success', count($quotations) . " quotations created, one per business line: {$numbers}. Review each, then set them to Sent.");
+        return $this->redirect(['/sales/opportunity/view', 'id' => $opportunity->id]);
     }
 
     /**

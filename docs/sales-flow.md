@@ -8,10 +8,11 @@ Lead ──convert──▶ Account + Contact + Opportunity
                                    │
                     Opportunity Products (amount rolls up)
                                    │
-                              Quotation ──Sent──▶ Opportunity: Proposal (50%)
+                    Quotation(s), one per business line ──Sent──▶ Opportunity: Proposal (50%)
                                    │
-                              Approved ──▶ Opportunity: Closed Won (100%)
-                                   │        + Sales Order (Draft) + SO items
+                              Approved ──▶ Sales Order (Draft) + SO items
+                                   │        (Opportunity: Closed Won once no
+                                   │         quotation is still Draft/Sent)
                                    ▼
                              Sales Order ──Confirm──▶ Invoice (Draft) + invoice items
                                                         │
@@ -93,11 +94,22 @@ A potential deal with an account: stage, amount, close date, probability.
 A formal offer to the account, linked to an opportunity. Status: Draft → Sent →
 Approved / Rejected.
 
-- **Number**: `0001/SPH/SLS-NHS/EXT/IX/2026` — running number per year (restarts in
-  January; the year is part of the number, and `ux_quotation_number` keeps numbers
-  unique), the code from the template, Roman month and year of the quotation date
-  (`Quotation::nextSphNumber`). Older `QTN/...` / `QUO/...` numbers are left as they
-  are and ignored by the counter.
+- **Business line** (`quotation.business_line`): every quotation belongs to one
+  line — **NHS** (NextSys Hospitality), **NXG** (NextGO), **IPTV** (Vision+), or any
+  later code. The line comes from the products (`product.business_line`, set in
+  Product & Pricing → Products). **1 quotation = 1 line**: a quotation item must be a
+  product of the quotation's line (`QuotationItem` rule — "This quotation is for NHS;
+  X is IPTV and needs its own quotation"; a product without a line can't be quoted).
+  An opportunity may mix lines; it then gets one quotation per line. The line is
+  chosen when the quotation is created and can't be changed afterwards (it is part
+  of the number).
+- **Number**: `001/SPH/SLS-NHS/EXT/IX/2026` — 3-digit running number **per business
+  line per year** (NHS, NXG and IPTV each count from 001 and restart in January; it
+  grows past 999 by itself), then the template code with `{LINE}` replaced by the
+  line (`SPH/SLS-{LINE}/EXT` in Master Data → Layout Quotation), Roman month and
+  year of the quotation date (`Quotation::nextSphNumber`). `ux_quotation_number`
+  keeps numbers unique. Older `QTN/...` / `QUO/...` numbers are left as they are and
+  ignored by the counter; the earlier 4-digit `0001/...` numbers still count.
 - **SPH PDF** (button *SPH (PDF)* on the quotation view, `actionPdf`, mPDF): the
   "Proposal Penawaran Harga" letter — letterhead logo and coloured footer on every
   page, recipient, opening text, one block per recurring item (Harga Paket, Jumlah
@@ -118,13 +130,19 @@ Approved / Rejected.
 - Product *Package Info* (e.g. "101 Channel Terlampir") is printed on the SPH.
 
 - **Create Quotation** (button on the opportunity view,
-  `QuotationController::actionCreateFromOpportunity` → `Opportunity::createQuotation()`):
-  makes a Draft quotation for the opportunity's account, dated today, valid 30 days,
-  with one item per active opportunity product (qty, price, discount), then opens
-  it. Refused while the opportunity has no products or already has an approved
-  quotation; the button is hidden on Closed Won / Closed Lost opportunities. The
-  opportunity view lists its quotations. Several quotations per opportunity are
-  allowed (revisions). Creating a quotation moves the opportunity to Proposal and
+  `QuotationController::actionCreateFromOpportunity` → `Opportunity::createQuotations()`):
+  makes one Draft quotation **per business line** of the opportunity's active
+  products (all in one transaction), each for the opportunity's account, dated
+  today, valid 30 days, numbered in its line, with one item per product of that line
+  (qty, price, discount). One quotation → it opens; several → the opportunity view
+  shows "N quotations created, one per business line: …". Lines that already have an
+  approved quotation are skipped. Refused (`Opportunity::quotationBlocker()`, shown
+  next to the disabled button) while the opportunity has no products, a product has
+  no business line, or every line is already approved; the button is hidden on
+  Closed Won / Closed Lost opportunities. The opportunity view lists its quotations.
+  Several quotations per line are allowed (revisions) — **set the replaced one to
+  Rejected**, otherwise a leftover Draft/Sent quotation keeps the opportunity open
+  (see Approve below). Creating a quotation moves the opportunity to Proposal and
   raises its probability to 50% if it was lower (`Quotation::setOpportunityProposal`).
 
 - **Quotation Items**: triggers compute each line's `total = qty*price - discount`
@@ -134,7 +152,13 @@ Approved / Rejected.
 - **Approve** (`/sales/quotation/approve`, `QuotationController::actionApprove`):
   refuses if already approved or if the quotation has no items; otherwise it only
   sets `status = 'Approved'`. Trigger `trg_quotation_to_sales_order` then:
-  - sets the opportunity to **Closed Won**, probability 100, amount = quotation total;
+  - closes the opportunity **only when none of its quotations is still Draft or
+    Sent**: **Closed Won** (probability 100, amount = sum of its *approved*
+    quotations) if at least one was approved, otherwise **Closed Lost**
+    (probability 0). The same check runs when a quotation is set to Rejected. So an
+    opportunity with an NHS and an IPTV quotation is Closed Won after both are
+    decided, with the total of the approved ones. (`Quotation::handleApproved` /
+    `handleRejected` repeat this in PHP via `Opportunity::syncStageFromQuotations()`.)
   - if no Sales Order exists for this quotation, creates one (`SO/YYYYMMDD/NNNN`,
     status Draft, same account and total). Trigger `trg_so_copy_items` on the new SO
     copies the quotation items into it.
@@ -184,7 +208,7 @@ discounts and bundle definitions, but no sales screen looks them up yet. See
 | Opportunity + products, Quotation + items (up to Sent) | ✅ | ✅ |
 | Remove opportunity products / quotation items | ✅ | ✅ |
 | Change Sales Team / Assigned Sales on existing records | ❌ | ✅ |
-| Approve quotation (creates the Sales Order, Closed Won) | ❌ | ✅ |
+| Approve quotation (creates the Sales Order; Closed Won once all quotations are decided) | ❌ | ✅ |
 | Edit Sales Order, Confirm SO (creates the Invoice) | ❌ | ✅ |
 | Edit invoice, Mark Sent / Paid | ❌ (PDF only) | ✅ |
 | Delete leads, accounts, contacts, opportunities, quotations | ❌ | ✅ |

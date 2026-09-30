@@ -34,7 +34,7 @@ $list = fn($text) => ($items = QuotationLayout::lines($text))
 
 <div class="card shadow-sm border-0 rounded-4 mb-3"><div class="card-body">
     <h6 class="fw-bold mb-3">Numbering &amp; Letter</h6>
-    <?= $line('SPH Number', Html::encode('0001/' . trim($model->number_code, '/') . '/IX/2026') . ' <span class="text-muted">(example; running number restarts every year)</span>') ?>
+    <?= $line('SPH Number', Html::encode('001/' . str_replace('{LINE}', 'NHS', trim($model->number_code, '/')) . '/IX/2026') . ' <span class="text-muted">(example for business line NHS; {LINE} = the quotation\'s business line; running number per line, restarts every year)</span>') ?>
     <?= $line('City', Html::encode($model->city)) ?>
     <?= $line('Recipient Title', Html::encode($model->recipient_title)) ?>
     <?= $line('Default Contract', $model->default_contract_months ? Html::encode($model->default_contract_months . ' months') : null) ?>

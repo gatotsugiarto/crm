@@ -151,6 +151,23 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
+                <?php
+                $lineData = \common\modules\productprice\models\Product::optsBusinessLine();
+                if ($model->business_line && !isset($lineData[$model->business_line])) {
+                    $lineData[$model->business_line] = $model->business_line;
+                }
+                ?>
+                <?= $form->field($model, 'business_line')->widget(Select2::class, [
+                    'data' => $lineData,
+                    'options' => ['placeholder' => 'Business Line', 'id' => 'product-business_line'],
+                    'pluginOptions' => ['allowClear' => true, 'tags' => true],
+                ])->hint('Line code used in the quotation (SPH) number, e.g. 001/SPH/SLS-<b>NHS</b>/EXT/IX/2026. One quotation holds products of one line.') ?>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
                 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
                 <?= $form->field($model, 'package_info')->textInput(['maxlength' => true, 'placeholder' => 'e.g. 101 Channel Terlampir'])->hint('Printed on the quotation (SPH) next to this product.') ?>
             </div>

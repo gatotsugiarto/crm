@@ -51,7 +51,22 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             </div>
 
             <div class="col-md-6">
-                
+                <?php
+                $lineData = \common\modules\productprice\models\Product::optsBusinessLine();
+                if ($model->business_line && !isset($lineData[$model->business_line])) {
+                    $lineData[$model->business_line] = $model->business_line;
+                }
+                ?>
+                <?= $form->field($model, 'business_line')->widget(Select2::class, [
+                    'data' => $lineData,
+                    'options' => [
+                        'placeholder' => 'Business Line',
+                        'id' => 'quotation-business_line',
+                        // part of the number: chosen once, when the quotation is created
+                        'disabled' => !$model->isNewRecord,
+                    ],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint($model->isNewRecord ? 'Only products of this line can be added. Tip: use Create Quotation on the opportunity; it picks the line(s) for you.' : 'Fixed; it is part of the quotation number.') ?>
             </div>
         </div>
 

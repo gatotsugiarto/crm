@@ -76,6 +76,19 @@ class QuotationItem extends ActiveRecord
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             [['quotation_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quotation::class, 'targetAttribute' => ['quotation_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            // a quotation holds products of its own business line only (SPH number SLS-<line>)
+            [['product_id'], function ($attribute) {
+                $quotation = $this->quotation;
+                $product = $this->product;
+                if ($quotation === null || $product === null || !$quotation->business_line) {
+                    return;
+                }
+                if (!$product->business_line) {
+                    $this->addError($attribute, "Set the Business Line of {$product->name} (Product & Pricing -> Products) before quoting it.");
+                } elseif ($product->business_line !== $quotation->business_line) {
+                    $this->addError($attribute, "This quotation is for {$quotation->business_line}; {$product->name} is {$product->business_line} and needs its own quotation.");
+                }
+            }],
         ];
     }
 

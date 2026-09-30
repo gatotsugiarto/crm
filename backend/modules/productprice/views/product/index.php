@@ -45,6 +45,7 @@ $gridColumns = [
     'type',
     'customer_type',
     'revenue_model',
+    'business_line',
     'bundle_price_type',
     'description:ntext',
     'base_price',
@@ -171,6 +172,16 @@ $gridColumns = [
             'value' => function ($model) {
                 return $model->revenue_model
                     ? Html::encode($model->revenue_model)
+                    : '<span class="text-muted">(belum diset)</span>';
+            },
+        ],
+        [
+            'attribute' => 'business_line',
+            'label' => 'Business Line',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return $model->business_line
+                    ? Html::encode($model->business_line)
                     : '<span class="text-muted">(belum diset)</span>';
             },
         ],

@@ -25,8 +25,8 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 | `opportunity_product` | opportunity_id, product_id, qty, price, discount, **total (generated: `qty*price-discount`, STORED)**, is_upsell, parent_product_id → opportunity_product | |
 | `opportunity_stage_history` | opportunity_id, old_stage, new_stage, changed_at, changed_by → user, description, days_in_previous_stage | Written only by triggers |
 | `activity` | account_id, contact_id, opportunity_id, reference_type/reference_id, assigned_to → team, **activity_type** enum(Call, Meeting, Email, Task, Note), priority enum(Low, Normal, High, Urgent), subject, activity_date, due_date, reminder_at, is_completed, completed_at, outcome | |
-| `quotation` | quotation_number (**unique**, SPH format), account_id, opportunity_id, quotation_date, valid_until, contract_months, payment_method, opening_text / terms_text / installation_notes / closing_text (copied from `quotation_layout`), total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
-| `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code, city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
+| `quotation` | quotation_number (**unique**, SPH format, per business line), **business_line** (one line per quotation, fixed after create), account_id, opportunity_id, quotation_date, valid_until, contract_months, payment_method, opening_text / terms_text / installation_notes / closing_text (copied from `quotation_layout`), total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
+| `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code (`SPH/SLS-{LINE}/EXT`, `{LINE}` = quotation business line), city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
 | `quotation_item` | quotation_id, product_id, qty, price, discount, total | `total` computed by trigger |
 | `sales_order` | order_number, account_id, quotation_id, order_date, total_amount, **status** enum(Draft, Confirmed, Completed, Cancelled) | Created by trigger on quotation approval |
 | `sales_order_item` | sales_order_id, product_id, qty, price, discount, total | `total` computed by trigger |
@@ -38,7 +38,7 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `product` | code, name, category_id, **parent_product_id** → product, uom_id, **type** enum(Goods, Service, Subscription, Bundle, Software), customer_type, revenue_model, **bundle_price_type** enum(fixed, sum), base_price, **is_bundle_expand** | Field rules: [product-classification.md](product-classification.md) |
+| `product` | code, name, category_id, **parent_product_id** → product, uom_id, **type** enum(Goods, Service, Subscription, Bundle, Software), customer_type, revenue_model, **business_line** (NHS / NXG / IPTV …, drives the quotation number), **bundle_price_type** enum(fixed, sum), base_price, **is_bundle_expand** | Field rules: [product-classification.md](product-classification.md) |
 | `product_category` | name, description | Hardware / Software / Service |
 | `product_uom` | name, code | License, Package, Unit, Subscription, Series |
 | `product_bundle_item` | bundle_product_id → product, product_id → product, quantity | Components of a Bundle product |
@@ -111,7 +111,7 @@ contact of the same account, then sets it to 1 on the chosen contact.
 | `opportunity` | `tr_opp_stage_update` | AFTER UPDATE | If `stage` changed, insert a history row. `days_in_previous_stage` is computed from the opportunity's `created_at`, not from the previous stage change |
 | `opportunity_product` | `tr_update_opp_amount_after_upsert` / `_after_update` / `_after_delete` | AFTER INSERT/UPDATE/DELETE | Recompute `opportunity.amount = SUM(total)` of its products |
 | `quotation` | `trg_quotation_after_update_status` | AFTER UPDATE | Status → `Sent`: set the opportunity to stage `Proposal`, probability 50 |
-| `quotation` | `trg_quotation_to_sales_order` | AFTER UPDATE | Status → `Approved`: set the opportunity to `Closed Won`, probability 100, amount = quotation total; if no SO exists for this quotation, insert a `sales_order` (`SO/YYYYMMDD/NNNN`, status Draft) and let `trg_so_copy_items` copy the items (the trigger's own copy was removed in `m260928_120000`, it duplicated them) |
+| `quotation` | `trg_quotation_to_sales_order` | AFTER UPDATE | Status → `Approved` or `Rejected`: if none of the opportunity's other quotations is still Draft/Sent, set the opportunity to `Closed Won` (probability 100, amount = SUM of approved quotations) or, when none was approved, `Closed Lost` (probability 0) — since `m260930_090000`; before that the first approval closed it. Status → `Approved`: if no SO exists for this quotation, insert a `sales_order` (`SO/YYYYMMDD/NNNN`, status Draft) and let `trg_so_copy_items` copy the items (the trigger's own copy was removed in `m260928_120000`, it duplicated them) |
 | `quotation_item` | `trg_qtn_item_before_insert` / `_before_update` | BEFORE INSERT/UPDATE | `total = qty*price - discount` |
 | `quotation_item` | `trg_qtn_after_insert` / `_after_update` / `_after_delete` | AFTER INSERT/UPDATE/DELETE | Recompute `quotation.total_amount = SUM(total)` |
 | `sales_order` | `trg_so_copy_items` | AFTER INSERT | Copy the linked quotation's items into `sales_order_item`. The only place SO items are copied, for approvals and for SOs created by hand |

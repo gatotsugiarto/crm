@@ -37,7 +37,7 @@ $this->title = 'Edit Layout Quotation';
 <div class="card shadow-sm border-0 rounded-4 mb-3"><div class="card-body">
     <h6 class="fw-bold mb-3">Numbering &amp; Letter</h6>
     <div class="row">
-        <div class="col-md-4"><?= $form->field($model, 'number_code')->textInput(['maxlength' => true])->hint('Number looks like 0001/<b>' . Html::encode(trim($model->number_code, '/')) . '</b>/IX/2026') ?></div>
+        <div class="col-md-4"><?= $form->field($model, 'number_code')->textInput(['maxlength' => true])->hint('Number looks like 001/<b>' . Html::encode(str_replace('{LINE}', 'NHS', trim($model->number_code, '/'))) . '</b>/IX/2026. <code>{LINE}</code> = the quotation\'s business line (NHS, NXG, IPTV); numbers run per line.') ?></div>
         <div class="col-md-4"><?= $form->field($model, 'city')->textInput(['maxlength' => true]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'default_contract_months')->textInput(['type' => 'number', 'min' => 1]) ?></div>
         <div class="col-md-4"><?= $form->field($model, 'recipient_title')->textInput(['maxlength' => true]) ?></div>

@@ -226,7 +226,12 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    <li><strong>Lead</strong> &rarr; A prospect comes in and is recorded as a Lead.</li>
 	    <li><strong>Account / Contact</strong> &rarr; A qualified Lead is converted into an Account with its Contacts and Addresses.</li>
 	    <li><strong>Opportunity</strong> &rarr; A potential deal is opened against the Account and tracked through pipeline stages.</li>
-	    <li><strong>Quotation</strong> &rarr; A price quote is sent to the customer based on the Opportunity.</li>
+	    <li><strong>Quotation</strong> &rarr; A price quote (SPH) is sent to the customer based on the Opportunity. One quotation covers <strong>one business line</strong>
+	        (<strong>NHS</strong> NextSys Hospitality, <strong>NXG</strong> NextGO, <strong>IPTV</strong> Vision+), taken from the products. <em>Create Quotation</em> on an
+	        Opportunity with products from several lines makes one quotation per line. Numbers run per line per year, e.g.
+	        <code>001/SPH/SLS-NHS/EXT/IX/2026</code>, <code>001/SPH/SLS-IPTV/EXT/IX/2026</code>. When a quotation is revised, set the old one to <em>Rejected</em>.</li>
+	    <li><strong>Closed Won / Lost</strong> &rarr; The Opportunity closes once none of its quotations is still Draft or Sent: <strong>Closed Won</strong> with the total of the
+	        approved quotations, or <strong>Closed Lost</strong> if all were rejected.</li>
 	    <li><strong>Sales Order</strong> &rarr; The customer confirms, and the Quotation is converted into a Sales Order.</li>
 	    <li><strong>Invoice</strong> &rarr; The Sales Order is billed to the customer.</li>
 	    <li><strong>Activity</strong> &rarr; Every interaction along the way (calls, meetings, notes) is logged against the related record.</li>
@@ -313,6 +318,9 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <!-- Product -->
 	  <h3 id="pp-product">3. Product</h3>
 	  <p>The core catalog entry: what is being sold. Each Product belongs to a Product Category, is measured in a Product UOM, and is what gets referenced by Quotation, Sales Order, and Invoice items in the Sales module.</p>
+	  <p><strong>Business Line</strong> (NHS = NextSys Hospitality, NXG = NextGO, IPTV = Vision+) says which sales line quotes the product. It becomes the line code
+	    in the quotation number (<code>001/SPH/SLS-NHS/EXT/IX/2026</code>), and a quotation can only hold products of one line. Set it on every product that is sold;
+	    a product without a Business Line can't be put on a quotation.</p>
 
 	  <!-- Price List -->
 	  <h3 id="pp-pricelist">4. Price List</h3>

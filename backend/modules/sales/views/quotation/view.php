@@ -81,7 +81,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <div class="col-md-6">
-                
+                <span class="text-secondary small">Business Line</span><br>
+                <span><small><?= Html::encode(\common\modules\productprice\models\Product::optsBusinessLine()[$model->business_line] ?? ($model->business_line ?: '-')) ?></small></span>
             </div>
         </div>
 

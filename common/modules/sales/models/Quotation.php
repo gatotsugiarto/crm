@@ -88,6 +88,18 @@ class Quotation extends ActiveRecord
             [['contract_months', 'payment_method', 'opening_text', 'terms_text', 'installation_notes', 'closing_text', 'signer_name', 'signer_title'], 'default', 'value' => null],
             [['signer_name', 'signer_title'], 'string', 'max' => 100],
             [['contract_months'], 'integer', 'min' => 1, 'max' => 240],
+            // one business line per quotation; it is part of the SPH number, so it is
+            // chosen when the quotation is created and can't change afterwards
+            [['business_line'], 'filter', 'filter' => fn($v) => $v === null || $v === '' ? null : strtoupper(trim($v))],
+            [['business_line'], 'string', 'max' => 20],
+            [['business_line'], 'required', 'when' => fn($m) => $m->isNewRecord,
+                'whenClient' => 'function () { return $("#quotation-business_line").length && !$("#quotation-business_line").prop("disabled"); }',
+                'message' => 'Choose the business line of the products in this quotation.'],
+            [['business_line'], function ($attribute) {
+                if (!$this->isNewRecord && $this->isAttributeChanged('business_line', false)) {
+                    $this->addError($attribute, 'The business line is part of the quotation number and can\'t be changed.');
+                }
+            }],
             [['payment_method'], 'string', 'max' => 50],
             [['opening_text', 'terms_text', 'installation_notes', 'closing_text'], 'string'],
             ['status', 'in', 'range' => array_keys(self::optsStatus())],
@@ -121,6 +133,7 @@ class Quotation extends ActiveRecord
             'total_amount' => 'Total Amount',
             'status' => 'Status',
             'status_id' => 'Status',
+            'business_line' => 'Business Line',
             'contract_months' => 'Contract Duration (months)',
             'payment_method' => 'Payment Method',
             'opening_text' => 'Opening Text',
@@ -140,7 +153,7 @@ class Quotation extends ActiveRecord
     {
         if ($insert) {
             if (empty($this->quotation_number)) {
-                $this->quotation_number = self::nextSphNumber($this->quotation_date ?: date('Y-m-d'));
+                $this->quotation_number = self::nextSphNumber($this->quotation_date ?: date('Y-m-d'), $this->business_line);
             }
             // Snapshot the SPH template so an issued quotation keeps its wording.
             $layout = QuotationLayout::findOne(1);
@@ -161,30 +174,33 @@ class Quotation extends ActiveRecord
     }
 
     /**
-     * Next SPH number for the year of $date: "0001/SPH/SLS-NHS/EXT/IX/2026". The
-     * running number restarts every year (the year is part of the number, so it
-     * never collides) and only counts numbers in this format, so older QTN/QUO
-     * numbers are ignored. The rows read are locked (FOR UPDATE) so concurrent
-     * inserts take turns; ux_quotation_number rejects a duplicate regardless.
+     * Next SPH number for a business line and the year of $date, e.g.
+     * "001/SPH/SLS-NHS/EXT/IX/2026". The running number (3 digits, more once past
+     * 999) restarts every year and is counted per line: the line and the year are
+     * both in the number, so numbers never collide. Only SPH-format numbers are
+     * counted (older QTN/QUO numbers are ignored). The rows read are locked
+     * (FOR UPDATE) so concurrent inserts take turns; ux_quotation_number rejects a
+     * duplicate regardless.
      */
-    public static function nextSphNumber($date)
+    public static function nextSphNumber($date, $businessLine)
     {
         $time = strtotime($date) ?: time();
         $year = date('Y', $time);
         $roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][(int) date('n', $time) - 1];
         $layout = QuotationLayout::findOne(1);
-        $code = $layout ? trim($layout->number_code, '/') : 'SPH';
+        $pattern = $layout ? trim($layout->number_code, '/') : 'SPH/SLS-{LINE}/EXT';
+        $code = str_replace('{LINE}', strtoupper((string) $businessLine), $pattern);
 
         $last = (int) Yii::$app->db->createCommand(
             "SELECT MAX(CAST(SUBSTRING_INDEX(quotation_number, '/', 1) AS UNSIGNED))
                FROM quotation
-              WHERE quotation_number REGEXP '^[0-9]{4,}/'
-                AND quotation_number LIKE :suffix
+              WHERE quotation_number REGEXP '^[0-9]{3,}/'
+                AND quotation_number LIKE :like
                 FOR UPDATE",
-            [':suffix' => '%/' . $year]
+            [':like' => '%/' . $code . '/%/' . $year]
         )->queryScalar();
 
-        return sprintf('%04d/%s/%s/%s', $last + 1, $code, $roman, $year);
+        return sprintf('%03d/%s/%s/%s', $last + 1, $code, $roman, $year);
     }
 
     /**
@@ -247,15 +263,7 @@ class Quotation extends ActiveRecord
 
     protected function handleApproved()
     {
-        // 1. Update Opportunity
-        $opportunity = Opportunity::findOne($this->opportunity_id);
-
-        if ($opportunity) {
-            $opportunity->stage = 'Closed Won';
-            $opportunity->probability = 100;
-            $opportunity->amount = $this->total_amount;
-            $opportunity->save(false);
-        }
+        Opportunity::findOne($this->opportunity_id)?->syncStageFromQuotations();
     }
 
     protected function copyItemsToSalesOrder($salesOrderId)
@@ -281,13 +289,7 @@ class Quotation extends ActiveRecord
 
     protected function handleRejected()
     {
-        $opportunity = Opportunity::findOne($this->opportunity_id);
-
-        if ($opportunity) {
-            $opportunity->stage = 'Closed Lost';
-            $opportunity->probability = 0;
-            $opportunity->save(false);
-        }
+        Opportunity::findOne($this->opportunity_id)?->syncStageFromQuotations();
     }
 
     protected function generateSoNumber()
@@ -448,7 +450,7 @@ class Quotation extends ActiveRecord
 
     public function generateQuotationNumberPreview()
     {
-        return 'QTN/' . date('Ymd') . '/AUTO';
+        return 'Auto, e.g. 001/SPH/SLS-<line>/EXT/' . ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][(int) date('n') - 1] . '/' . date('Y');
     }
 
     public static function dropdown()

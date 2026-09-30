@@ -92,6 +92,9 @@ class Product extends ActiveRecord
             [['code'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
             [['customer_type', 'revenue_model'], 'string', 'max' => 50],
+            // Business line code (NHS, NXG, IPTV, ...): drives the SPH number SLS-{code}
+            [['business_line'], 'filter', 'filter' => fn($v) => $v === null || $v === '' ? null : strtoupper(trim($v))],
+            [['business_line'], 'match', 'pattern' => '/^[A-Z0-9]{2,20}$/', 'message' => 'Use a short code of capital letters/digits, e.g. NHS.'],
             ['type', 'in', 'range' => array_keys(self::optsType())],
             ['bundle_price_type', 'in', 'range' => array_keys(self::optsBundlePriceType())],
             [['code'], 'unique'],
@@ -118,6 +121,7 @@ class Product extends ActiveRecord
             'type' => 'Type',
             'customer_type' => 'Customer Type',
             'revenue_model' => 'Revenue Model',
+            'business_line' => 'Business Line',
             'bundle_price_type' => 'Bundle Price Type',
             'description' => 'Description',
             'package_info' => 'Package Info',
@@ -333,6 +337,28 @@ class Product extends ActiveRecord
             'Hospitality' => 'Hospitality',
             'Internal' => 'Internal',
         ];
+    }
+
+    /**
+     * Business line codes for the dropdown: the known ones with their names, plus
+     * any other code already used on a product (the field accepts new codes).
+     * @return array code => label
+     */
+    public static function optsBusinessLine()
+    {
+        $known = [
+            'NHS'  => 'NHS - NextSys Hospitality',
+            'NXG'  => 'NXG - NextGO',
+            'IPTV' => 'IPTV - Vision+',
+        ];
+        $used = static::find()->select('business_line')->distinct()
+            ->where(['not', ['business_line' => null]])->column();
+        foreach ($used as $code) {
+            if (!isset($known[$code])) {
+                $known[$code] = $code;
+            }
+        }
+        return $known;
     }
 
     /**
