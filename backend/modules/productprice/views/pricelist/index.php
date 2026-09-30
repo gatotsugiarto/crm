@@ -115,49 +115,6 @@ $gridColumns = [
         //         ]
         //     ),
         // ],
-        // [
-        //     'attribute' => 'status_id',
-        //     'format' => 'raw',
-        //     'value' => function ($model) {
-        //         if ($model->status_id == 1) {
-        //             return Html::a(
-        //                 Html::tag('span', 'Active', ['class' => 'badge badge-success']),
-        //                 'javascript:void(0);',
-        //                 [
-        //                     'class' => 'text-primary nonactive-js',
-        //                     'data-url' => Url::to(['nonactive', 'id' => $model->id]),
-        //                     'title' => 'Non Active',
-        //                     'data-title' => 'Non Active PriceList',
-        //                     'data-name' => $model->employee->fullname,
-        //                 ]
-        //             );
-        //         } else {
-        //             return Html::a(
-        //                 Html::tag('span', 'Non Active', ['class' => 'badge badge-secondary']),
-        //                 'javascript:void(0);',
-        //                 [
-        //                     'class' => 'text-primary reactive-js',
-        //                     'data-url' => Url::to(['reactive', 'id' => $model->id]),
-        //                     'title' => 'Reactivate',
-        //                     'data-title' => 'Reactivate PriceList',
-        //                     'data-name' => $model->employee->fullname,
-        //                 ]
-        //             );
-        //         }
-        //     },
-        //     'filterType' => GridView::FILTER_SELECT2,
-        //     'filter' => [1 => 'Active', 2 => 'Non Active'],
-        //     'filterWidgetOptions' => [
-        //         'pluginOptions' => [
-        //             'allowClear' => true,
-        //             'placeholder' => 'All Status',
-        //         ],
-        //         'options' => ['placeholder' => 'All Status'],
-        //     ],
-        //     'filterInputOptions' => ['class' => 'form-control'],
-        //     'contentOptions' => ['class' => 'text-center'],
-        //     'headerOptions' => ['class' => 'text-white bg-creative text-center'],
-        // ],
         [
             'attribute' => 'name',
             'format' => 'raw',
@@ -168,6 +125,27 @@ $gridColumns = [
             ),
         ],
         'currency',
+        [
+            'attribute' => 'status_id',
+            'label' => 'Status',
+            'format' => 'raw',
+            'value' => function ($model) {
+                $active = (int) $model->status_id === 1;
+                return Html::a(
+                    Html::tag('span', $active ? 'Active' : 'Non Active', ['class' => 'badge badge-' . ($active ? 'success' : 'secondary')]),
+                    'javascript:void(0);',
+                    [
+                        'class' => $active ? 'nonactive-js' : 'reactive-js',
+                        'data-url' => Url::to([$active ? 'nonactive' : 'reactive', 'id' => $model->id]),
+                        'title' => $active ? 'Set Non Active' : 'Reactivate',
+                        'data-title' => $active ? 'Non Active' : 'Reactivate',
+                        'data-name' => $model->name,
+                    ]
+                );
+            },
+            'contentOptions' => ['class' => 'text-center'],
+            'headerOptions' => ['class' => 'text-white text-center'],
+        ],
         //'created_at',
         //'createdBy.fullname',
         //'updated_at',
@@ -220,6 +198,7 @@ DELETE MODAL
             </div>
             <div class="modal-body">
                 Are you sure want to delete <strong id="delete-modal-name"></strong>?
+                <br><small class="text-muted">A price list that still has product prices, discounts or accounts can't be deleted; set it to Non Active instead.</small>
             </div>
             <div class="modal-footer">
                 <?= Html::button('<i class="fa fa-times"></i> Cancel', [
@@ -269,7 +248,7 @@ CONFIRM MODAL
                 ]) ?>
                 <form id="data-url" method="post">
                     <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->getCsrfToken()) ?>
-                    <?= Html::submitButton('<i class="fa fa-trash"></i> <span class="data-title"></span>', [
+                    <?= Html::submitButton('<i class="fa fa-check"></i> <span class="data-title"></span>', [
                         'class' => 'btn btn-warning px-4',
                         'style' => 'min-width:140px;',
                     ]) ?>
@@ -354,6 +333,14 @@ $(document).on('submit', '#delete-modal-form', function(e) {
                            '<span aria-hidden="true">&times;</span></button>' +
                            '</div>';
                 $('#alert-container').html(html);
+            } else if (res && res.message) {
+                $('#alert-container').html(
+                    '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">' +
+                    '<i class="fa fa-ban"></i> ' + $('<div>').text(res.message).html() +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button>' +
+                    '</div>'
+                );
             }
         });
     }, 'json').fail(function(xhr) {

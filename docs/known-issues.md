@@ -85,6 +85,16 @@ the account's price list"), not as unfinished Product & Pricing work.
 - The team's `user_id` is labelled **Team Leader** (was "Manager"), to keep it apart
   from the **Sales Manager** role.
 
+## Fixed 2026-09-30 (Price List)
+
+- Deleting a price list that still had product prices / discounts threw a 500
+  ("Request failed"); one used only by accounts (no FK on `account.price_list_id`)
+  was deleted and left those accounts pointing at nothing. Delete now refuses with
+  what still uses it. Price lists can be set **Non Active** / reactivated from the
+  Status column; Non Active lists drop out of the Account, Product Price and
+  Discount forms (`PriceList::dropdownActive`, which keeps a record's current list).
+- The Product Bundles menu card checked the Price List permission.
+
 ## Fixed 2026-09-28 (deleting)
 
 - Deleting an account failed with "Request failed" whenever it had contacts (FK
@@ -108,9 +118,6 @@ the account's price list"), not as unfinished Product & Pricing work.
   attributed to whoever last edited the opportunity.
 - **Invoice totals** are not recomputed when invoice items are edited (no triggers on
   invoice tables), and nothing sets `Overdue` automatically.
-- **Menu gating typo**: the Product Bundle Item card in
-  `backend/views/menu/productprice.php` checks `backend.productprice.pricelist.index`
-  instead of `...productbundleitem.index`.
 - **Action buttons are not permission-aware**. Users without write access see
   New/Edit/Delete and get the 403 message on click (message added 2026-09-28).
 - **Dead code**: `frontend/` (template, not served), `backend/modules/auth/views/rbac

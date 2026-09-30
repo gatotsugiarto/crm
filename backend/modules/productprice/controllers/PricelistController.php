@@ -219,10 +219,21 @@ class PricelistController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+
+        $blocker = $model->deleteBlockers();
+        if ($blocker !== null) {
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ['success' => false, 'message' => $blocker];
+            }
+            Yii::$app->session->setFlash('error', $blocker);
+            return $this->redirect(['index']);
+        }
+
         $model->delete();
 
         if (Yii::$app->request->isAjax) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            Yii::$app->response->format = Response::FORMAT_JSON;
             return [
                 'success' => true,
                 'message' => 'Price list deleted successfully.'
@@ -233,53 +244,35 @@ class PricelistController extends Controller
         return $this->redirect(['index']);
     }
 
-    /*
-    public function actionReactive($id)
-    {
-        $model = $this->findModel($id);
-        // Non behavior token protection
-        $model->detachBehavior('tokenProtection');
-
-        // Update PriceList        $model->status_id = 1;
-        $model->save();
-
-        if (Yii::$app->request->isAjax) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
-                'success' => true,
-                'message' => 'PriceList activate successfully.',
-                'errors' => $model->errors,
-            ];
-        }
-
-        // fallback non-AJAX
-        Yii::$app->session->setFlash('success', 'PriceList activate successfully.');
-        return $this->redirect(['index']);
-    }
-
+    /**
+     * Retire a price list without losing its prices: it stays in the data but no
+     * longer appears in the Account / Product Price / Discount forms.
+     */
     public function actionNonactive($id)
     {
-        $model = $this->findModel($id);
-        // Non behavior token protection
-        $model->detachBehavior('tokenProtection');
+        return $this->setStatus($id, 2, 'deactivated');
+    }
 
-        // Update PriceList        $model->status_id = 2;
-        $model->save();
+    public function actionReactive($id)
+    {
+        return $this->setStatus($id, 1, 'activated');
+    }
+
+    private function setStatus($id, $statusId, $verb)
+    {
+        $model = $this->findModel($id);
+        $model->detachBehavior('tokenProtection');
+        $model->status_id = $statusId;
+        $ok = $model->save(false);
+        $message = $ok ? "Price list \"{$model->name}\" {$verb}." : 'Price list could not be updated.';
 
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
-                'success' => true,
-                'message' => 'PriceList non activate successfully.',
-                'errors' => $model->errors,
-            ];
+            return ['success' => $ok, 'message' => $message];
         }
-
-        // fallback non-AJAX
-        Yii::$app->session->setFlash('success', 'PriceList non activate successfully.');
+        Yii::$app->session->setFlash($ok ? 'success' : 'error', $message);
         return $this->redirect(['index']);
     }
-    */
 
     /**
      * Finds the PriceList model based on its primary key value.

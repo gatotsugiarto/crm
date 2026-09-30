@@ -44,7 +44,7 @@ $icon  = $isNew ? 'fa-plus-circle' : 'fa-edit';
         <div class="row">
             <div class="col-md-12">
                 <?= $form->field($model, 'price_list_id')->widget(Select2::class, [
-                    'data' => \common\modules\productprice\models\PriceList::dropdown(),
+                    'data' => \common\modules\productprice\models\PriceList::dropdownActive($model->price_list_id),
                     'options' => [
                         'placeholder' => 'Select Price List',
                     ],

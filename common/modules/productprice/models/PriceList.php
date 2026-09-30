@@ -152,4 +152,46 @@ class PriceList extends ActiveRecord
     }
 
 
+
+    /**
+     * Active price lists for a form's dropdown; $keepId (the record's current
+     * value) is included even when that list has been deactivated.
+     * @return array id => name
+     */
+    public static function dropdownActive($keepId = null)
+    {
+        $list = static::find()->select(['name', 'id'])
+            ->where(['status_id' => 1])->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')->column();
+        if ($keepId && !isset($list[$keepId]) && ($kept = static::findOne($keepId)) !== null) {
+            $list[$kept->id] = $kept->name . ' (Non Active)';
+        }
+        return $list;
+    }
+
+    /**
+     * Why this price list can't be deleted, or null. Its product prices and
+     * discounts and the accounts that use it must go first; deactivating it
+     * (Non Active) keeps the history instead.
+     */
+    public function deleteBlockers()
+    {
+        $counts = [
+            'product price' => (int) ProductPrice::find()->where(['price_list_id' => $this->id])->count(),
+            'discount'      => (int) ProductDiscount::find()->where(['price_list_id' => $this->id])->count(),
+            'account'       => (int) \common\modules\sales\models\Account::find()->where(['price_list_id' => $this->id])->count(),
+        ];
+        $parts = [];
+        foreach ($counts as $label => $n) {
+            if ($n > 0) {
+                $parts[] = $n . ' ' . $label . ($n === 1 ? '' : 's');
+            }
+        }
+        if (!$parts) {
+            return null;
+        }
+        $last = array_pop($parts);
+        $list = $parts ? implode(', ', $parts) . ' and ' . $last : $last;
+        return "{$this->name} still has {$list}. Set it to Non Active instead, or remove those first.";
+    }
 }

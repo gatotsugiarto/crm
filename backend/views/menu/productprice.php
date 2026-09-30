@@ -19,7 +19,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 
     
     <!-- Product Bundles -->
-    <?php if (\Yii::$app->user->can('backend.productprice.pricelist.index') || \Yii::$app->user->can("root")) { ?>
+    <?php if (\Yii::$app->user->can('backend.productprice.productbundleitem.index') || \Yii::$app->user->can("root")) { ?>
     <div class="col-6 col-md-4 col-lg-3 mb-4">
       <a href="<?=$baseUrl ?>/productprice/productbundleitem/index" class="text-decoration-none">
         <div class="card menu-card text-center p-4 h-100">
