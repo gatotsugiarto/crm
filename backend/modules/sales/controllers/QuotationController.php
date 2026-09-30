@@ -414,16 +414,20 @@ class QuotationController extends Controller
             return $this->redirect(['/sales/opportunity/view', 'id' => $opportunity->id]);
         }
 
+        $replaced = $opportunity->replacedQuotations
+            ? ' Replaced (set to Rejected): ' . implode(', ', array_map(fn($q) => $q->quotation_number, $opportunity->replacedQuotations)) . '.'
+            : '';
+
         if (count($quotations) === 1) {
             $quotation = $quotations[0];
             $count = $quotation->getQuotationItems()->count();
-            Yii::$app->session->setFlash('success', "Quotation {$quotation->quotation_number} created with {$count} " . ($count == 1 ? 'item' : 'items') . ' from the opportunity. Review it, then set it to Sent.');
+            Yii::$app->session->setFlash('success', "Quotation {$quotation->quotation_number} created with {$count} " . ($count == 1 ? 'item' : 'items') . " from the opportunity. Review it, then set it to Sent.{$replaced}");
             return $this->redirect(['view', 'id' => $quotation->id]);
         }
 
         // products from several business lines: one quotation (SPH) per line
         $numbers = implode(', ', array_map(fn($q) => $q->quotation_number, $quotations));
-        Yii::$app->session->setFlash('success', count($quotations) . " quotations created, one per business line: {$numbers}. Review each, then set them to Sent.");
+        Yii::$app->session->setFlash('success', count($quotations) . " quotations created, one per business line: {$numbers}. Review each, then set them to Sent.{$replaced}");
         return $this->redirect(['/sales/opportunity/view', 'id' => $opportunity->id]);
     }
 

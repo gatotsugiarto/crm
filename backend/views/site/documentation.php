@@ -229,7 +229,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    <li><strong>Quotation</strong> &rarr; A price quote (SPH) is sent to the customer based on the Opportunity. One quotation covers <strong>one business line</strong>
 	        (<strong>NHS</strong> NextSys Hospitality, <strong>NXG</strong> NextGO, <strong>IPTV</strong> Vision+), taken from the products. <em>Create Quotation</em> on an
 	        Opportunity with products from several lines makes one quotation per line. Numbers run per line per year, e.g.
-	        <code>001/SPH/SLS-NHS/EXT/IX/2026</code>, <code>001/SPH/SLS-IPTV/EXT/IX/2026</code>. When a quotation is revised, set the old one to <em>Rejected</em>.</li>
+	        <code>001/SPH/SLS-NHS/EXT/IX/2026</code>, <code>001/SPH/SLS-IPTV/EXT/IX/2026</code>. To revise, change the Opportunity Products and click <em>Revise Quotation</em> (the same button): it creates the new quotation and sets the old Draft/Sent one to <em>Rejected</em>. Don't reject the old one by hand first &mdash; that closes the Opportunity as Closed Lost.</li>
 	    <li><strong>Closed Won / Lost</strong> &rarr; The Opportunity closes once none of its quotations is still Draft or Sent: <strong>Closed Won</strong> with the total of the
 	        approved quotations, or <strong>Closed Lost</strong> if all were rejected.</li>
 	    <li><strong>Sales Order</strong> &rarr; The customer confirms, and the Quotation is converted into a Sales Order.</li>

@@ -30,6 +30,12 @@ $quotations = $model->getQuotations()->orderBy(['id' => SORT_DESC])->all();
 $canCreateQuotation = \common\components\rbac\SalesAccess::can('backend.sales.quotation.create-from-opportunity')
     && !in_array($model->stage, ['Closed Won', 'Closed Lost'], true);
 $quotationBlocker = $canCreateQuotation ? $model->quotationBlocker() : null;
+$toReplace = ($canCreateQuotation && $quotationBlocker === null) ? $model->quotationsToReplace() : [];
+$createConfirm = 'Create Draft quotation(s) from this opportunity\'s products? One quotation per business line (NHS, NXG, IPTV, ...); lines that already have an approved quotation are skipped.';
+if ($toReplace) {
+    $createConfirm .= "\n\nThis is a revision. These will be set to Rejected and replaced:\n- "
+        . implode("\n- ", array_map(fn($q) => "{$q->quotation_number} ({$q->status})", $toReplace));
+}
 ?>
 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
     <div class="small">
@@ -45,11 +51,11 @@ $quotationBlocker = $canCreateQuotation ? $model->quotationBlocker() : null;
     </div>
     <?php if ($canCreateQuotation): ?>
         <?php if ($quotationBlocker === null): ?>
-            <?= Html::a('<i class="fa fa-file-invoice"></i> Create Quotation',
+            <?= Html::a('<i class="fa fa-file-invoice"></i> ' . ($toReplace ? 'Revise Quotation' : 'Create Quotation'),
                 ['/sales/quotation/create-from-opportunity', 'id' => $model->id], [
                 'class'        => 'btn btn-success btn-sm px-3 rounded-pill shadow-sm',
                 'data-method'  => 'post',
-                'data-confirm' => 'Create Draft quotation(s) with this opportunity\'s products? One quotation per business line (NHS, NXG, IPTV, ...); lines that already have an approved quotation are skipped.',
+                'data-confirm' => $createConfirm,
             ]) ?>
         <?php else: ?>
             <span title="<?= Html::encode($quotationBlocker) ?>" style="cursor: not-allowed;">

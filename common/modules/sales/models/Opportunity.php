@@ -18,6 +18,9 @@ use common\modules\auth\models\User;
 
 class Opportunity extends ActiveRecord
 {
+    /** @var Quotation[] Draft/Sent quotations the last createQuotations() set to Rejected */
+    public $replacedQuotations = [];
+
 
     /**
      * ENUM field values
@@ -235,6 +238,22 @@ class Opportunity extends ActiveRecord
     }
 
     /**
+     * Draft/Sent quotations that Create Quotation will replace: the open ones in the
+     * business lines it is about to quote again.
+     * @return Quotation[]
+     */
+    public function quotationsToReplace()
+    {
+        $lines = array_keys($this->linesToQuote());
+        if (!$lines) {
+            return [];
+        }
+        return $this->getQuotations()
+            ->where(['status' => [Quotation::STATUS_DRAFT, Quotation::STATUS_SENT], 'business_line' => $lines])
+            ->orderBy(['id' => SORT_ASC])->all();
+    }
+
+    /**
      * Why quotations can't be created from this opportunity yet, or null.
      */
     public function quotationBlocker()
@@ -266,6 +285,11 @@ class Opportunity extends ActiveRecord
      * quotation_item triggers). Creating a quotation moves the opportunity to
      * Proposal (Quotation::afterSave).
      *
+     * It is also the revise action: Draft/Sent quotations of those lines
+     * (quotationsToReplace()) are set to Rejected after their replacement exists,
+     * so the opportunity never looks "all rejected" (Closed Lost) in between. The
+     * rejected ones are left in $replacedQuotations.
+     *
      * @return Quotation[]
      * @throws \RuntimeException with quotationBlocker()'s reason
      */
@@ -277,6 +301,7 @@ class Opportunity extends ActiveRecord
         }
 
         $created = [];
+        $this->replacedQuotations = $this->quotationsToReplace();
         $transaction = static::getDb()->beginTransaction();
         try {
             foreach ($this->linesToQuote() as $line => $rows) {
@@ -314,6 +339,14 @@ class Opportunity extends ActiveRecord
                     $quotation->updateAttributes(['payment_method' => $paymentMethod]);
                 }
                 $created[] = $quotation;
+            }
+
+            foreach ($this->replacedQuotations as $old) {
+                $old->detachBehavior('tokenProtection');
+                $old->status = Quotation::STATUS_REJECTED;
+                if (!$old->save(false, ['status', 'updated_at', 'updated_by'])) {
+                    throw new \RuntimeException("Quotation {$old->quotation_number} could not be set to Rejected.");
+                }
             }
             $transaction->commit();
         } catch (\Throwable $e) {

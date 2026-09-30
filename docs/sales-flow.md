@@ -140,9 +140,16 @@ Approved / Rejected.
   next to the disabled button) while the opportunity has no products, a product has
   no business line, or every line is already approved; the button is hidden on
   Closed Won / Closed Lost opportunities. The opportunity view lists its quotations.
-  Several quotations per line are allowed (revisions) — **set the replaced one to
-  Rejected**, otherwise a leftover Draft/Sent quotation keeps the opportunity open
-  (see Approve below). Creating a quotation moves the opportunity to Proposal and
+- **Revise** = the same button. When a line being quoted still has a Draft/Sent
+  quotation, the button reads **Revise Quotation** and its confirm dialog lists
+  those quotations (`Opportunity::quotationsToReplace()`). Clicking it creates the
+  new quotation(s) first and then sets the old ones to **Rejected** in the same
+  transaction (flash: "Replaced (set to Rejected): 001/…"). Workflow for a
+  revision: change the Opportunity Products → click Revise Quotation. Don't reject
+  the old quotation by hand first: with no Draft/Sent quotation left the
+  opportunity closes as Closed Lost (see Approve below) and the button disappears.
+  A Draft that was never sent can also simply be edited in place (same number).
+- Creating a quotation moves the opportunity to Proposal and
   raises its probability to 50% if it was lower (`Quotation::setOpportunityProposal`).
 
 - **Quotation Items**: triggers compute each line's `total = qty*price - discount`
