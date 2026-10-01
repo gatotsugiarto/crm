@@ -671,7 +671,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <h2 id="salespath">Sales Path: from Lead to Paid Invoice</h2>
 	  <p class="text-muted">
 	    The whole road of one deal, step by step: who does it, which menu or button, and what the system does by itself.
-	    Roles: <strong>Sales</strong> (e.g. Iqbal, Gatot) and <strong>Sales Manager</strong> (e.g. Fikri). Root can do everything.
+	    Roles: <strong>Sales</strong> (e.g. Iqbal, Bagus) and <strong>Sales Manager</strong> (e.g. Fikri). Root can do everything.
 	  </p>
 
 	  <div class="d-flex flex-wrap align-items-center mb-3 small" style="gap:6px;">
