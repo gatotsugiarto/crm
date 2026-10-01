@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row mb-2 small">
             <div class="col-md-6 text-muted">
                 <i class="fa fa-plus-circle"></i> Change by:
-                <strong><?= Html::encode($model->changedBy->fullname) ?></strong>
+                <strong><?= Html::encode($model->changedBy?->fullname ?? '-') ?></strong>
                 <br>
                 <span class="text-secondary small">Change At</span> <i class="far fa-clock"></i> <small><?= Html::encode($model->changed_at) ?></small>
             </div>

@@ -68,13 +68,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row mb-2 small">
             <div class="col-md-6 text-muted">
                 <i class="fa fa-plus-circle"></i> Created by:
-                <strong><?= Html::encode($model->createdBy->fullname) ?></strong>
+                <strong><?= Html::encode($model->createdBy?->fullname ?? '-') ?></strong>
                 <br>
                 <i class="far fa-clock"></i> <small><?= Html::encode($model->created_at) ?></small>
             </div>
             <div class="col-md-6 text-muted">
                 <i class="fa fa-edit"></i> Updated by:
-                <strong><?= Html::encode($model->updatedBy->fullname) ?></strong>
+                <strong><?= Html::encode($model->updatedBy?->fullname ?? '-') ?></strong>
                 <br>
                 <i class="far fa-clock"></i> <small><?=Html::encode($model->updated_at) ?></small>
             </div>
