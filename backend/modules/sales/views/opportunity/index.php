@@ -228,7 +228,8 @@ $gridColumns = [
             'attribute' => 'owner_user_id',
             'format' => 'raw',
             'value' => function ($model) {
-                return $model->ownerUser?->id ?? '-';
+                // owner_user_id holds the owning sales team (same as the detail page)
+                return Html::encode($model->team?->name ?? '-');
             },
         ],
         'probability',
