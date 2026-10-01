@@ -41,6 +41,11 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <a class="nav-link text-white fw-bold" href="#lead">Lead</a>
 	        </li>
 
+	    <!-- SALES PATH -->
+	    <li class="nav-item">
+	          <a class="nav-link text-white fw-bold" href="#salespath">Sales Path</a>
+	        </li>
+
 	  </ul>
 	</nav>
 
@@ -659,6 +664,78 @@ $baseUrl = Yii::$app->request->baseUrl;
 	    </div>
 	  </div>
 	  <p class="text-muted small">After adding them, try <strong>Convert</strong> on one (e.g. Lead 1) to see its Account, Contact and Opportunity being created.</p>
+	</section>
+
+	<!-- Sales Path Documentation -->
+	<section class="col-md-9">
+	  <h2 id="salespath">Sales Path: from Lead to Paid Invoice</h2>
+	  <p class="text-muted">
+	    The whole road of one deal, step by step: who does it, which menu or button, and what the system does by itself.
+	    Roles: <strong>Sales</strong> (e.g. Iqbal, Gatot) and <strong>Sales Manager</strong> (e.g. Fikri). Root can do everything.
+	  </p>
+
+	  <div class="d-flex flex-wrap align-items-center mb-3 small" style="gap:6px;">
+	    <span class="badge badge-secondary p-2">Lead</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-secondary p-2">Account + Contact + Opportunity</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-info p-2">Opportunity Products</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-info p-2">Quotation (SPH)</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-success p-2">Approved &rarr; Sales Order</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-primary p-2">Confirm SO &rarr; Invoice</span><i class="fa fa-arrow-right text-muted"></i>
+	    <span class="badge badge-dark p-2">Sent &rarr; Paid</span>
+	  </div>
+
+	  <h3 id="sp-steps">1. Steps</h3>
+	  <div class="table-responsive">
+	    <table class="table table-sm table-bordered" style="max-width:980px;">
+	      <thead class="thead-light">
+	        <tr><th>#</th><th>Step</th><th>Who</th><th>Where / button</th><th>What happens automatically</th><th>Opportunity stage</th></tr>
+	      </thead>
+	      <tbody>
+	        <tr><td>1</td><td><strong>Record the prospect</strong></td><td>Sales</td><td>Sales &rarr; Lead Management &rarr; <em>+ New Data</em></td>
+	            <td>Lead saved, owned by a Sales Team (see the <a href="#lead">Lead</a> menu).</td><td>&ndash;</td></tr>
+	        <tr><td>2</td><td><strong>Convert</strong> the qualified Lead</td><td>Sales of the Lead's team, or Sales Manager</td><td>Lead list &rarr; <i class="fa fa-exchange-alt"></i> Convert</td>
+	            <td>Account (Prospect) + its Billing/Shipping/Office addresses, primary Contact, and an Opportunity.</td><td>Prospecting 10%</td></tr>
+	        <tr><td>3</td><td><strong>Complete the Account</strong></td><td>Sales; Sales Manager for Sales Team / Assigned Sales</td><td>Sales &rarr; Accounts &rarr; edit</td>
+	            <td>Assigned Sales becomes the signer of the SPH. Set the Price List (Corporate / Retail).</td><td>&ndash;</td></tr>
+	        <tr><td>4</td><td><strong>Work the Opportunity</strong>: rename it, add products</td><td>Sales</td><td>Sales &rarr; Opportunities &rarr; open &rarr; <em>Add Opportunity Product</em></td>
+	            <td>Amount = sum of the products (qty &times; price &minus; discount). Every product needs a <strong>Business Line</strong> (NHS / NXG / IPTV).</td><td>Qualification (set by hand)</td></tr>
+	        <tr><td>5</td><td><strong>Create Quotation</strong></td><td>Sales</td><td>Opportunity page &rarr; <em>Create Quotation</em></td>
+	            <td>One Draft quotation <strong>per business line</strong>, numbered e.g. <code>001/SPH/SLS-NHS/EXT/X/2026</code>, items and SPH texts copied in.</td><td>Proposal 50%</td></tr>
+	        <tr><td>6</td><td><strong>Check and send the SPH</strong></td><td>Sales (the Assigned Sales)</td><td>Quotation page &rarr; <em>SPH (PDF)</em>, then edit &rarr; Status <em>Sent</em></td>
+	            <td>&ndash;</td><td>Proposal 50%</td></tr>
+	        <tr class="table-light"><td>6b</td><td><em>Customer asks for changes</em></td><td>Sales</td><td>Change the Opportunity Products &rarr; <em>Revise Quotation</em> (same button)</td>
+	            <td>New quotation (next number); the old Draft/Sent one becomes <strong>Rejected</strong>. Don't reject it by hand first.</td><td>Proposal</td></tr>
+	        <tr><td>7</td><td><strong>Approve</strong> (customer agreed)</td><td><strong>Sales Manager</strong></td><td>Quotation page &rarr; <em>Approve &amp; Generate SO</em></td>
+	            <td>Sales Order (Draft) with the same items. The quotation is locked. When <em>all</em> quotations of the opportunity are decided, the opportunity closes.</td>
+	            <td><span class="badge badge-primary">Closed Won</span> 100%, amount = approved total<br><small>(all rejected &rarr; <span class="badge badge-warning">Closed Lost</span>)</small></td></tr>
+	        <tr><td>8</td><td>Account becomes a customer</td><td>Sales</td><td>Accounts &rarr; edit &rarr; Customer Type <em>Customer</em></td><td>Not automatic yet.</td><td>&ndash;</td></tr>
+	        <tr><td>9</td><td><strong>Confirm the Sales Order</strong></td><td><strong>Sales Manager</strong></td><td>Sales &rarr; Sales Order &rarr; open &rarr; <em>Confirm SO</em></td>
+	            <td>SO &rarr; Confirmed and an <strong>Invoice</strong> (Draft, due in 30 days) with the same items. Only once.</td><td>&ndash;</td></tr>
+	        <tr><td>10</td><td><strong>Send the invoice</strong></td><td><strong>Sales Manager</strong></td><td>Invoice page &rarr; <em>Invoice PDF</em>, <em>Mark as Sent</em></td><td>&ndash;</td><td>&ndash;</td></tr>
+	        <tr><td>11</td><td><strong>Payment received</strong></td><td><strong>Sales Manager</strong></td><td>Invoice page &rarr; <em>Mark as Paid</em></td><td>&ndash;</td><td>&ndash;</td></tr>
+	        <tr><td>12</td><td>Delivery / installation done</td><td><strong>Sales Manager</strong></td><td>Sales Order &rarr; edit &rarr; Status <em>Completed</em> (or <em>Cancelled</em>)</td><td>&ndash;</td><td>&ndash;</td></tr>
+	      </tbody>
+	    </table>
+	  </div>
+
+	  <h3 id="sp-confirm">2. What &ldquo;Confirm SO&rdquo; means</h3>
+	  <p>
+	    Approving the quotation records that the customer agreed; the Sales Order is created as <strong>Draft</strong>.
+	    <strong>Confirm</strong> says the order is final and may be billed. Before confirming, check for example that the customer signed the SPK/contract,
+	    that quantities, prices and addresses are right, and that installation is scheduled. Confirming creates the Invoice and can't be repeated.
+	  </p>
+
+	  <h3 id="sp-rules">3. Rules to remember</h3>
+	  <ul>
+	    <li><strong>1 quotation = 1 business line.</strong> An opportunity with NHS and IPTV products gets two quotations, each with its own number series.</li>
+	    <li><strong>Approved and Rejected quotations are final</strong>: their items can't be changed and a rejected one can't be approved. Changes go through <em>Revise Quotation</em>.</li>
+	    <li><strong>Closed Won</strong> waits until no quotation of the opportunity is still Draft or Sent. Closed rows are highlighted in the Opportunities list
+	        (<span class="badge badge-primary">Won</span> blue, <span class="badge badge-warning">Lost</span> yellow).</li>
+	    <li>Quotation status colours: <span class="badge badge-secondary">Draft</span> <span class="badge badge-info">Sent</span>
+	        <span class="badge badge-success">Approved</span> <span class="badge badge-danger">Rejected</span>; rows of rejected quotations are dimmed.</li>
+	    <li>Sales users can see invoices and print their PDF; editing the Sales Order and invoice statuses is for the Sales Manager.</li>
+	    <li>Every step is recorded in <strong>Log Activity</strong>, except Confirm SO for now (it writes straight to the database).</li>
+	  </ul>
 	</section>
 
 <style>
