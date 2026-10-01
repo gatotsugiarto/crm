@@ -11,6 +11,9 @@ use common\modules\sales\models\QuotationItem;
  */
 class QuotationItemSearch extends QuotationItem
 {
+    /** @var string|null status of the item's quotation (Draft, Sent, Approved, Rejected) */
+    public $quotationStatus;
+
     /**
      * {@inheritdoc}
      */
@@ -20,6 +23,7 @@ class QuotationItemSearch extends QuotationItem
             [['id', 'quotation_id', 'product_id', 'qty', 'status_id', 'created_by', 'updated_by'], 'integer'],
             [['price', 'discount', 'total'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
+            [['quotationStatus'], 'in', 'range' => array_keys(Quotation::optsStatus())],
         ];
     }
 
@@ -42,7 +46,7 @@ class QuotationItemSearch extends QuotationItem
      */
     public function search($params, $formName = null)
     {
-        $query = QuotationItem::find();
+        $query = QuotationItem::find()->joinWith('quotation q')->with('product');
 
         // add conditions that should always apply here
 
@@ -55,6 +59,14 @@ class QuotationItemSearch extends QuotationItem
                 'defaultOrder' => [
                     'id' => SORT_DESC,
                 ],
+                // table-qualified: the quotation join has columns with the same names
+                'attributes' => array_merge(
+                    array_combine(
+                        $cols = ['id', 'quotation_id', 'product_id', 'qty', 'price', 'discount', 'total'],
+                        array_map(fn($c) => ['asc' => ["quotation_item.$c" => SORT_ASC], 'desc' => ["quotation_item.$c" => SORT_DESC]], $cols)
+                    ),
+                    ['quotationStatus' => ['asc' => ['q.status' => SORT_ASC], 'desc' => ['q.status' => SORT_DESC]]]
+                ),
             ],
         ]);
 
@@ -68,19 +80,21 @@ class QuotationItemSearch extends QuotationItem
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'quotation_id' => $this->quotation_id,
-            'product_id' => $this->product_id,
-            'qty' => $this->qty,
-            'price' => $this->price,
-            'discount' => $this->discount,
-            'total' => $this->total,
-            'status_id' => $this->status_id,
-            'created_at' => $this->created_at,
-            'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
+            'quotation_item.id' => $this->id,
+            'quotation_item.quotation_id' => $this->quotation_id,
+            'quotation_item.product_id' => $this->product_id,
+            'quotation_item.qty' => $this->qty,
+            'quotation_item.price' => $this->price,
+            'quotation_item.discount' => $this->discount,
+            'quotation_item.total' => $this->total,
+            'quotation_item.status_id' => $this->status_id,
+            'quotation_item.created_at' => $this->created_at,
+            'quotation_item.created_by' => $this->created_by,
+            'quotation_item.updated_at' => $this->updated_at,
+            'quotation_item.updated_by' => $this->updated_by,
         ]);
+
+        $query->andFilterWhere(['q.status' => $this->quotationStatus]);
 
         return $dataProvider;
     }

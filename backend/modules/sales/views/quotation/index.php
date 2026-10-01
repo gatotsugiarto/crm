@@ -137,6 +137,8 @@ $gridColumns = [
         'class' => 'table table-hover table-striped align-middle shadow-sm'
     ],
     'layout' => "{items}\n<div class='d-flex justify-content-between align-items-center mt-2'>{pager}{summary}</div>",
+    // a replaced / turned-down quotation stays visible but dimmed
+    'rowOptions' => fn($model) => $model->status === 'Rejected' ? ['class' => 'text-muted', 'style' => 'opacity:.55;'] : [],
     'columns' => [
         ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
         // 'id',
@@ -227,7 +229,12 @@ $gridColumns = [
                 return Yii::$app->formatter->asCurrency($model->total_amount);
             },
         ],
-        'status',
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'value' => fn($model) => $model::statusBadge($model->status),
+            'contentOptions' => ['class' => 'text-center'],
+        ],
         //'created_at',
         //'createdBy.fullname',
         //'updated_at',

@@ -216,6 +216,10 @@ class QuotationController extends Controller
             Yii::$app->session->setFlash('warning', 'Quotation already approved');
             return $this->redirect(['view', 'id' => $id]);
         }
+        if ($model->status === 'Rejected') {
+            Yii::$app->session->setFlash('error', 'A rejected quotation can\'t be approved; it was replaced or turned down.');
+            return $this->redirect(['view', 'id' => $id]);
+        }
 
         // ❗ validasi item
         if (empty($model->quotationItems)) {

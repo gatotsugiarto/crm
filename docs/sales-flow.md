@@ -154,6 +154,13 @@ Approved / Rejected.
 
 - **Quotation Items**: triggers compute each line's `total = qty*price - discount`
   and keep `quotation.total_amount = SUM(total)`.
+- **Approved and Rejected are final** (`Quotation::isLocked()`): their items can't be
+  added, edited or deleted (`QuotationItem` rule + `QuotationitemController::denyIfLocked`
+  → 403 with the reason), the buttons are hidden, and a Rejected quotation can't be
+  approved. A change after that is a new version via Revise Quotation. The Quotations
+  and Quotation Items lists show the status as a coloured badge (Draft grey, Sent
+  blue, Approved green, Rejected red), dim the rows of Rejected quotations, and the
+  items list can be filtered by quotation status.
 - **Status → Sent** (trigger `trg_quotation_after_update_status`): the opportunity
   moves to stage **Proposal**, probability 50.
 - **Approve** (`/sales/quotation/approve`, `QuotationController::actionApprove`):

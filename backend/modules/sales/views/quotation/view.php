@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="d-flex gap-2">
 
-        <?php if ($model->status !== 'Approved' && \common\components\rbac\SalesAccess::canApproveQuotation()): ?>
+        <?php if (!$model->isLocked() && \common\components\rbac\SalesAccess::canApproveQuotation()): ?>
             <?= Html::a('<i class="fa fa-check"></i> Approve & Generate SO', 
                 ['approve', 'id' => $model->id], [
                 'class' => 'btn btn-success btn-sm',
@@ -181,7 +181,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <small class="text-muted">Track all items associated with customer quotations</small>
         </div>
-        <?php if ($model->status !== 'Approved'): ?>
+        <?php if (!$model->isLocked()): ?>
             <?= Html::button('<i class="fa fa-plus"></i> Add Quotation Item', [
                 'class'    => 'btn btn-primary btn-sm px-3 rounded-pill shadow-sm create-quotation-item',
                 'data-url' => Url::to(['/sales/quotationitem/create', 'opportunity_id' => $model->id]),
@@ -258,8 +258,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'template'       => '{update} {delete}',
             'contentOptions' => ['class' => 'text-center'],
             'visibleButtons' => [
-                'update' => fn($m) => $model->status !== 'Approved',
-                'delete' => fn($m) => $model->status !== 'Approved',
+                'update' => fn($m) => !$model->isLocked(),
+                'delete' => fn($m) => !$model->isLocked(),
             ],
             'buttons'        => [
                 'update' => fn($url, $m) => Html::a('<i class="fa fa-edit"></i>', 'javascript:void(0);', [

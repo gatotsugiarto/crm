@@ -375,6 +375,27 @@ class Quotation extends ActiveRecord
 
 
     /**
+     * Approved and Rejected are final: the items can't change any more (an approved
+     * quotation already has its Sales Order; a revision is a new quotation).
+     */
+    public function isLocked()
+    {
+        return in_array($this->status, [self::STATUS_APPROVED, self::STATUS_REJECTED], true);
+    }
+
+    /** Coloured badge for a quotation status (lists and detail pages). */
+    public static function statusBadge($status)
+    {
+        $class = [
+            self::STATUS_DRAFT => 'badge-secondary',
+            self::STATUS_SENT => 'badge-info',
+            self::STATUS_APPROVED => 'badge-success',
+            self::STATUS_REJECTED => 'badge-danger',
+        ][$status] ?? 'badge-light';
+        return \yii\helpers\Html::tag('span', \yii\helpers\Html::encode($status ?: '-'), ['class' => "badge $class"]);
+    }
+
+    /**
      * column status ENUM value labels
      * @return string[]
      */

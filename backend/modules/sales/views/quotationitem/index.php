@@ -25,8 +25,13 @@ $gridColumns = [
         'attribute' => 'quotation_id',
         'format' => 'raw',
         'value' => function ($model) {
-            return $model->quotation->name;
+            return $model->quotation->quotation_number ?? '-';
         },
+    ],
+    [
+        'attribute' => 'quotationStatus',
+        'label' => 'Quotation Status',
+        'value' => fn($model) => $model->quotation->status ?? '-',
     ],
     [
         'attribute' => 'product_id',
@@ -122,6 +127,9 @@ $gridColumns = [
         'class' => 'table table-hover table-striped align-middle shadow-sm'
     ],
     'layout' => "{items}\n<div class='d-flex justify-content-between align-items-center mt-2'>{pager}{summary}</div>",
+    // items of a replaced / turned-down quotation stay visible but dimmed
+    'rowOptions' => fn($model) => ($model->quotation->status ?? null) === 'Rejected'
+        ? ['class' => 'text-muted', 'style' => 'opacity:.55;'] : [],
     'columns' => [
         ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
         // 'id',
@@ -193,6 +201,13 @@ $gridColumns = [
             ),
         ],
         [
+            'attribute' => 'quotationStatus',
+            'label' => 'Status',
+            'format' => 'raw',
+            'value' => fn($model) => \common\modules\sales\models\Quotation::statusBadge($model->quotation->status ?? null),
+            'contentOptions' => ['class' => 'text-center'],
+        ],
+        [
             'attribute' => 'product_id',
             'format' => 'raw',
             'value' => function ($model) {
@@ -232,8 +247,8 @@ $gridColumns = [
             'headerOptions' => ['style' => 'width:120px;'],
             'contentOptions' => ['class' => 'text-center'],
             'visibleButtons' => [
-                'update' => fn($m) => $m->status !== 'Approved',
-                'delete' => fn($m) => $m->status !== 'Approved',
+                'update' => fn($m) => !($m->quotation && $m->quotation->isLocked()),
+                'delete' => fn($m) => !($m->quotation && $m->quotation->isLocked()),
             ],
             'buttons' => [
                 'update' => fn($url, $model) => Html::a('<i class="fa fa-edit"></i>', 'javascript:void(0);', [

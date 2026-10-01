@@ -153,6 +153,7 @@ class QuotationitemController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $this->denyIfLocked($model);
         // $model->scenario = 'updateData';
 
         if (Yii::$app->request->isAjax) {
@@ -207,6 +208,7 @@ class QuotationitemController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+        $this->denyIfLocked($model);
         $model->delete();
 
         if (Yii::$app->request->isAjax) {
@@ -268,6 +270,18 @@ class QuotationitemController extends Controller
         return $this->redirect(['index']);
     }
     */
+
+    /**
+     * Items of an Approved / Rejected quotation are final (the 403 message is shown
+     * by the layout's AJAX handler).
+     */
+    protected function denyIfLocked(QuotationItem $item)
+    {
+        $quotation = $item->quotation;
+        if ($quotation !== null && $quotation->isLocked()) {
+            throw new \yii\web\ForbiddenHttpException("Quotation {$quotation->quotation_number} is {$quotation->status}; its items can't be changed.");
+        }
+    }
 
     /**
      * Finds the QuotationItem model based on its primary key value.

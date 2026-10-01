@@ -72,6 +72,12 @@ class QuotationItem extends ActiveRecord
             [['qty'], 'default', 'value' => 1],
             [['quotation_id', 'product_id', 'qty', 'status_id', 'created_by', 'updated_by'], 'integer'],
             [['price', 'discount', 'total'], 'number'],
+            [['quotation_id'], function ($attribute) {
+                $quotation = Quotation::findOne($this->quotation_id);
+                if ($quotation !== null && $quotation->isLocked()) {
+                    $this->addError($attribute, "Quotation {$quotation->quotation_number} is {$quotation->status}; its items can't be changed. Use Revise Quotation on the opportunity for a new version.");
+                }
+            }],
             [['created_at', 'updated_at'], 'safe'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             [['quotation_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quotation::class, 'targetAttribute' => ['quotation_id' => 'id']],

@@ -57,6 +57,17 @@ use kartik\select2\Select2;
         ])->label(false) ?>
         </div>
 
+        <div style="width: 180px;">
+        <?= $form->field($model, 'quotationStatus', [
+            'options' => ['class' => 'mb-0'],
+            'template' => '{input}'
+        ])->widget(Select2::classname(), [
+            'data' => \common\modules\sales\models\Quotation::optsStatus(),
+            'options' => ['placeholder' => 'Quotation Status'],
+            'pluginOptions' => ['allowClear' => true],
+        ])->label(false) ?>
+        </div>
+
     <?php // echo $form->field($model, 'discount') ?>
 
     <?php // echo $form->field($model, 'total') ?>
