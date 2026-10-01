@@ -128,6 +128,12 @@ $gridColumns = [
         'class' => 'table table-hover table-striped align-middle shadow-sm'
     ],
     'layout' => "{items}\n<div class='d-flex justify-content-between align-items-center mt-2'>{pager}{summary}</div>",
+    // closed deals stand out: Closed Won = primary, Closed Lost = warning
+    'rowOptions' => fn($model) => match ($model->stage) {
+        'Closed Won' => ['class' => 'table-primary'],
+        'Closed Lost' => ['class' => 'table-warning'],
+        default => [],
+    },
     'columns' => [
         ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
         // 'id',
