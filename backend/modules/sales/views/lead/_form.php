@@ -97,7 +97,13 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     ],
                 ])->hint('Copied to the Account on Convert.') ?>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'revenue_type')->widget(Select2::class, [
+                    'data' => \common\modules\sales\models\Opportunity::optsRevenueType(),
+                    'options' => ['placeholder' => 'Recurring or OTC', 'id' => 'lead-revenue_type'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint('<b>Recurring</b> = monthly subscription (installation may come along); <b>OTC</b> = one time charge only (beli putus, prepaid). Copied to the Opportunity on Convert.') ?>
+            </div>
         </div>
 
         <div class="row">

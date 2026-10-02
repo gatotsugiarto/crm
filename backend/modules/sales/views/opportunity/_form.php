@@ -102,6 +102,17 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
+                <?= $form->field($model, 'revenue_type')->widget(Select2::class, [
+                    'data' => \common\modules\sales\models\Opportunity::optsRevenueType(),
+                    'options' => ['placeholder' => 'Recurring or OTC', 'id' => 'opportunity-revenue_type'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint('<b>Recurring</b> = monthly billing (one-time items such as installation may come along); <b>OTC</b> = one time charge only, no Recurring products.') ?>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
                 <?= $form->field($model, 'stage')->widget(Select2::classname(), [
                     'data' => [ 
                         'Prospecting' => 'Prospecting', 

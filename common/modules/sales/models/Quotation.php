@@ -159,12 +159,15 @@ class Quotation extends ActiveRecord
             $layout = QuotationLayout::findOne(1);
             if ($layout !== null) {
                 // signer is not copied: it defaults to the account's Assigned Sales at print time
+                $otc = $this->opportunity && $this->opportunity->isOtc();
                 foreach (['opening_text', 'terms_text', 'installation_notes', 'closing_text'] as $attr) {
                     if ($this->$attr === null || $this->$attr === '') {
-                        $this->$attr = $layout->$attr;
+                        // OTC deals get the terms without contract / subscription clauses
+                        $this->$attr = ($attr === 'terms_text' && $otc && $layout->terms_text_otc) ? $layout->terms_text_otc : $layout->$attr;
                     }
                 }
-                if (!$this->contract_months) {
+                // a one time charge has no contract duration
+                if (!$this->contract_months && !$otc) {
                     $this->contract_months = $layout->default_contract_months;
                 }
             }
@@ -219,7 +222,8 @@ class Quotation extends ActiveRecord
                 return 'Tahunan (di depan)';
             }
         }
-        return null;
+        // only one-time items (beli putus, installation)
+        return $this->quotationItems ? 'Sekali Bayar' : null;
     }
 
     public function afterSave($insert, $changedAttributes)

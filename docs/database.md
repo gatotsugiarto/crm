@@ -16,17 +16,17 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `lead` | company_name, contact_name, email, phone, lead_source, industry, customer_segment (optional, carried to the account on convert), address, city/province/country/postal_code_id, **is_converted**, converted_account_id, converted_contact_id, owner_user_id → team | Converted by `sp_convert_lead_to_customer` |
+| `lead` | company_name, contact_name, email, phone, lead_source, industry, customer_segment (optional, carried to the account on convert), revenue_type (Recurring / OTC, carried to the opportunity), address, city/province/country/postal_code_id, **is_converted**, converted_account_id, converted_contact_id, owner_user_id → team | Converted by `sp_convert_lead_to_customer` |
 | `account` | parent_account_id → account (holding/group), code (unique), name, **account_type** enum(Prospect, Customer, Partner, Reseller, Vendor) shown as "Customer Type", **customer_segment** (free text, same list as `product.customer_type`), industry, tax_number, contact info, location FKs, price_list_id, owner_user_id → team ("Sales Team"), **assigned_user_id** → user ("Assigned Sales", ON DELETE SET NULL) | |
 | `account_address` | account_id, **address_type** enum(Billing, Shipping, Office), address, location FKs | Extra addresses besides the account's main address. Was Invoice/Branch until `m260928_130000` |
 | `account_attachment` | account_id (ON DELETE CASCADE), file_name (original), stored_name (on disk), mime_type, file_size, description | Documents per account. Files live in `params['accountAttachmentPath']/<account_id>/` (default `backend/runtime/attachments/account`, outside the web root) |
 | `contact` | account_id, fullname, job_title, email, phone, mobile, **is_primary** | One primary per account, via `sp_set_primary_contact` |
-| `opportunity` | account_id, contact_id, owner_user_id → team, name, **stage** enum(Prospecting, Qualification, Proposal, Negotiation, Closed Won, Closed Lost), amount, close_date, probability | `amount` maintained by triggers |
+| `opportunity` | account_id, contact_id, owner_user_id → team, name, revenue_type (Recurring / OTC), **stage** enum(Prospecting, Qualification, Proposal, Negotiation, Closed Won, Closed Lost), amount, close_date, probability | `amount` maintained by triggers |
 | `opportunity_product` | opportunity_id, product_id, qty, price, discount, **total (generated: `qty*price-discount`, STORED)**, is_upsell, parent_product_id → opportunity_product | |
 | `opportunity_stage_history` | opportunity_id, old_stage, new_stage, changed_at, changed_by → user, description, days_in_previous_stage | Written only by triggers |
 | `activity` | account_id, contact_id, opportunity_id, reference_type/reference_id, assigned_to → team, **activity_type** enum(Call, Meeting, Email, Task, Note), priority enum(Low, Normal, High, Urgent), subject, activity_date, due_date, reminder_at, is_completed, completed_at, outcome | |
 | `quotation` | quotation_number (**unique**, SPH format, per business line), **business_line** (one line per quotation, fixed after create), account_id, opportunity_id, quotation_date, valid_until, contract_months, payment_method, opening_text / terms_text / installation_notes / closing_text (copied from `quotation_layout`), total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
-| `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code (`SPH/SLS-{LINE}/EXT`, `{LINE}` = quotation business line), city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
+| `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code (`SPH/SLS-{LINE}/EXT`, `{LINE}` = quotation business line), terms_text (Recurring) / terms_text_otc (OTC), city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
 | `quotation_item` | quotation_id, product_id, qty, price, discount, total | `total` computed by trigger |
 | `sales_order` | order_number, account_id, quotation_id, order_date, total_amount, trial_start/end, contract_start/end, rfs_date, pks_number, installation_address (free text; empty = account Shipping address), installation_address_id / billing_address_id → account_address, installation_contact_id / billing_contact_id → contact (SET NULL; not in the form yet, empty = account Billing address / primary contact), **status** enum(Draft, Confirmed, Completed, Cancelled), confirmed_at, confirmed_by | Created by trigger on quotation approval |
 | `sales_order_item` | sales_order_id, product_id, qty, price, discount, total | `total` computed by trigger |
@@ -92,7 +92,7 @@ Called by `LeadController::actionConvert`. In one transaction:
    lead's address and location (since `m260928_150000`; skipped if the lead has no
    address; users edit the ones that differ), then a primary
    `contact` from the lead's contact fields.
-4. Inserts an `opportunity` "Opportunity - {company}" with the lead's description
+4. Inserts an `opportunity` "Opportunity - {company}" with the lead's `revenue_type` (since `m261002_150000`) and description
    (since `m260929_090000`) at stage `Prospecting`,
    probability 10, amount 0, close date today + 30 days.
 5. Marks the lead `is_converted = 1` with the new account/contact ids.

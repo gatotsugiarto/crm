@@ -79,6 +79,7 @@ Naming follows Yii's `mYYMMDD_HHMMSS_<description>.php`. Existing ones that matt
 | `m260928_120000_fix_duplicate_sales_order_items` | stops quotation approval duplicating SO items |
 | `m260928_130000_account_brd_fields` | address types, customer segment, assigned sales, account documents |
 | `m260928_140000_add_customer_segment_to_lead` | customer segment on lead, copied by `sp_convert_lead_to_customer` |
+| `m261002_150000_revenue_type` | Revenue Type (Recurring / OTC) on lead and opportunity, OTC terms on the SPH layout, convert copies it |
 | `m261002_120000_sales_order_installation_text` | free-text installation address on the Sales Order |
 | `m261002_090000_sales_order_form` | Sales Order form PDF: SO periods, RFS, PKS, installation/billing address + contact, confirmed_at/by; product service type + bandwidth; SO PDF permission |
 | `m260930_090000_business_line` | business line on product and quotation, SPH number per line (`001/SPH/SLS-{LINE}/EXT/…`), opportunity closes when all quotations are decided |

@@ -18,6 +18,9 @@ use common\modules\auth\models\User;
 
 class Opportunity extends ActiveRecord
 {
+    const REVENUE_RECURRING = 'Recurring';
+    const REVENUE_OTC = 'OTC';
+
     /** @var Quotation[] Draft/Sent quotations the last createQuotations() set to Rejected */
     public $replacedQuotations = [];
 
@@ -97,6 +100,19 @@ class Opportunity extends ActiveRecord
             [['contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class, 'targetAttribute' => ['contact_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
             [['amount'], 'validateAmountFromProducts'],
+            [['revenue_type'], 'required', 'message' => 'Choose Recurring or OTC.'],
+            [['revenue_type'], 'in', 'range' => array_keys(self::optsRevenueType())],
+            // an OTC deal can't hold Recurring products
+            [['revenue_type'], function ($attribute) {
+                if ($this->revenue_type !== self::REVENUE_OTC || $this->isNewRecord) {
+                    return;
+                }
+                $recurring = $this->getOpportunityProducts()->alias('op')->joinWith('product p', false)
+                    ->andWhere(['like', 'p.revenue_model', 'Recurring%', false])->select('p.name')->column();
+                if ($recurring) {
+                    $this->addError($attribute, 'This opportunity has Recurring products (' . implode(', ', $recurring) . '); remove them or keep Recurring.');
+                }
+            }],
             [['owner_user_id'], function ($attribute) {
                 \common\components\rbac\SalesAccess::checkAssignment($this, $attribute);
             }, 'skipOnEmpty' => false],
@@ -119,6 +135,7 @@ class Opportunity extends ActiveRecord
             'close_date' => 'Close Date',
             'probability' => 'Probability (%)',
             'description' => 'Description',
+            'revenue_type' => 'Revenue Type',
             'status_id' => 'Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
@@ -381,6 +398,30 @@ class Opportunity extends ActiveRecord
             $this->probability = 0;
         }
         $this->save(false);
+    }
+
+    /**
+     * Revenue Type of a deal: Recurring (monthly billing; one-time items such as
+     * installation may come along) or OTC (one time charge only).
+     * @return array value => label
+     */
+    public static function optsRevenueType()
+    {
+        return [
+            self::REVENUE_RECURRING => 'Recurring',
+            self::REVENUE_OTC => 'OTC (One Time Charge)',
+        ];
+    }
+
+    public function isOtc()
+    {
+        return $this->revenue_type === self::REVENUE_OTC;
+    }
+
+    /** True when a product is billed monthly (revenue model "Recurring ..."). */
+    public static function isRecurringProduct($product)
+    {
+        return $product !== null && stripos((string) $product->revenue_model, 'Recurring') === 0;
     }
 
     /**

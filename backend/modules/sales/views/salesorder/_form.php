@@ -153,12 +153,16 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         $defaultAddress = fn($kind) => ($a = $model->effectiveAddress($kind)) ? 'Empty = ' . $a->address_type . ' address of the account' : 'The account has no ' . ($kind === 'installation' ? 'Shipping' : 'Billing') . ' address yet';
         ?>
         <h6 class="text-primary mt-3 mb-2"><i class="fa fa-file-alt"></i> Sales Order form (PDF)</h6>
+        <?php if ($model->quotation && $model->quotation->opportunity && $model->quotation->opportunity->isOtc()): ?>
+            <p class="small text-muted mb-2">OTC deal (one time charge): no trial or contract period.</p>
+        <?php else: ?>
         <div class="row">
             <div class="col-md-3"><?= $datePicker('trial_start', 'Trial start') ?></div>
             <div class="col-md-3"><?= $datePicker('trial_end', 'Trial end') ?></div>
             <div class="col-md-3"><?= $datePicker('contract_start', 'Contract start') ?></div>
             <div class="col-md-3"><?= $datePicker('contract_end', 'Contract end') ?></div>
         </div>
+        <?php endif; ?>
         <div class="row">
             <div class="col-md-6"><?= $datePicker('rfs_date', 'Ready For Service date') ?></div>
             <div class="col-md-6"><?= $form->field($model, 'pks_number')->textInput(['maxlength' => true, 'placeholder' => 'Contract (PKS) number']) ?></div>

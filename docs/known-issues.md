@@ -128,3 +128,13 @@ the account's price list"), not as unfinished Product & Pricing work.
 - **Dashboard** (`site/index`) is empty; the in-app Documentation page is the only
   landing content. `CRM.txt` (in `common/modules/productprice/models/`) lists planned
   Reports (pipeline, revenue, product sales, customer activity) that don't exist yet.
+
+## 7. Recurring deals are invoiced once (open, 2026-10-02)
+
+Confirm SO creates **one** invoice for the whole Sales Order total. That fits OTC
+deals, but a **Recurring** deal is billed every month over the contract
+(`sales_order.contract_start` / `contract_end`). Not built yet, pending a decision:
+recurring billing in this CRM (monthly invoices generated over the contract) or in
+the separate billing system (the SO's "Kuning (Billing)" copy), in which case the
+CRM invoice would cover only the one-time items. See the Revenue Type table in
+[sales-flow.md](sales-flow.md#1-lead).

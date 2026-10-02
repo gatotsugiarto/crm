@@ -41,6 +41,7 @@ $gridColumns = [
     ],
     'name',
     'stage',
+    'revenue_type',
     'amount',
     'close_date',
     'probability',
@@ -223,6 +224,14 @@ $gridColumns = [
             },
         ],
         'stage',
+        [
+            'attribute' => 'revenue_type',
+            'label' => 'Revenue',
+            'format' => 'raw',
+            'value' => fn($model) => $model->revenue_type
+                ? Html::tag('span', Html::encode($model->revenue_type), ['class' => 'badge ' . ($model->isOtc() ? 'badge-warning' : 'badge-info')])
+                : '-',
+        ],
         'close_date',
         [
             'attribute' => 'owner_user_id',

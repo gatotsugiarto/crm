@@ -27,6 +27,7 @@ $gridColumns = [
     'phone',
     'lead_source',
     'industry',
+    'revenue_type',
     [
         'attribute' => 'city_id',
         'value' => function ($model) {

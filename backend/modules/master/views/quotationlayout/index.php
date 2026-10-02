@@ -39,7 +39,8 @@ $list = fn($text) => ($items = QuotationLayout::lines($text))
     <?= $line('Recipient Title', Html::encode($model->recipient_title)) ?>
     <?= $line('Default Contract', $model->default_contract_months ? Html::encode($model->default_contract_months . ' months') : null) ?>
     <?= $line('Opening Text', nl2br(QuotationLayout::inline($model->opening_text))) ?>
-    <?= $line('Terms & Conditions', $list($model->terms_text)) ?>
+    <?= $line('Terms & Conditions (Recurring)', $list($model->terms_text)) ?>
+    <?= $line('Terms & Conditions (OTC)', $list($model->terms_text_otc)) ?>
     <?= $line('Installation Notes', $list($model->installation_notes)) ?>
     <?= $line('Closing Text', nl2br(QuotationLayout::inline($model->closing_text))) ?>
     <?= $line('Signatures', Html::encode($model->sign_left_label) . ' &nbsp;/&nbsp; ' . Html::encode($model->sign_right_label)) ?>

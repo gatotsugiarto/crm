@@ -67,6 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <span class="text-secondary small">Customer Segment</span><br>
                 <span><small><?= Html::encode($model->customer_segment ?? '-') ?></small></span>
             </div>
+            <div class="col-md-6">
+                <span class="text-secondary small">Revenue Type</span><br>
+                <span><small><?= Html::encode(\common\modules\sales\models\Opportunity::optsRevenueType()[$model->revenue_type] ?? '-') ?></small></span>
+            </div>
         </div>
 
         <hr class="my-2">

@@ -200,7 +200,12 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
         <div class="row">
             <div class="col-md-6">
-                <?= $form->field($model, 'contract_months')->textInput(['type' => 'number', 'min' => 1, 'placeholder' => 'e.g. 36']) ?>
+                <?php if ($model->opportunity && $model->opportunity->isOtc()): ?>
+                    <label class="control-label">Contract (months)</label>
+                    <div class="form-control-plaintext text-muted small">OTC deal: one time charge, no contract duration.</div>
+                <?php else: ?>
+                    <?= $form->field($model, 'contract_months')->textInput(['type' => 'number', 'min' => 1, 'placeholder' => 'e.g. 36']) ?>
+                <?php endif; ?>
             </div>
             <div class="col-md-6">
                 <?= $form->field($model, 'payment_method')->widget(Select2::class, [

@@ -25,7 +25,19 @@ contact or opportunity at any point.
 ## 1. Lead
 
 A prospect not yet in the customer base: company name, contact person, source,
-industry, optional customer segment, location, owner (a team).
+industry, optional customer segment, **revenue type**, location, owner (a team).
+
+- **Revenue Type** (required, `lead.revenue_type`, copied to the opportunity on
+  Convert): **Recurring** = monthly billing (one-time items such as installation may
+  come along), **OTC** = one time charge only (beli putus, yearly prepaid,
+  installation). It decides what the later steps need:
+
+  | | Recurring | OTC |
+  |---|---|---|
+  | Opportunity products | any | no product whose revenue model is `Recurring…` (`OpportunityProduct` rule; the opportunity can't switch to OTC while it has one) |
+  | Quotation (SPH) | contract months (default from the layout), terms *Recurring* | no contract months, payment *Sekali Bayar* when only one-time items, terms *OTC* (`quotation_layout.terms_text_otc`); quotation items can't be Recurring |
+  | Sales Order form | trial / contract period, RFS, PKS | no trial / contract period (hidden) |
+  | Invoice | **open question**: recurring billing (monthly invoices over the contract) is not built; Confirm SO still makes one invoice for the SO total. Decide whether recurring billing lives in this CRM or in the billing system | one invoice (as today) |
 
 - **Owner change** is recorded in `record_owner_history` by trigger
   `trg_lead_owner_update`.
@@ -74,7 +86,8 @@ industry, optional customer segment, location, owner (a team).
 
 ## 3. Opportunity
 
-A potential deal with an account: stage, amount, close date, probability.
+A potential deal with an account: stage, amount, close date, probability, revenue
+type (Recurring / OTC, from the lead; shown as a badge on the opportunity and the list).
 
 - **Stages**: Prospecting → Qualification → Proposal → Negotiation → Closed Won /
   Closed Lost. Every stage change (including the initial one) is written to

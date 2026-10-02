@@ -77,6 +77,14 @@ class OpportunityProduct extends ActiveRecord
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             [['parent_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['parent_product_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+            // an OTC opportunity takes one-time products only
+            [['product_id'], function ($attribute) {
+                $opportunity = Opportunity::findOne($this->opportunity_id);
+                $product = Product::findOne($this->product_id);
+                if ($opportunity !== null && $opportunity->isOtc() && Opportunity::isRecurringProduct($product)) {
+                    $this->addError($attribute, "{$product->name} is billed monthly (Recurring); this opportunity is OTC. Change the opportunity's Revenue Type to Recurring first.");
+                }
+            }],
         ];
     }
 

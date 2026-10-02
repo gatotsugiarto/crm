@@ -93,6 +93,8 @@ class QuotationItem extends ActiveRecord
                     $this->addError($attribute, "Set the Business Line of {$product->name} (Product & Pricing -> Products) before quoting it.");
                 } elseif ($product->business_line !== $quotation->business_line) {
                     $this->addError($attribute, "This quotation is for {$quotation->business_line}; {$product->name} is {$product->business_line} and needs its own quotation.");
+                } elseif ($quotation->opportunity && $quotation->opportunity->isOtc() && Opportunity::isRecurringProduct($product)) {
+                    $this->addError($attribute, "{$product->name} is billed monthly (Recurring); this quotation's opportunity is OTC.");
                 }
             }],
         ];

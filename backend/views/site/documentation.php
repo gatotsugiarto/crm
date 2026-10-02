@@ -460,6 +460,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>Lead Source <span class="text-danger">*</span></td><td>Where the lead came from (free text)</td><td>Website, Referral, Cold Call, Exhibition, Event</td></tr>
 	        <tr><td>Industry <span class="text-danger">*</span></td><td>Line of business (free text)</td><td>Hospitality, Retail, Technology, Property</td></tr>
 	        <tr><td>Customer Segment</td><td>Optional. Segment/channel, same list as Product (pick or type). Copied to the Account on Convert</td><td>Hospitality, B2B2C (ISP), B2B, B2C</td></tr>
+	        <tr><td>Revenue Type <span class="text-danger">*</span></td><td><strong>Recurring</strong> = monthly subscription (installation may come along); <strong>OTC</strong> = one time charge only (beli putus, prepaid). Copied to the Opportunity on Convert; an OTC deal can't take monthly (Recurring) products, has no contract period, and its SPH uses the OTC terms</td><td>Recurring (hotel, apartment, ISP), OTC (retail STB beli putus)</td></tr>
 	        <tr><td>Address <span class="text-danger">*</span></td><td>Full street address</td><td>Jl. Sudirman No. 10</td></tr>
 	        <tr><td>Country / Province / City / Postal Code <span class="text-danger">*</span></td><td>Pick from the lists (Master Data)</td><td>INDONESIA / DKI JAKARTA / JAKARTA SELATAN / 12190</td></tr>
 	        <tr><td>Owner User <span class="text-danger">*</span></td><td>The <strong>sales team</strong> handling this lead (a team, not a person)</td><td>Enterprise Sales, SMB Sales</td></tr>
@@ -480,7 +481,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	            whose address is also listed under <strong>Account Addresses</strong> as <em>Billing</em>, <em>Shipping</em> and <em>Office</em> addresses
 	            (edit any that differ),</li>
 	        <li>a <strong>Contact</strong> (the person, set as primary contact),</li>
-	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; with the Lead's description, at stage <em>Prospecting</em>, 10% probability, closing in 30 days.
+	        <li>an <strong>Opportunity</strong> &ldquo;Opportunity - {company}&rdquo; with the Lead's Revenue Type and description, at stage <em>Prospecting</em>, 10% probability, closing in 30 days.
 	            Rename it to describe the deal (e.g. &ldquo;TV Berlangganan 3 Tower&rdquo;), since one company can have several opportunities.</li>
 	      </ul>
 	      A Lead can only be converted once, and only by <strong>members of the Lead's Sales Team</strong> or the <strong>Sales Manager</strong>
@@ -570,6 +571,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Exhibition</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
 	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
+	          <tr><td>Revenue Type</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Recurring</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Jend. Sudirman Kav. 52, Senayan</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -591,6 +593,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Referral</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Telecommunication</td></tr>
 	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2B2C (ISP)</td></tr>
+	          <tr><td>Revenue Type</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Recurring</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pemuda No. 88, Rawamangun</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -612,6 +615,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Website</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Food &amp; Beverage</td></tr>
 	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2B</td></tr>
+	          <tr><td>Revenue Type</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Recurring</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Kebon Sirih No. 12, Menteng</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -633,6 +637,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Cold Call</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Retail</td></tr>
 	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">B2C</td></tr>
+	          <tr><td>Revenue Type</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">OTC</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Daan Mogot Km. 11, Cengkareng</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -654,6 +659,7 @@ $baseUrl = Yii::$app->request->baseUrl;
 	          <tr><td>Lead Source</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Event</td></tr>
 	          <tr><td>Industry</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Property</td></tr>
 	          <tr><td>Customer Segment</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Hospitality</td></tr>
+	          <tr><td>Revenue Type</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">Recurring</td></tr>
 	          <tr><td>Address</td><td><span class="badge badge-info">type</span></td><td class="lead-copy" title="Click to copy">Jl. Pantai Indah Kapuk Boulevard No. 1</td></tr>
 	          <tr><td>Country</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">INDONESIA</td></tr>
 	          <tr><td>Province</td><td><span class="badge badge-secondary">select</span></td><td class="lead-copy" title="Click to copy">DKI JAKARTA</td></tr>
@@ -736,6 +742,9 @@ $baseUrl = Yii::$app->request->baseUrl;
 
 	  <h3 id="sp-rules">3. Rules to remember</h3>
 	  <ul>
+	    <li><strong>Revenue Type</strong> (set on the Lead): <span class="badge badge-info">Recurring</span> deals have a contract period and monthly prices;
+	        <span class="badge badge-warning">OTC</span> deals are one time charges &mdash; no monthly products, no contract months, OTC terms on the SPH, no trial/contract period on the SO.
+	        Monthly invoicing of Recurring deals is not built yet (Confirm SO makes one invoice).</li>
 	    <li><strong>1 quotation = 1 business line.</strong> An opportunity with NHS and IPTV products gets two quotations, each with its own number series.</li>
 	    <li><strong>Approved and Rejected quotations are final</strong>: their items can't be changed and a rejected one can't be approved. Changes go through <em>Revise Quotation</em>.</li>
 	    <li><strong>Closed Won</strong> waits until no quotation of the opportunity is still Draft or Sent. Closed rows are highlighted in the Opportunities list

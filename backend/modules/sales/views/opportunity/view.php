@@ -98,7 +98,8 @@ if ($toReplace) {
         <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Stage</span><br>
-                <span><small><?= Html::encode($model->stage) ?></small></span>
+                <span><small><?= Html::encode($model->stage) ?></small>
+                    <?php if ($model->revenue_type): ?>&nbsp;<span class="badge <?= $model->isOtc() ? 'badge-warning' : 'badge-info' ?>"><?= Html::encode($model->revenue_type) ?></span><?php endif; ?></span>
             </div>
 
             <div class="col-md-6">
