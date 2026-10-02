@@ -156,7 +156,7 @@ $invoice = $model->invoices[0] ?? null;
         <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Installation address / contact</span><br>
-                <span><small><?= $fmtAddr($model->effectiveAddress('installation')) . $isDefault($model->installation_address_id) ?><br>
+                <span><small><?= $model->installation_address ? nl2br(Html::encode($model->installation_address)) : $fmtAddr($model->effectiveAddress('installation')) . $isDefault(null) ?><br>
                     <?= $fmtContact($model->effectiveContact('installation')) . $isDefault($model->installation_contact_id) ?></small></span>
             </div>
             <div class="col-md-6">

@@ -181,7 +181,13 @@ $contactRows = function ($contact) use ($e) {
 <div class="sect">INSTALLATION INFORMATION</div>
 <div class="sub">DATA PEMASANGAN / <i>INSTALLATION DETAIL</i></div>
 <table class="f">
-    <?= $addressRows('Alamat Pemasangan', 'Installation Address', $instAddr) ?>
+    <?php if ($model->installation_address): ?>
+        <?= $row('Alamat Pemasangan / <i>Installation Address</i>', nl2br($e($model->installation_address))) ?>
+        <tr><td></td><td></td><td class="val small">RT : ________ &nbsp; RW : ________ &nbsp; Kelurahan : ______________________ &nbsp; Kecamatan : ______________________</td></tr>
+        <tr><td class="lbl">Kota / <i>City</i></td><td class="colon">:</td><td class="val">&nbsp;</td></tr>
+    <?php else: ?>
+        <?= $addressRows('Alamat Pemasangan', 'Installation Address', $instAddr) ?>
+    <?php endif; ?>
 </table>
 <p style="margin:1.5mm 0 1mm 0">Untuk pertanyaan teknis atau pemasangan, dapat menghubungi / <i>For technical inquiries or installation, please contact</i></p>
 <?= $contactRows($instContact) ?>

@@ -195,12 +195,14 @@ The confirmed order. Status: Draft → Confirmed → Completed / Cancelled.
   - copies every SO item into `invoice_item`;
   - redirects to the invoice.
 - **SO form details** (*Edit SO Details* on the SO page, Sales Manager): trial and
-  contract periods, RFS date, No. PKS, installation address + technical contact,
-  billing address + billing contact. Addresses/contacts must belong to the SO's
-  account; left empty they default to the account's **Shipping** / **Billing**
-  address and its **primary contact** (`SalesOrder::effectiveAddress()` /
-  `effectiveContact()`). A different installation site is added under Account
-  Addresses first.
+  contract periods, RFS date, No. PKS, and the **installation address as free text**
+  (`installation_address`, site name + full address; empty = the account's
+  **Shipping** address). The **billing address** is always the account's **Billing**
+  address and both contacts (technical, billing) are its **primary contact**
+  (`SalesOrder::effectiveAddress()` / `effectiveContact()`). The address/contact
+  picker columns (`installation_address_id`, `billing_address_id`,
+  `installation_contact_id`, `billing_contact_id`) exist but are hidden in the form
+  for now.
 - **SO (PDF)** (`/sales/salesorder/pdf`, `_pdf_so.php`, Sales / Sales Manager /
   viewApplication): the 2-page "SALES ORDER" form as signed with the customer —
   company details (account, NPWP), service (FTTHD / Metro-E / Lain-lain ticked from

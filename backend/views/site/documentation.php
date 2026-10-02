@@ -713,7 +713,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	        <tr><td>8</td><td>Account becomes a customer</td><td>Sales</td><td>Accounts &rarr; edit &rarr; Customer Type <em>Customer</em></td><td>Not automatic yet.</td><td>&ndash;</td></tr>
 	        <tr><td>8b</td><td><strong>Complete and print the SO form</strong></td><td><strong>Sales Manager</strong> (print: Sales too)</td>
 	            <td>Sales Order page &rarr; <em>Edit SO Details</em>, then <em>SO (PDF)</em></td>
-	            <td>Fill trial / contract period, RFS date, No. PKS, installation and billing address + contact (empty = the account's Shipping / Billing address and primary contact).
+	            <td>Fill trial / contract period, RFS date, No. PKS and the installation address (free text: site name + address; empty = the account's Shipping address).
+	                Billing address = the account's Billing address; contacts = its primary contact.
 	                The PDF is the 2-page SALES ORDER form for the customer's signature: service type ticked from the products, items, totals, Internal Use names
 	                (Account Manager = Assigned Sales, Sec. Head = team leader, Dept. Head = who confirms).</td><td>&ndash;</td></tr>
 	        <tr><td>9</td><td><strong>Confirm the Sales Order</strong></td><td><strong>Sales Manager</strong></td><td>Sales &rarr; Sales Order &rarr; open &rarr; <em>Confirm SO</em></td>

@@ -150,10 +150,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             'options' => ['placeholder' => $placeholder, 'id' => 'salesorder-' . $attr],
             'pluginOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd'],
         ]);
-        $addresses = $model->addressOptions();
-        $contacts = $model->contactOptions();
         $defaultAddress = fn($kind) => ($a = $model->effectiveAddress($kind)) ? 'Empty = ' . $a->address_type . ' address of the account' : 'The account has no ' . ($kind === 'installation' ? 'Shipping' : 'Billing') . ' address yet';
-        $defaultContact = 'Empty = the account\'s primary contact';
         ?>
         <h6 class="text-primary mt-3 mb-2"><i class="fa fa-file-alt"></i> Sales Order form (PDF)</h6>
         <div class="row">
@@ -167,37 +164,18 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             <div class="col-md-6"><?= $form->field($model, 'pks_number')->textInput(['maxlength' => true, 'placeholder' => 'Contract (PKS) number']) ?></div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'installation_address_id')->widget(Select2::class, [
-                    'data' => $addresses,
-                    'options' => ['placeholder' => 'Installation address', 'id' => 'salesorder-installation_address_id'],
-                    'pluginOptions' => ['allowClear' => true],
-                ])->hint($defaultAddress('installation') . '. Add another site under Account Addresses.') ?>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'installation_contact_id')->widget(Select2::class, [
-                    'data' => $contacts,
-                    'options' => ['placeholder' => 'Technical contact', 'id' => 'salesorder-installation_contact_id'],
-                    'pluginOptions' => ['allowClear' => true],
-                ])->hint($defaultContact) ?>
+            <div class="col-md-12">
+                <?= $form->field($model, 'installation_address')->textarea([
+                    'rows' => 2,
+                    'placeholder' => 'Site name and full address, e.g. PT. Hailal Sinar Cemerlang, Jl. Yosodipuro No. 31-33, Timuran, Banjarsari, Kota Surakarta, Jawa Tengah',
+                ])->hint($defaultAddress('installation') . '. Billing address = the account\'s Billing address; contacts = its primary contact.') ?>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'billing_address_id')->widget(Select2::class, [
-                    'data' => $addresses,
-                    'options' => ['placeholder' => 'Billing address', 'id' => 'salesorder-billing_address_id'],
-                    'pluginOptions' => ['allowClear' => true],
-                ])->hint($defaultAddress('billing')) ?>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'billing_contact_id')->widget(Select2::class, [
-                    'data' => $contacts,
-                    'options' => ['placeholder' => 'Billing contact', 'id' => 'salesorder-billing_contact_id'],
-                    'pluginOptions' => ['allowClear' => true],
-                ])->hint($defaultContact) ?>
-            </div>
-        </div>
+        <?php
+        // Address / contact pickers are hidden for now: billing comes from the account's
+        // Billing address, contacts from its primary contact (columns kept, see
+        // m261002_120000_sales_order_installation_text).
+        ?>
         <?php endif; ?>
 
     </div>
