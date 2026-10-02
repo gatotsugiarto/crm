@@ -190,7 +190,7 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         <div class="row">
             <div class="col-md-6">
                 <?= $form->field($model, 'owner_user_id')->widget(Select2::classname(), [
-                    'data' => \common\modules\master\models\Team::dropdown(),
+                    'data' => \common\modules\master\models\Team::dropdownActive($model->owner_user_id),
                     'options' => [
                         'placeholder' => 'Sales Team',
                         // only a Sales Manager may reassign an existing record

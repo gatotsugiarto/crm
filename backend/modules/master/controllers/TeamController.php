@@ -207,6 +207,18 @@ class TeamController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+
+        // a team in use is referenced with FK RESTRICT: say why instead of a 500
+        $blocker = $model->deleteBlockers();
+        if ($blocker !== null) {
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['success' => false, 'message' => $blocker];
+            }
+            Yii::$app->session->setFlash('error', $blocker);
+            return $this->redirect(['index']);
+        }
+
         $model->delete();
 
         if (Yii::$app->request->isAjax) {
@@ -221,53 +233,31 @@ class TeamController extends Controller
         return $this->redirect(['index']);
     }
 
-    /*
-    public function actionReactive($id)
-    {
-        $model = $this->findModel($id);
-        // Non behavior token protection
-        $model->detachBehavior('tokenProtection');
-
-        // Update Team        $model->status_id = 1;
-        $model->save();
-
-        if (Yii::$app->request->isAjax) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
-                'success' => true,
-                'message' => 'Team activate successfully.',
-                'errors' => $model->errors,
-            ];
-        }
-
-        // fallback non-AJAX
-        Yii::$app->session->setFlash('success', 'Team activate successfully.');
-        return $this->redirect(['index']);
-    }
-
     public function actionNonactive($id)
     {
-        $model = $this->findModel($id);
-        // Non behavior token protection
-        $model->detachBehavior('tokenProtection');
+        return $this->setStatus($id, 2, 'deactivated');
+    }
 
-        // Update Team        $model->status_id = 2;
-        $model->save();
+    public function actionReactive($id)
+    {
+        return $this->setStatus($id, 1, 'activated');
+    }
+
+    private function setStatus($id, $statusId, $verb)
+    {
+        $model = $this->findModel($id);
+        $model->detachBehavior('tokenProtection');
+        $model->status_id = $statusId;
+        $ok = $model->save(false);
+        $message = $ok ? "Team \"{$model->name}\" {$verb}." : 'Team could not be updated.';
 
         if (Yii::$app->request->isAjax) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
-                'success' => true,
-                'message' => 'Team non activate successfully.',
-                'errors' => $model->errors,
-            ];
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['success' => $ok, 'message' => $message];
         }
-
-        // fallback non-AJAX
-        Yii::$app->session->setFlash('success', 'Team non activate successfully.');
+        Yii::$app->session->setFlash($ok ? 'success' : 'error', $message);
         return $this->redirect(['index']);
     }
-    */
 
     /**
      * Finds the Team model based on its primary key value.

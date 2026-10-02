@@ -138,3 +138,13 @@ recurring billing in this CRM (monthly invoices generated over the contract) or 
 the separate billing system (the SO's "Kuning (Billing)" copy), in which case the
 CRM invoice would cover only the one-time items. See the Revenue Type table in
 [sales-flow.md](sales-flow.md#1-lead).
+
+## 8. ~~Deleting a team in use fails~~ (fixed 2026-10-02)
+
+`lead`, `account`, `opportunity` (owner_user_id), `activity` (assigned_to) and
+`user` (team_id) reference `team` with FK RESTRICT, so deleting a team that is in
+use threw a database error ("Request failed"). `Team::deleteBlockers()` now refuses
+with e.g. "SMB Sales still has 2 leads and 1 member. Set it to Non Active instead,
+or move those to another team first." The Team grid has a Status column (Non Active
+/ Reactive), and the Lead, Account, Opportunity and User forms list only active
+teams (`Team::dropdownActive()`, keeping a record's current team as "(Non Active)").

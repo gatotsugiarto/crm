@@ -184,4 +184,51 @@ class Team extends ActiveRecord
             ->orderBy(['fullname' => SORT_ASC])
             ->indexBy('id')->column();
     }
+
+    /**
+     * Active teams for a form's dropdown; $keepId (the record's current team) is
+     * included even when that team has been deactivated.
+     * @return array id => name
+     */
+    public static function dropdownActive($keepId = null)
+    {
+        $list = static::find()->select(['name', 'id'])
+            ->where(['status_id' => 1])->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')->column();
+        if ($keepId && !isset($list[$keepId]) && ($kept = static::findOne($keepId)) !== null) {
+            $list[$kept->id] = $kept->name . ' (Non Active)';
+        }
+        return $list;
+    }
+
+    /**
+     * Why this team can't be deleted, or null. Leads, accounts, opportunities and
+     * activities it owns and its members point to it (FK RESTRICT); deactivating
+     * the team (Non Active) keeps that history instead.
+     */
+    public function deleteBlockers()
+    {
+        $db = static::getDb();
+        $count = fn($sql) => (int) $db->createCommand($sql, [':id' => $this->id])->queryScalar();
+        $counts = [
+            'lead'        => $count('SELECT COUNT(*) FROM `lead` WHERE owner_user_id = :id'),
+            'account'     => $count('SELECT COUNT(*) FROM account WHERE owner_user_id = :id'),
+            'opportunity' => $count('SELECT COUNT(*) FROM opportunity WHERE owner_user_id = :id'),
+            'activity'    => $count('SELECT COUNT(*) FROM activity WHERE assigned_to = :id'),
+            'member'      => $count('SELECT COUNT(*) FROM `user` WHERE team_id = :id'),
+        ];
+        $parts = [];
+        foreach ($counts as $label => $n) {
+            if ($n > 0) {
+                $plural = $label === 'opportunity' ? 'opportunities' : ($label === 'activity' ? 'activities' : $label . 's');
+                $parts[] = $n . ' ' . ($n === 1 ? $label : $plural);
+            }
+        }
+        if (!$parts) {
+            return null;
+        }
+        $last = array_pop($parts);
+        $list = $parts ? implode(', ', $parts) . ' and ' . $last : $last;
+        return "{$this->name} still has {$list}. Set it to Non Active instead, or move those to another team first.";
+    }
 }
