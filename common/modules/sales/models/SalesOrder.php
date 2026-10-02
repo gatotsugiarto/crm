@@ -86,6 +86,24 @@ class SalesOrder extends ActiveRecord
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => Account::class, 'targetAttribute' => ['account_id' => 'id']],
             [['quotation_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quotation::class, 'targetAttribute' => ['quotation_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+
+            // Sales Order form fields
+            [['trial_start', 'trial_end', 'contract_start', 'contract_end', 'rfs_date', 'pks_number',
+              'installation_address_id', 'installation_contact_id', 'billing_address_id', 'billing_contact_id'], 'default', 'value' => null],
+            [['trial_start', 'trial_end', 'contract_start', 'contract_end', 'rfs_date'], 'date', 'format' => 'php:Y-m-d'],
+            [['pks_number'], 'string', 'max' => 100],
+            [['installation_address_id', 'installation_contact_id', 'billing_address_id', 'billing_contact_id'], 'integer'],
+            [['trial_end'], 'compare', 'compareAttribute' => 'trial_start', 'operator' => '>=', 'type' => 'date', 'skipOnEmpty' => true,
+                'when' => fn($m) => (bool) $m->trial_start, 'message' => 'Trial end must be on or after the trial start.'],
+            [['contract_end'], 'compare', 'compareAttribute' => 'contract_start', 'operator' => '>=', 'type' => 'date', 'skipOnEmpty' => true,
+                'when' => fn($m) => (bool) $m->contract_start, 'message' => 'Contract end must be on or after the contract start.'],
+            // addresses and contacts must be the SO account's own
+            [['installation_address_id', 'billing_address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccountAddress::class,
+                'targetAttribute' => 'id', 'filter' => fn($q) => $q->andWhere(['account_id' => $this->account_id]),
+                'message' => 'Pick an address of this account.'],
+            [['installation_contact_id', 'billing_contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class,
+                'targetAttribute' => 'id', 'filter' => fn($q) => $q->andWhere(['account_id' => $this->account_id]),
+                'message' => 'Pick a contact of this account.'],
         ];
     }
 
@@ -107,6 +125,18 @@ class SalesOrder extends ActiveRecord
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'trial_start' => 'Trial Start',
+            'trial_end' => 'Trial End',
+            'contract_start' => 'Contract Start',
+            'contract_end' => 'Contract End',
+            'rfs_date' => 'RFS Date',
+            'pks_number' => 'No. PKS (Contract Number)',
+            'installation_address_id' => 'Installation Address',
+            'installation_contact_id' => 'Installation Contact',
+            'billing_address_id' => 'Billing Address',
+            'billing_contact_id' => 'Billing Contact',
+            'confirmed_at' => 'Confirmed At',
+            'confirmed_by' => 'Confirmed By',
         ];
     }
 
@@ -117,6 +147,9 @@ class SalesOrder extends ActiveRecord
         if (isset($changedAttributes['status'])) {
 
             if ($this->status === 'Confirmed' && $changedAttributes['status'] !== 'Confirmed') {
+                if ($this->confirmed_at === null) {
+                    $this->updateAttributes(['confirmed_at' => date('Y-m-d H:i:s'), 'confirmed_by' => Yii::$app->user->id ?? null]);
+                }
                 $this->generateInvoice();
             }
         }
@@ -240,6 +273,84 @@ class SalesOrder extends ActiveRecord
     public function getStatus0()
     {
         return $this->hasOne(StatusActive::class, ['id' => 'status_id']);
+    }
+
+    public function getInstallationAddress()
+    {
+        return $this->hasOne(AccountAddress::class, ['id' => 'installation_address_id']);
+    }
+
+    public function getInstallationContact()
+    {
+        return $this->hasOne(Contact::class, ['id' => 'installation_contact_id']);
+    }
+
+    public function getBillingAddress()
+    {
+        return $this->hasOne(AccountAddress::class, ['id' => 'billing_address_id']);
+    }
+
+    public function getBillingContact()
+    {
+        return $this->hasOne(Contact::class, ['id' => 'billing_contact_id']);
+    }
+
+    public function getConfirmedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'confirmed_by']);
+    }
+
+    /**
+     * Address printed under Installation / Billing: the one chosen on the SO, else
+     * the account's address of that type (Shipping / Billing).
+     * @param string $kind 'installation' or 'billing'
+     * @return AccountAddress|null
+     */
+    public function effectiveAddress($kind)
+    {
+        $chosen = $kind === 'installation' ? $this->installationAddress : $this->billingAddress;
+        if ($chosen !== null) {
+            return $chosen;
+        }
+        return AccountAddress::find()
+            ->where(['account_id' => $this->account_id, 'address_type' => $kind === 'installation' ? 'Shipping' : 'Billing'])
+            ->orderBy(['id' => SORT_ASC])->one();
+    }
+
+    /**
+     * Contact printed under Installation / Billing: the one chosen on the SO, else
+     * the account's primary contact.
+     * @param string $kind 'installation' or 'billing'
+     * @return Contact|null
+     */
+    public function effectiveContact($kind)
+    {
+        $chosen = $kind === 'installation' ? $this->installationContact : $this->billingContact;
+        if ($chosen !== null) {
+            return $chosen;
+        }
+        return Contact::find()->where(['account_id' => $this->account_id])
+            ->orderBy(['is_primary' => SORT_DESC, 'id' => SORT_ASC])->one();
+    }
+
+    /** Addresses of the SO account for the form: id => "Shipping - Jl. ..., City". */
+    public function addressOptions()
+    {
+        $out = [];
+        foreach (AccountAddress::find()->where(['account_id' => $this->account_id])->with('city')->orderBy(['id' => SORT_ASC])->all() as $a) {
+            $out[$a->id] = $a->address_type . ' - ' . $a->address . ($a->city ? ', ' . $a->city->name : '');
+        }
+        return $out;
+    }
+
+    /** Contacts of the SO account for the form: id => "Name (job title)". */
+    public function contactOptions()
+    {
+        $out = [];
+        foreach (Contact::find()->where(['account_id' => $this->account_id])->orderBy(['is_primary' => SORT_DESC, 'id' => SORT_ASC])->all() as $c) {
+            $out[$c->id] = $c->fullname . ($c->job_title ? ' (' . $c->job_title . ')' : '') . ($c->is_primary ? ' - primary' : '');
+        }
+        return $out;
     }
 
     // Relasi ke user created

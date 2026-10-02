@@ -95,6 +95,8 @@ class Product extends ActiveRecord
             // Business line code (NHS, NXG, IPTV, ...): drives the SPH number SLS-{code}
             [['business_line'], 'filter', 'filter' => fn($v) => $v === null || $v === '' ? null : strtoupper(trim($v))],
             [['business_line'], 'match', 'pattern' => '/^[A-Z0-9]{2,20}$/', 'message' => 'Use a short code of capital letters/digits, e.g. NHS.'],
+            [['service_type', 'bandwidth'], 'filter', 'filter' => fn($v) => $v === null || trim($v) === '' ? null : trim($v)],
+            [['service_type', 'bandwidth'], 'string', 'max' => 50],
             ['type', 'in', 'range' => array_keys(self::optsType())],
             ['bundle_price_type', 'in', 'range' => array_keys(self::optsBundlePriceType())],
             [['code'], 'unique'],
@@ -122,6 +124,8 @@ class Product extends ActiveRecord
             'customer_type' => 'Customer Type',
             'revenue_model' => 'Revenue Model',
             'business_line' => 'Business Line',
+            'service_type' => 'Service Type',
+            'bandwidth' => 'Bandwidth',
             'bundle_price_type' => 'Bundle Price Type',
             'description' => 'Description',
             'package_info' => 'Package Info',
@@ -357,6 +361,22 @@ class Product extends ActiveRecord
             if (!isset($known[$code])) {
                 $known[$code] = $code;
             }
+        }
+        return $known;
+    }
+
+    /**
+     * Service Type boxes on the Sales Order form (FTTHD, Metro-E, anything else =
+     * "Lain-lain"), plus any other value already used (free text, tags mode).
+     * @return array value => label
+     */
+    public static function optsServiceType()
+    {
+        $known = ['FTTHD' => 'FTTHD', 'Metro-E' => 'Metro-E', 'Other' => 'Other'];
+        $used = static::find()->select('service_type')->distinct()
+            ->where(['not', ['service_type' => null]])->column();
+        foreach ($used as $value) {
+            $known[$value] = $value;
         }
         return $known;
     }

@@ -105,7 +105,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 <span class="text-secondary small">Business Line</span><br>
                 <span><small><?= $model->business_line ? Html::encode($model::optsBusinessLine()[$model->business_line] ?? $model->business_line) : '<span class="text-muted">(belum diset)</span>' ?></small></span>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-3">
+                <span class="text-secondary small">Service Type</span><br>
+                <span><small><?= Html::encode($model->service_type ?: '-') ?></small></span>
+            </div>
+            <div class="col-md-3">
+                <span class="text-secondary small">Bandwidth</span><br>
+                <span><small><?= Html::encode($model->bandwidth ?: '-') ?></small></span>
+            </div>
         </div>
 
         <div class="row mb-3">

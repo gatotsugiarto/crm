@@ -46,6 +46,8 @@ $gridColumns = [
     'customer_type',
     'revenue_model',
     'business_line',
+    'service_type',
+    'bandwidth',
     'bundle_price_type',
     'description:ntext',
     'base_price',

@@ -82,6 +82,16 @@ product that can be quoted — Create Quotation and quotation items refuse produ
 without one. Grouping-only nodes and internal items (e.g. Plaza MNC Group, Sunter)
 can stay empty.
 
+## Service Type / Bandwidth (implemented)
+
+`product.service_type` and `product.bandwidth` (migration
+`m261002_090000_sales_order_form`) fill the *Service Information* box of the Sales
+Order form: **FTTHD** and **Metro-E** tick their own box (internet products, with a
+bandwidth such as `100 Mbps`), anything else — **Other** or empty — ticks
+*Lain-lain*. The current catalog has no internet products, so NextSys, Vision+,
+NextGO and STB products are `Other` with no bandwidth. Free text with suggestions
+(`Product::optsServiceType()`), like Business Line.
+
 ## Revenue MKM product hierarchy (as classified so far)
 
 ```

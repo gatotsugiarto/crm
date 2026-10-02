@@ -28,7 +28,7 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 | `quotation` | quotation_number (**unique**, SPH format, per business line), **business_line** (one line per quotation, fixed after create), account_id, opportunity_id, quotation_date, valid_until, contract_months, payment_method, opening_text / terms_text / installation_notes / closing_text (copied from `quotation_layout`), total_amount, **status** enum(Draft, Sent, Approved, Rejected) | `total_amount` maintained by triggers |
 | `quotation_layout` | one row: letterhead (company, address, phone, website, logo file under `backend/runtime/quotation-layout`), SPH number code (`SPH/SLS-{LINE}/EXT`, `{LINE}` = quotation business line), city, recipient title, template texts, signature labels, default contract months | Master Data → Layout Quotation |
 | `quotation_item` | quotation_id, product_id, qty, price, discount, total | `total` computed by trigger |
-| `sales_order` | order_number, account_id, quotation_id, order_date, total_amount, **status** enum(Draft, Confirmed, Completed, Cancelled) | Created by trigger on quotation approval |
+| `sales_order` | order_number, account_id, quotation_id, order_date, total_amount, trial_start/end, contract_start/end, rfs_date, pks_number, installation_address_id / billing_address_id → account_address, installation_contact_id / billing_contact_id → contact (all SET NULL; empty = account default), **status** enum(Draft, Confirmed, Completed, Cancelled), confirmed_at, confirmed_by | Created by trigger on quotation approval |
 | `sales_order_item` | sales_order_id, product_id, qty, price, discount, total | `total` computed by trigger |
 | `invoice` | invoice_number, account_id, sales_order_id, invoice_date, due_date, total_amount, **status** enum(Draft, Sent, Paid, Overdue) | Created in PHP by `SalesorderController::actionConfirm` |
 | `invoice_item` | invoice_id, product_id, qty, price, discount, total | Copied from SO items in PHP |
@@ -38,7 +38,7 @@ Active), `created_at`, `created_by`, `updated_at`, `updated_by`.
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `product` | code, name, category_id, **parent_product_id** → product, uom_id, **type** enum(Goods, Service, Subscription, Bundle, Software), customer_type, revenue_model, **business_line** (NHS / NXG / IPTV …, drives the quotation number), **bundle_price_type** enum(fixed, sum), base_price, **is_bundle_expand** | Field rules: [product-classification.md](product-classification.md) |
+| `product` | code, name, category_id, **parent_product_id** → product, uom_id, **type** enum(Goods, Service, Subscription, Bundle, Software), customer_type, revenue_model, **business_line** (NHS / NXG / IPTV …, drives the quotation number), service_type (FTTHD / Metro-E / Other, ticked on the SO form), bandwidth, **bundle_price_type** enum(fixed, sum), base_price, **is_bundle_expand** | Field rules: [product-classification.md](product-classification.md) |
 | `product_category` | name, description | Hardware / Software / Service |
 | `product_uom` | name, code | License, Package, Unit, Subscription, Series |
 | `product_bundle_item` | bundle_product_id → product, product_id → product, quantity | Components of a Bundle product |

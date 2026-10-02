@@ -163,7 +163,22 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
                     'pluginOptions' => ['allowClear' => true, 'tags' => true],
                 ])->hint('Line code used in the quotation (SPH) number, e.g. 001/SPH/SLS-<b>NHS</b>/EXT/IX/2026. One quotation holds products of one line.') ?>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-3">
+                <?php
+                $serviceData = \common\modules\productprice\models\Product::optsServiceType();
+                if ($model->service_type && !isset($serviceData[$model->service_type])) {
+                    $serviceData[$model->service_type] = $model->service_type;
+                }
+                ?>
+                <?= $form->field($model, 'service_type')->widget(Select2::class, [
+                    'data' => $serviceData,
+                    'options' => ['placeholder' => 'Service Type', 'id' => 'product-service_type'],
+                    'pluginOptions' => ['allowClear' => true, 'tags' => true],
+                ])->hint('Ticked on the Sales Order: FTTHD, Metro-E, or Other (= Lain-lain).') ?>
+            </div>
+            <div class="col-md-3">
+                <?= $form->field($model, 'bandwidth')->textInput(['maxlength' => true, 'placeholder' => 'e.g. 100 Mbps'])->hint('Internet products only; printed as Kapasitas/Bandwidth.') ?>
+            </div>
         </div>
 
         <div class="row">

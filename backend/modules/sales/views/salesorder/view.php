@@ -44,6 +44,18 @@ $invoice = $model->invoices[0] ?? null;
             ]) ?>
         <?php endif; ?>
 
+        <?php if (\common\components\rbac\SalesAccess::can('backend.sales.salesorder.pdf')): ?>
+            <?= Html::a('<i class="fa fa-file-pdf"></i> SO (PDF)', ['pdf', 'id' => $model->id], [
+                'class' => 'btn btn-outline-danger btn-sm', 'target' => '_blank', 'data-pjax' => 0,
+            ]) ?>
+        <?php endif; ?>
+
+        <?php if (\common\components\rbac\SalesAccess::can('backend.sales.salesorder.update')): ?>
+            <?= Html::a('<i class="fa fa-edit"></i> Edit SO Details', ['update', 'id' => $model->id], [
+                'class' => 'btn btn-outline-primary btn-sm',
+            ]) ?>
+        <?php endif; ?>
+
         <?php if ($invoice): ?>
             <?= Html::a('<i class="fa fa-file-invoice"></i> View Invoice',
                 ['/sales/invoice/view', 'id' => $invoice->id], [
@@ -110,6 +122,53 @@ $invoice = $model->invoices[0] ?? null;
                 <span class="badge badge-<?= $statusClass ?>">
                     <?= Html::encode($model->status) ?>
                 </span>
+            </div>
+        </div>
+
+        <?php
+        $fmtAddr = fn($addr) => $addr ? Html::encode($addr->address_type . ' - ' . $addr->address . ($addr->city ? ', ' . $addr->city->name : '')) : '<span class="text-muted">-</span>';
+        $fmtContact = fn($c) => $c ? Html::encode($c->fullname . (($c->mobile ?: $c->phone) ? ' - ' . ($c->mobile ?: $c->phone) : '')) : '<span class="text-muted">-</span>';
+        $isDefault = fn($id) => $id ? '' : ' <span class="badge badge-light">default</span>';
+        $period = fn($a, $b) => ($a || $b) ? Html::encode(($a ?: '?') . ' s/d ' . ($b ?: '?')) : '<span class="text-muted">-</span>';
+        ?>
+        <hr class="my-2">
+        <div class="text-primary small fw-bold mb-2"><i class="fa fa-file-alt"></i> Sales Order form (PDF)</div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Trial period</span><br>
+                <span><small><?= $period($model->trial_start, $model->trial_end) ?></small></span>
+            </div>
+            <div class="col-md-6">
+                <span class="text-secondary small">Contract period</span><br>
+                <span><small><?= $period($model->contract_start, $model->contract_end) ?></small></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">RFS date</span><br>
+                <span><small><?= Html::encode($model->rfs_date ?: '-') ?></small></span>
+            </div>
+            <div class="col-md-6">
+                <span class="text-secondary small">No. PKS</span><br>
+                <span><small><?= Html::encode($model->pks_number ?: '-') ?></small></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Installation address / contact</span><br>
+                <span><small><?= $fmtAddr($model->effectiveAddress('installation')) . $isDefault($model->installation_address_id) ?><br>
+                    <?= $fmtContact($model->effectiveContact('installation')) . $isDefault($model->installation_contact_id) ?></small></span>
+            </div>
+            <div class="col-md-6">
+                <span class="text-secondary small">Billing address / contact</span><br>
+                <span><small><?= $fmtAddr($model->effectiveAddress('billing')) . $isDefault($model->billing_address_id) ?><br>
+                    <?= $fmtContact($model->effectiveContact('billing')) . $isDefault($model->billing_contact_id) ?></small></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-secondary small">Confirmed</span><br>
+                <span><small><?= $model->confirmed_at ? Html::encode($model->confirmed_at . ' by ' . ($model->confirmedBy?->fullname ?? '-')) : '<span class="text-muted">not yet</span>' ?></small></span>
             </div>
         </div>
 

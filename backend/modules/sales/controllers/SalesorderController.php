@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /**
@@ -98,6 +99,74 @@ class SalesorderController extends Controller
         ]);
     }
 
+    /**
+     * The Sales Order form (2 pages, like the printed MNC Play "SALES ORDER") as PDF:
+     * company, service, installation, billing, marketing, authorization and internal
+     * use. Logo from Master Data -> Layout Quotation.
+     */
+    public function actionPdf($id)
+    {
+        $model = $this->findModel($id);
+        $layout = \common\modules\master\models\QuotationLayout::current();
+
+        $months = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $idDate = function ($ymd) use ($months) {
+            if (!$ymd) {
+                return '';
+            }
+            $t = strtotime($ymd);
+            return $t ? date('j', $t) . ' ' . $months[(int) date('n', $t)] . ' ' . date('Y', $t) : '';
+        };
+
+        $tempDir = Yii::getAlias('@runtime/mpdf');
+        \yii\helpers\FileHelper::createDirectory($tempDir, 0775, true);
+        $pdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 14, 'margin_right' => 14,
+            'margin_top' => 36, 'margin_bottom' => 26,
+            'margin_header' => 8, 'margin_footer' => 6,
+            'tempDir' => $tempDir,
+            'default_font' => 'dejavusans',
+            'shrink_tables_to_fit' => 1, // keep the form's tables at the body font size
+        ]);
+        $pdf->SetTitle('Sales Order ' . $model->order_number);
+        $pdf->SetAuthor($layout->company_name);
+
+        $logo = $layout->hasLogo()
+            ? '<img src="' . $layout->getLogoPath() . '" style="height:16mm">'
+            : '<span style="font-size:14pt;font-weight:bold;color:#1a3a6e">' . Html::encode($layout->company_name) . '</span>';
+        $pdf->SetHTMLHeader(
+            '<table width="100%" style="border-collapse:collapse"><tr>'
+            . '<td style="vertical-align:middle">' . $logo . '</td>'
+            . '<td style="text-align:right;vertical-align:middle">'
+            . '<div style="font-size:20pt;font-weight:bold;color:#1b2a57;letter-spacing:0.5pt">SALES ORDER</div>'
+            . '<table style="border-collapse:collapse;margin-left:auto;margin-top:1mm"><tr>'
+            . '<td style="font-size:8pt;border:0.6px solid #333;border-right:none;padding:1mm 2mm">NO.SO :</td>'
+            . '<td style="font-size:9pt;border:1px solid #e07b16;padding:1mm 4mm;text-align:center;min-width:30mm">' . Html::encode($model->order_number) . '</td>'
+            . '</tr></table></td></tr></table>'
+        );
+        $pdf->SetHTMLFooter(
+            '<table width="100%" style="border-collapse:collapse;font-size:6.8pt;color:#333"><tr>'
+            . '<td style="vertical-align:bottom">Dengan ini kami menyatakan konfirmasi &amp; setuju dengan isi halaman depan serta Syarat &amp; Ketentuan Berlangganan Jasa '
+            . Html::encode($layout->company_name) . ' yang berlaku / <i>We agree &amp; confirm with the information on this page as well as the Terms and Conditions of the service subscription</i>'
+            . '<br><br>Lembar : Putih (sales admin MKM), Biru (Pelanggan/ Customer), Kuning (Billing), Hijau (CDM), Merah (Legal)</td>'
+            . '<td style="width:16mm;text-align:center;vertical-align:bottom"><table style="border-collapse:collapse;margin:0 auto"><tr><td style="border:0.6px solid #333;width:12mm;height:10mm"></td></tr></table>Paraf</td>'
+            . '</tr></table>'
+        );
+
+        $pdf->WriteHTML($this->renderPartial('_pdf_so', [
+            'model' => $model,
+            'layout' => $layout,
+            'idDate' => $idDate,
+        ]));
+
+        $fileName = 'SO ' . str_replace('/', '-', $model->order_number) . ' - ' . ($model->account->name ?? '') . '.pdf';
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', \Mpdf\Output\Destination::STRING_RETURN), $fileName, [
+            'mimeType' => 'application/pdf',
+            'inline' => true,
+        ]);
+    }
+
     public function actionConfirm($id)
     {
         Yii::$app->session->removeAllFlashes();
@@ -127,8 +196,9 @@ class SalesorderController extends Controller
             }
 
             // Update status SO
-            $db->createCommand('UPDATE {{%sales_order}} SET status = :s WHERE id = :id')
-                ->bindValues([':s' => 'Confirmed', ':id' => $id])
+            // confirmed_at / confirmed_by print as the Internal Use date and Dept. Head on the SO form
+            $db->createCommand('UPDATE {{%sales_order}} SET status = :s, confirmed_at = NOW(), confirmed_by = :u, updated_at = NOW(), updated_by = :u WHERE id = :id')
+                ->bindValues([':s' => 'Confirmed', ':u' => Yii::$app->user->id, ':id' => $id])
                 ->execute();
 
             // Generate invoice number
@@ -303,7 +373,7 @@ class SalesorderController extends Controller
             if ($model->save()) {
                 $model->getBehavior('tokenProtection')->consumeToken();
                 Yii::$app->session->setFlash('success', 'SalesOrder updated successfully.');
-                return $this->redirect(['index']);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 

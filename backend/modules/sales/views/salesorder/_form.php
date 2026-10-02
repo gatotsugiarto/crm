@@ -143,6 +143,63 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
             <div class="col-md-6"></div>
         </div>
 
+        <?php if (!$isNew): ?>
+        <?php
+        // Sales Order form (PDF): periods, RFS / PKS, installation and billing details
+        $datePicker = fn($attr, $placeholder) => $form->field($model, $attr)->widget(\kartik\date\DatePicker::class, [
+            'options' => ['placeholder' => $placeholder, 'id' => 'salesorder-' . $attr],
+            'pluginOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd'],
+        ]);
+        $addresses = $model->addressOptions();
+        $contacts = $model->contactOptions();
+        $defaultAddress = fn($kind) => ($a = $model->effectiveAddress($kind)) ? 'Empty = ' . $a->address_type . ' address of the account' : 'The account has no ' . ($kind === 'installation' ? 'Shipping' : 'Billing') . ' address yet';
+        $defaultContact = 'Empty = the account\'s primary contact';
+        ?>
+        <h6 class="text-primary mt-3 mb-2"><i class="fa fa-file-alt"></i> Sales Order form (PDF)</h6>
+        <div class="row">
+            <div class="col-md-3"><?= $datePicker('trial_start', 'Trial start') ?></div>
+            <div class="col-md-3"><?= $datePicker('trial_end', 'Trial end') ?></div>
+            <div class="col-md-3"><?= $datePicker('contract_start', 'Contract start') ?></div>
+            <div class="col-md-3"><?= $datePicker('contract_end', 'Contract end') ?></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6"><?= $datePicker('rfs_date', 'Ready For Service date') ?></div>
+            <div class="col-md-6"><?= $form->field($model, 'pks_number')->textInput(['maxlength' => true, 'placeholder' => 'Contract (PKS) number']) ?></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <?= $form->field($model, 'installation_address_id')->widget(Select2::class, [
+                    'data' => $addresses,
+                    'options' => ['placeholder' => 'Installation address', 'id' => 'salesorder-installation_address_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint($defaultAddress('installation') . '. Add another site under Account Addresses.') ?>
+            </div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'installation_contact_id')->widget(Select2::class, [
+                    'data' => $contacts,
+                    'options' => ['placeholder' => 'Technical contact', 'id' => 'salesorder-installation_contact_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint($defaultContact) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <?= $form->field($model, 'billing_address_id')->widget(Select2::class, [
+                    'data' => $addresses,
+                    'options' => ['placeholder' => 'Billing address', 'id' => 'salesorder-billing_address_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint($defaultAddress('billing')) ?>
+            </div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'billing_contact_id')->widget(Select2::class, [
+                    'data' => $contacts,
+                    'options' => ['placeholder' => 'Billing contact', 'id' => 'salesorder-billing_contact_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ])->hint($defaultContact) ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
     </div>
 </div>
 

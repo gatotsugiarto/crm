@@ -326,6 +326,8 @@ $baseUrl = Yii::$app->request->baseUrl;
 	  <p><strong>Business Line</strong> (NHS = NextSys Hospitality, NXG = NextGO, IPTV = Vision+) says which sales line quotes the product. It becomes the line code
 	    in the quotation number (<code>001/SPH/SLS-NHS/EXT/IX/2026</code>), and a quotation can only hold products of one line. Set it on every product that is sold;
 	    a product without a Business Line can't be put on a quotation.</p>
+	  <p><strong>Service Type</strong> (FTTHD / Metro-E / Other) and <strong>Bandwidth</strong> (e.g. 100 Mbps) fill the Service Information box of the Sales Order form:
+	    FTTHD and Metro-E tick their own box, anything else ticks <em>Lain-lain</em>. Non-internet products (NextSys, Vision+, NextGO, STB) are <em>Other</em> without bandwidth.</p>
 
 	  <!-- Price List -->
 	  <h3 id="pp-pricelist">4. Price List</h3>
@@ -709,8 +711,14 @@ $baseUrl = Yii::$app->request->baseUrl;
 	            <td>Sales Order (Draft) with the same items. The quotation is locked. When <em>all</em> quotations of the opportunity are decided, the opportunity closes.</td>
 	            <td><span class="badge badge-primary">Closed Won</span> 100%, amount = approved total<br><small>(all rejected &rarr; <span class="badge badge-warning">Closed Lost</span>)</small></td></tr>
 	        <tr><td>8</td><td>Account becomes a customer</td><td>Sales</td><td>Accounts &rarr; edit &rarr; Customer Type <em>Customer</em></td><td>Not automatic yet.</td><td>&ndash;</td></tr>
+	        <tr><td>8b</td><td><strong>Complete and print the SO form</strong></td><td><strong>Sales Manager</strong> (print: Sales too)</td>
+	            <td>Sales Order page &rarr; <em>Edit SO Details</em>, then <em>SO (PDF)</em></td>
+	            <td>Fill trial / contract period, RFS date, No. PKS, installation and billing address + contact (empty = the account's Shipping / Billing address and primary contact).
+	                The PDF is the 2-page SALES ORDER form for the customer's signature: service type ticked from the products, items, totals, Internal Use names
+	                (Account Manager = Assigned Sales, Sec. Head = team leader, Dept. Head = who confirms).</td><td>&ndash;</td></tr>
 	        <tr><td>9</td><td><strong>Confirm the Sales Order</strong></td><td><strong>Sales Manager</strong></td><td>Sales &rarr; Sales Order &rarr; open &rarr; <em>Confirm SO</em></td>
-	            <td>SO &rarr; Confirmed and an <strong>Invoice</strong> (Draft, due in 30 days) with the same items. Only once.</td><td>&ndash;</td></tr>
+	            <td>SO &rarr; Confirmed and an <strong>Invoice</strong> (Draft, due in 30 days) with the same items. Only once.
+                The confirm date and the confirming manager are printed under Internal Use on the SO form.</td><td>&ndash;</td></tr>
 	        <tr><td>10</td><td><strong>Send the invoice</strong></td><td><strong>Sales Manager</strong></td><td>Invoice page &rarr; <em>Invoice PDF</em>, <em>Mark as Sent</em></td><td>&ndash;</td><td>&ndash;</td></tr>
 	        <tr><td>11</td><td><strong>Payment received</strong></td><td><strong>Sales Manager</strong></td><td>Invoice page &rarr; <em>Mark as Paid</em></td><td>&ndash;</td><td>&ndash;</td></tr>
 	        <tr><td>12</td><td>Delivery / installation done</td><td><strong>Sales Manager</strong></td><td>Sales Order &rarr; edit &rarr; Status <em>Completed</em> (or <em>Cancelled</em>)</td><td>&ndash;</td><td>&ndash;</td></tr>

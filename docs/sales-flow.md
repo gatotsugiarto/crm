@@ -187,11 +187,32 @@ The confirmed order. Status: Draft → Confirmed → Completed / Cancelled.
 - **Confirm** (`/sales/salesorder/confirm`, `SalesorderController::actionConfirm`),
   in PHP inside a transaction:
   - locks the SO row; if an invoice already exists for it, redirects there instead;
-  - sets SO `status = 'Confirmed'`;
+  - sets SO `status = 'Confirmed'` and stamps `confirmed_at` / `confirmed_by`
+    (printed as the Internal Use date and Dept. Head on the SO form; confirming
+    through the edit form stamps them too, in `SalesOrder::afterSave`);
   - creates an **Invoice** (`generateInvoiceNumber()`, invoice date today, due in 30
     days, status Draft, `total_amount` = SO total);
   - copies every SO item into `invoice_item`;
   - redirects to the invoice.
+- **SO form details** (*Edit SO Details* on the SO page, Sales Manager): trial and
+  contract periods, RFS date, No. PKS, installation address + technical contact,
+  billing address + billing contact. Addresses/contacts must belong to the SO's
+  account; left empty they default to the account's **Shipping** / **Billing**
+  address and its **primary contact** (`SalesOrder::effectiveAddress()` /
+  `effectiveContact()`). A different installation site is added under Account
+  Addresses first.
+- **SO (PDF)** (`/sales/salesorder/pdf`, `_pdf_so.php`, Sales / Sales Manager /
+  viewApplication): the 2-page "SALES ORDER" form as signed with the customer —
+  company details (account, NPWP), service (FTTHD / Metro-E / Lain-lain ticked from
+  the items' product **Service Type**, bandwidth from the product, monthly / yearly
+  price and one-time installation fee from the revenue model, "Kontrak N Tahun" from
+  the quotation's contract months), one line per item with the total, trial and
+  contract periods, installation and billing blocks, marketing info (the converted
+  lead's Lead Source), authorization text, attachment checklist, and Internal Use:
+  Account Manager = Assigned Sales, Sec. Head = the Sales Team's leader, Dept. Head =
+  whoever confirmed the SO, dated with the confirm date. RT/RW, Kelurahan, Kecamatan,
+  fax, the customer signature and the attachment ticks are left blank for hand
+  filling. Logo from Master Data → Layout Quotation.
 
 ## 6. Invoice
 
