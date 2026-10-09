@@ -12,10 +12,20 @@ use common\components\behaviors\TokenProtectedFormBehavior;
 use common\components\behaviors\LoggableBehavior;
 
 use common\modules\master\models\Status;
+use common\modules\master\models\StatusActive;
 use common\modules\auth\models\User;
 
 class Activity extends ActiveRecord
 {
+    const RELATED_ACCOUNT = 'account';
+    const RELATED_LEAD = 'lead';
+
+    /**
+     * @var string|null form-only: what the activity is about, 'account' (account +
+     * optional contact / opportunity) or 'lead' (a lead, stored as
+     * reference_type = 'lead', reference_id = lead id)
+     */
+    public $relatedTo;
 
     /**
      * ENUM field values
@@ -95,7 +105,86 @@ class Activity extends ActiveRecord
             [['contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class, 'targetAttribute' => ['contact_id' => 'id']],
             [['opportunity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Opportunity::class, 'targetAttribute' => ['opportunity_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusActive::class, 'targetAttribute' => ['status_id' => 'id']],
+
+            // form rules
+            [['activity_date', 'due_date', 'reminder_at', 'completed_at'], 'filter', 'filter' => [self::class, 'normalizeDateTime']],
+            [['subject', 'activity_type', 'priority', 'activity_date', 'assigned_to'], 'required'],
+            [['relatedTo'], 'in', 'range' => [self::RELATED_ACCOUNT, self::RELATED_LEAD]],
+            [['assigned_to'], 'exist', 'skipOnError' => true, 'targetClass' => \common\modules\master\models\Team::class, 'targetAttribute' => 'id'],
+            [['account_id'], 'required', 'when' => fn($m) => $m->relatedTo === self::RELATED_ACCOUNT,
+                'whenClient' => "function () { return $('input[name=\"Activity[relatedTo]\"]:checked').val() === 'account'; }",
+                'message' => 'Choose the account this activity is about.'],
+            [['reference_id'], 'required', 'when' => fn($m) => $m->relatedTo === self::RELATED_LEAD,
+                'whenClient' => "function () { return $('input[name=\"Activity[relatedTo]\"]:checked').val() === 'lead'; }",
+                'message' => 'Choose the lead this activity is about.'],
+            [['contact_id'], function ($attribute) {
+                if ($this->account_id && !Contact::find()->where(['id' => $this->contact_id, 'account_id' => $this->account_id])->exists()) {
+                    $this->addError($attribute, 'This contact belongs to another account.');
+                }
+            }],
+            [['opportunity_id'], function ($attribute) {
+                if ($this->account_id && !Opportunity::find()->where(['id' => $this->opportunity_id, 'account_id' => $this->account_id])->exists()) {
+                    $this->addError($attribute, 'This opportunity belongs to another account.');
+                }
+            }],
+            [['due_date'], 'compare', 'compareAttribute' => 'activity_date', 'operator' => '>=', 'type' => 'datetime', 'skipOnEmpty' => true,
+                'when' => fn($m) => (bool) $m->activity_date, 'message' => 'Due date can\'t be before the activity date.'],
         ];
+    }
+
+    /**
+     * "2026-10-09T14:30" (datetime-local input) -> "2026-10-09 14:30:00"; empty -> null.
+     */
+    public static function normalizeDateTime($value)
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return null;
+        }
+        $time = strtotime(str_replace('T', ' ', $value));
+        return $time ? date('Y-m-d H:i:s', $time) : $value;
+    }
+
+    /** "2026-10-09 14:30:00" -> "2026-10-09T14:30" for a datetime-local input. */
+    public static function toInputDateTime($value)
+    {
+        $time = $value ? strtotime($value) : false;
+        return $time ? date('Y-m-d\TH:i', $time) : '';
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->relatedTo = $this->reference_type === self::RELATED_LEAD ? self::RELATED_LEAD : self::RELATED_ACCOUNT;
+    }
+
+    public function beforeSave($insert)
+    {
+        // keep one subject: a lead, or an account (with its contact / opportunity)
+        if ($this->relatedTo === self::RELATED_LEAD) {
+            $this->reference_type = self::RELATED_LEAD;
+            $this->account_id = $this->contact_id = $this->opportunity_id = null;
+        } elseif ($this->relatedTo === self::RELATED_ACCOUNT) {
+            $this->reference_type = null;
+            $this->reference_id = null;
+        }
+        // completion time follows the checkbox
+        if ($this->is_completed) {
+            $this->completed_at = $this->completed_at ?: date('Y-m-d H:i:s');
+        } else {
+            $this->completed_at = null;
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public function getLead()
+    {
+        return $this->hasOne(Lead::class, ['id' => 'reference_id']);
+    }
+
+    public function getTeam()
+    {
+        return $this->hasOne(\common\modules\master\models\Team::class, ['id' => 'assigned_to']);
     }
 
     /**
@@ -109,15 +198,16 @@ class Activity extends ActiveRecord
             'contact_id' => 'Contact',
             'opportunity_id' => 'Opportunity',
             'reference_type' => 'Reference Type',
-            'reference_id' => 'Reference',
-            'assigned_to' => 'Assigned To',
+            'reference_id' => 'Lead',
+            'relatedTo' => 'Related To',
+            'assigned_to' => 'Assigned To (Team)',
             'activity_type' => 'Activity Type',
             'priority' => 'Priority',
             'subject' => 'Subject',
             'activity_date' => 'Activity Date',
             'due_date' => 'Due Date',
             'reminder_at' => 'Reminder At',
-            'is_completed' => 'Is Completed',
+            'is_completed' => 'Completed',
             'completed_at' => 'Completed At',
             'description' => 'Description',
             'outcome' => 'Outcome',

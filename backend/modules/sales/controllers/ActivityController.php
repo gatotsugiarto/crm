@@ -30,6 +30,12 @@ class ActivityController extends Controller
                     'allow' => true,
                     'roles' => ['@'],
                     'matchCallback' => function ($rule, $action) {
+                        // form lookups (contacts / opportunities of an account) need
+                        // the right to create or edit an activity
+                        if (in_array($action->id, ['contacts', 'opportunities'], true)) {
+                            return \common\components\rbac\SalesAccess::can('backend.sales.activity.create')
+                                || \common\components\rbac\SalesAccess::can('backend.sales.activity.update');
+                        }
                         $route = 'backend.'.str_replace('/','.',$this->getRoute());
                         $parents = strstr($route, strrchr ($route,'.'),true).'.*';
                         if (\Yii::$app->user->can($route) || \Yii::$app->user->can($parents) || \Yii::$app->user->can("root")){
@@ -268,6 +274,28 @@ class ActivityController extends Controller
         return $this->redirect(['index']);
     }
     */
+
+    /**
+     * Contacts of an account for the activity form: [{id, text}] (primary first).
+     */
+    public function actionContacts($id = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $rows = \common\modules\sales\models\Contact::find()->select(['id', 'fullname', 'job_title', 'is_primary'])
+            ->where(['account_id' => (int) $id])->orderBy(['is_primary' => SORT_DESC, 'fullname' => SORT_ASC])->asArray()->all();
+        return array_map(fn($r) => ['id' => $r['id'], 'text' => $r['fullname'] . ($r['job_title'] ? ' (' . $r['job_title'] . ')' : '')], $rows);
+    }
+
+    /**
+     * Opportunities of an account for the activity form: [{id, text}] (newest first).
+     */
+    public function actionOpportunities($id = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $rows = \common\modules\sales\models\Opportunity::find()->select(['id', 'name', 'stage'])
+            ->where(['account_id' => (int) $id])->orderBy(['id' => SORT_DESC])->asArray()->all();
+        return array_map(fn($r) => ['id' => $r['id'], 'text' => $r['name'] . ' (' . $r['stage'] . ')'], $rows);
+    }
 
     /**
      * Finds the Activity model based on its primary key value.

@@ -192,6 +192,13 @@ $gridColumns = [
         //     },
         // ],
         [
+            'label' => 'Related To',
+            'format' => 'raw',
+            'value' => fn($model) => $model->reference_type === 'lead'
+                ? '<span class="badge badge-secondary">Lead</span> ' . Html::encode($model->lead?->company_name ?? ('#' . $model->reference_id))
+                : Html::encode($model->account?->name ?? '-'),
+        ],
+        [
             'attribute' => 'opportunity_id',
             'format' => 'raw',
             'value' => fn($model) => Html::a(

@@ -3,7 +3,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
-use kartik\number\NumberControl;
+use common\modules\sales\models\Activity;
+use common\modules\sales\models\Contact;
+use common\modules\sales\models\Opportunity;
 
 $isNew = $model->isNewRecord;
 $title = $isNew ? 'Create New Activity' : 'Edit Activity';
@@ -40,85 +42,109 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
         
         <?= Html::hiddenInput('form_token', $formToken) ?>
 
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'account_id')->textInput() ?>
-            </div>
+        <?php
+        // defaults for a new activity: about an account, now, the user's own team
+        if ($isNew && $model->relatedTo === null) {
+            $model->relatedTo = Activity::RELATED_ACCOUNT;
+            $model->activity_date = $model->activity_date ?: date('Y-m-d H:i:s');
+            $model->assigned_to = $model->assigned_to ?: (Yii::$app->user->identity->team_id ?? null);
+            $model->activity_type = $model->activity_type ?: Activity::ACTIVITY_TYPE_TASK;
+            $model->priority = $model->priority ?: Activity::PRIORITY_NORMAL;
+        }
+        $isLead = $model->relatedTo === Activity::RELATED_LEAD;
+        $contacts = $model->account_id
+            ? Contact::find()->select(['fullname', 'id'])->where(['account_id' => $model->account_id])->indexBy('id')->column() : [];
+        $opportunities = $model->account_id
+            ? Opportunity::find()->select(['name', 'id'])->where(['account_id' => $model->account_id])->orderBy(['id' => SORT_DESC])->indexBy('id')->column() : [];
+        $dateTime = fn($attr) => $form->field($model, $attr)->input('datetime-local', [
+            'value' => Activity::toInputDateTime($model->$attr),
+        ]);
+        ?>
 
-            <div class="col-md-6">
-                <?= $form->field($model, 'contact_id')->textInput() ?>
+        <!-- what the activity is about -->
+        <?= $form->field($model, 'relatedTo')->radioList([
+            Activity::RELATED_ACCOUNT => 'Account (customer / prospect already converted)',
+            Activity::RELATED_LEAD    => 'Lead (not converted yet)',
+        ], ['class' => 'activity-related', 'itemOptions' => ['class' => 'mr-1', 'labelOptions' => ['class' => 'mr-4 font-weight-normal']]]) ?>
+
+        <div class="row activity-for-account" <?= $isLead ? 'style="display:none"' : '' ?>>
+            <div class="col-md-4">
+                <?= $form->field($model, 'account_id')->widget(Select2::class, [
+                    'data' => \common\modules\sales\models\Account::dropdown() ?? [],
+                    'options' => ['placeholder' => 'Account', 'id' => 'activity-account_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ]) ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'contact_id')->widget(Select2::class, [
+                    'data' => $contacts,
+                    'options' => ['placeholder' => 'Contact (optional)', 'id' => 'activity-contact_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ]) ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'opportunity_id')->widget(Select2::class, [
+                    'data' => $opportunities,
+                    'options' => ['placeholder' => 'Opportunity (optional)', 'id' => 'activity-opportunity_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ]) ?>
+            </div>
+        </div>
+
+        <div class="row activity-for-lead" <?= $isLead ? '' : 'style="display:none"' ?>>
+            <div class="col-md-8">
+                <?= $form->field($model, 'reference_id')->widget(Select2::class, [
+                    'data' => \common\modules\sales\models\Lead::dropdown() ?? [],
+                    'options' => ['placeholder' => 'Lead', 'id' => 'activity-reference_id'],
+                    'pluginOptions' => ['allowClear' => true],
+                ]) ?>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'opportunity_id')->textInput() ?>
+            <div class="col-md-4">
+                <?= $form->field($model, 'activity_type')->widget(Select2::class, [
+                    'data' => Activity::optsActivityType(),
+                    'options' => ['placeholder' => 'Type', 'id' => 'activity-activity_type'],
+                    'hideSearch' => true,
+                ]) ?>
             </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'reference_type')->textInput(['maxlength' => true]) ?>
+            <div class="col-md-4">
+                <?= $form->field($model, 'priority')->widget(Select2::class, [
+                    'data' => Activity::optsPriority(),
+                    'options' => ['placeholder' => 'Priority', 'id' => 'activity-priority'],
+                    'hideSearch' => true,
+                ]) ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'assigned_to')->widget(Select2::class, [
+                    'data' => \common\modules\master\models\Team::dropdownActive($model->assigned_to),
+                    'options' => ['placeholder' => 'Sales Team', 'id' => 'activity-assigned_to'],
+                    'pluginOptions' => ['allowClear' => true],
+                ]) ?>
             </div>
         </div>
+
+        <?= $form->field($model, 'subject')->textInput(['maxlength' => true, 'placeholder' => 'e.g. Presentasi demo NextSys Hospitality']) ?>
 
         <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'reference_id')->textInput() ?>
-            </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'assigned_to')->textInput() ?>
-            </div>
+            <div class="col-md-4"><?= $dateTime('activity_date') ?></div>
+            <div class="col-md-4"><?= $dateTime('due_date') ?></div>
+            <div class="col-md-4"><?= $dateTime('reminder_at') ?></div>
         </div>
+
+        <?= $form->field($model, 'description')->textarea(['rows' => 4, 'placeholder' => 'What was discussed / what needs to be done']) ?>
 
         <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'activity_type')->dropDownList([ 'Call' => 'Call', 'Meeting' => 'Meeting', 'Email' => 'Email', 'Task' => 'Task', 'Note' => 'Note', ], ['prompt' => '']) ?>
+            <div class="col-md-4">
+                <?= $form->field($model, 'is_completed')->checkbox(['id' => 'activity-is_completed']) ?>
             </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'priority')->dropDownList([ 'Low' => 'Low', 'Normal' => 'Normal', 'High' => 'High', 'Urgent' => 'Urgent', ], ['prompt' => '']) ?>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'subject')->textInput(['maxlength' => true]) ?>
-            </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'activity_date')->textInput() ?>
+            <div class="col-md-8 activity-completed" <?= $model->is_completed ? '' : 'style="display:none"' ?>>
+                <?= $dateTime('completed_at')->hint('Empty = now, when saved.') ?>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'due_date')->textInput() ?>
-            </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'reminder_at')->textInput() ?>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'is_completed')->textInput() ?>
-            </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'completed_at')->textInput() ?>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-            </div>
-
-            <div class="col-md-6">
-                <?= $form->field($model, 'outcome')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
+        <?= $form->field($model, 'outcome')->textInput(['maxlength' => true, 'placeholder' => 'Result, e.g. "Customer asks for a revised quotation"']) ?>
 
         <div class="row">
             <div class="col-md-6">
@@ -180,3 +206,41 @@ $icon = $isNew ? 'fa-user-plus' : 'fa-edit';
 
 
 <?php ActiveForm::end(); ?>
+
+<?php
+$contactsUrl = \yii\helpers\Url::to(['/sales/activity/contacts']);
+$opportunitiesUrl = \yii\helpers\Url::to(['/sales/activity/opportunities']);
+$this->registerJs(<<<JS
+(function () {
+    var form = $('#activity-form');
+    // Account or Lead
+    form.on('change', 'input[name="Activity[relatedTo]"]', function () {
+        var lead = this.value === 'lead';
+        form.find('.activity-for-lead').toggle(lead);
+        form.find('.activity-for-account').toggle(!lead);
+    });
+    // completed -> show the completion time
+    form.on('change', '#activity-is_completed', function () {
+        form.find('.activity-completed').toggle(this.checked);
+    });
+    // account -> its contacts and opportunities
+    function refill(select, url, accountId) {
+        var keep = select.val();
+        select.empty().append(new Option('', '', false, false));
+        if (!accountId) { select.val(null).trigger('change'); return; }
+        $.getJSON(url, {id: accountId}, function (items) {
+            var stillValid = false;
+            $.each(items, function (i, item) {
+                select.append(new Option(item.text, item.id, false, false));
+                if (String(item.id) === String(keep)) stillValid = true;
+            });
+            select.val(stillValid ? keep : null).trigger('change');
+        });
+    }
+    form.on('change', '#activity-account_id', function () {
+        refill(form.find('#activity-contact_id'), '{$contactsUrl}', this.value);
+        refill(form.find('#activity-opportunity_id'), '{$opportunitiesUrl}', this.value);
+    });
+})();
+JS);
+?>

@@ -28,37 +28,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <span class="text-secondary small">Account</span><br>
-                <span><small><?= Html::encode($model->account->name) ?></small></span>
+                <span class="text-secondary small">Related to</span><br>
+                <span><small><?php if ($model->reference_type === 'lead'): ?>
+                    <span class="badge badge-secondary">Lead</span> <?= Html::encode($model->lead?->company_name ?? ('#' . $model->reference_id)) ?>
+                <?php else: ?>
+                    <span class="badge badge-info">Account</span> <?= Html::encode($model->account?->name ?? '-') ?>
+                <?php endif; ?></small></span>
             </div>
 
+            <div class="col-md-6">
+                <span class="text-secondary small">Assigned to (team)</span><br>
+                <span><small><?= Html::encode($model->team?->name ?? '-') ?></small></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Contact</span><br>
-                <span><small><?= Html::encode($model->contact?->name ?? '-') ?></small></span>
+                <span><small><?= Html::encode($model->contact?->fullname ?? '-') ?></small></span>
             </div>
-        </div>
 
-        <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Opportunity</span><br>
-                <span><small><?= Html::encode($model->opportunity->name) ?></small></span>
-            </div>
-
-            <div class="col-md-6">
-                <span class="text-secondary small">Reference type</span><br>
-                <span><small><?= Html::encode($model->reference_type) ?></small></span>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <span class="text-secondary small">Reference</span><br>
-                <span><small><?= Html::encode($model->reference_id) ?></small></span>
-            </div>
-
-            <div class="col-md-6">
-                <span class="text-secondary small">Assigned to</span><br>
-                <span><small><?= Html::encode($model->assigned_to) ?></small></span>
+                <span><small><?= Html::encode($model->opportunity?->name ?? '-') ?></small></span>
             </div>
         </div>
 
@@ -101,7 +93,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row mb-3">
             <div class="col-md-6">
                 <span class="text-secondary small">Is completed</span><br>
-                <span><small><?= Html::encode($model->is_completed) ?></small></span>
+                <span><small><?= $model->is_completed ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-light">No</span>' ?></small></span>
             </div>
 
             <div class="col-md-6">
